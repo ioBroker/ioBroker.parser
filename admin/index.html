@@ -1,0 +1,283 @@
+<html>
+
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+<style>
+    .number {
+        width: 70px
+    }
+    .table-values th {
+        background: #686868;
+        color: #FFF;
+        font-weight: bold;
+    }
+    .table-values tr:nth-child(even) {
+        background: #d0d0d0;
+    }
+    .error {
+        border: 1px solid red;
+    }
+</style>
+
+<script type="text/javascript">
+    systemDictionary = {
+        "Proxy adapter settings": {
+            "de": "Proxy Adapter Einstellungen",
+            "ru": "Настройки Proxy драйвера"
+        },
+        "Extend WEB adapter:":    {"en": "Extend WEB adapter:",     "de": "Erweitere WEB Adapter:", "ru": "Подключить к WEB драйверу:"},
+        "all":                    {"en": "all",                     "de": "alle",                   "ru": "все"},
+        "Context":                {"en": "Context",                 "de": "Kontext",                "ru": "Контекст"},
+        "URL":                    {"en": "URL",                     "de": "URL",                    "ru": "URL"},
+        "Route path:":            {"en": "Route path:",             "de": "Route-Weg:",             "ru": "Путь в URL:"}
+    };
+
+    var values = [];
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+        if (!settings) return;
+
+        $('.value').each(function () {
+            var key = $(this).attr('id');
+            var $key = $('#' + key + '.value');
+            if ($key.attr('type') === 'checkbox') {
+                $key.prop('checked', settings[key]).change(function() {
+                    onChange();
+                });
+            } else {
+                $key.val(settings[key]).change(function() {
+                    onChange();
+                }).keyup(function() {
+                    onChange();
+                });
+            }
+        });
+
+        onChange(false);
+
+        var namespace = adapter + '.' + instance + '.';
+
+        socket.emit('getObjectView', 'system', 'state', {startkey: namespace, endkey: namespace + '\u9999'}, function (err, res) {
+            if (!err && res) {
+                var _res   = {};
+                for (var i = 0; i < res.rows.length; i++) {
+                    var obj = res.rows[i].value;
+                    values.push({
+                        name:       obj._id.substring(namespace.length),
+                        link:       obj.native.link,
+                        read:       obj.common.read,
+                        write:      obj.common.write,
+                        regex:      obj.native.regex,
+                        role:       obj.common.role,
+                        type:       obj.common.type,
+                        unit:       obj.common.unit,
+                        interval:   obj.native.link,
+                        obj:        obj
+                    });
+                }
+            }
+
+            var newValues = JSON.parse(JSON.stringify(values));
+            values2table('values', newValues, onChange, function () {
+                if (!newValues.length) {
+                    $('.table-button-add').trigger('click');
+                }
+
+                $('.values-input[data-name="name"]').change(function () {
+                    var val = $(this).val();
+                    var error = '';
+                    if (!val) {
+                        error = 'Empty names are not allowed';
+                    } else if (val.indexOf(' ') !== -1) {
+                        error = 'Spaces are not allowed';
+                    }
+                    if (error) {
+                        $(this).addClass(error).attr('title', _(error));
+                    } else {
+                        $(this).removeClass('error').attr('title', '');
+                    }
+                });
+            });
+        });
+    }
+
+    function processTasks(tasks, cb) {
+        if (!tasks || !tasks.length) {
+            cb && cb();
+            return;
+        }
+
+        var task = tasks.pop();
+
+        if (typeof task === 'object') {
+            socket.emit('setObject', task._id, task, function (err) {
+                if (err) console.error(err);
+                setTimeout(function () {
+                    processTasks(tasks, cb);
+                }, 0);
+            });
+        } else {
+            socket.emit('delState', task, function (err) {
+                if (err) console.error(err);
+                socket.emit('delObject', task, function (err) {
+                    if (err) console.error(err);
+                    setTimeout(function () {
+                        processTasks(tasks, cb);
+                    }, 0);
+                });
+            });
+        }
+    }
+
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+
+        var newValues = table2values();
+        var tasks = [];
+        for (var v = 0; v < newValues.length; v++) {
+            if (!newValues[v].name) {
+                showMessage(_('Empty names are not allowed'), _('Error'), 'alert');
+                return;
+            }
+            var found = false;
+            var t;
+            // find same name in old values
+            for (t = 0; t < values.length; t++) {
+                if (values[t].name === newValues[v].name) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                var _obj = values[t].obj;
+                var changed = false;
+                if (_obj.common.write !== !!newValues[v].write) {
+                    _obj.common.write = !!newValues[v].write;
+                    changed = true;
+                }
+                if (_obj.common.read !== true) {
+                    _obj.common.read = true;
+                    changed = true;
+                }
+                if (_obj.common.unit !== newValues[v].unit) {
+                    _obj.common.unit = newValues[v].unit;
+                    changed = true;
+                }
+                if (_obj.common.type !== newValues[v].type) {
+                    _obj.common.type = newValues[v].type;
+                    changed = true;
+                }
+                if (_obj.common.role !== newValues[v].role) {
+                    _obj.common.role = newValues[v].role;
+                    changed = true;
+                }
+                if (_obj.native.link !== newValues[v].link) {
+                    _obj.native.link = newValues[v].link;
+                    changed = true;
+                }
+                if (_obj.native.regex !== newValues[v].regex) {
+                    _obj.native.regex = newValues[v].regex;
+                    changed = true;
+                }
+                if (_obj.native.interval !== newValues[v].interval) {
+                    _obj.native.interval = newValues[v].interval;
+                    changed = true;
+                }
+                if (changed) tasks.push(_obj);
+            } else {
+                tasks.push({
+                    _id:            adapter + '.' + instance + '.' + newValues[t].name.replace(/\s/g, '_'),
+                    common: {
+                        name:       newValues[t].name,
+                        write:      !!newValues[t].write,
+                        read:       true,
+                        unit:       newValues[t].unit,
+                        type:       newValues[t].type,
+                        role:       newValues[t].role
+                    },
+                    native: {
+                        link:       newValues[t].link,
+                        regex:      newValues[t].regex,
+                        interval:   newValues[t].interval
+                    },
+                    type: 'state'
+                });
+            }
+        }
+        for (var w = 0; w < values.length; w++) {
+            var found = false;
+            for (var k = 0; k < newValues.length; k++) {
+                if (values[w].name === newValues[k].name) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                tasks.push(values[w].obj._id);
+            }
+        }
+
+        processTasks(tasks, function () {
+            values = newValues;
+            callback(obj);
+        });
+    }
+</script>
+
+<div id="adapter-container">
+
+    <table><tr><td><img src="parser.png"></td><td><h3 class="translate">Parser adapter settings</h3></td></tr></table>
+
+    <table style="width: 100%;">
+        <tr>
+            <td style="width: 200px;"><label for="pollInterval" class="translate">Default poll interval: </label></td>
+            <td style="width: 100px;"><input class="value" id="pollInterval" style="width: 100%"/></td>
+            <td class="translate">ms</td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+    </table>
+    <div id="values" style="width: 100%; height: calc(100% - 205px)">
+        <button class="table-button-add" style="margin-left: 10px; width: 1.5em; height: 1.5em"></button>
+        <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+            <table class="table-values" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th data-name="_index" style="width: 30px"></th>
+                        <th data-name="name"      style="width: 110px" data-style="width: 110px" class="translate">Name</th>
+                        <!--th data-name="read"      style="width: 50px" data-type="checkbox" class="translate" data-def="true">Read</th-->
+                        <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
+                        <th data-name="link"      style="width: 30%" class="translate">URL or file name</th>
+                        <th data-name="regex"     style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
+                        <th data-name="role"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;level;blinds;switch;button" class="translate">Role</th>
+                        <th data-name="type"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;string;json" class="translate">Type</th>
+                        <th data-name="unit"      style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
+                        <th data-name="interval"  style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
+                        <th data-buttons="delete" style="width: 30px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</html>
