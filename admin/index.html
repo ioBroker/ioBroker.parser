@@ -78,7 +78,7 @@
                         role:       obj.common.role,
                         type:       obj.common.type,
                         unit:       obj.common.unit,
-                        interval:   obj.native.link,
+                        interval:   obj.native.interval,
                         obj:        obj
                     });
                 }
@@ -269,9 +269,10 @@
                         <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
                         <th data-name="link"      style="width: 30%" class="translate">URL or file name</th>
                         <th data-name="regex"     style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
-                        <th data-name="role"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;level;blinds;switch;button" class="translate">Role</th>
+                        <th data-name="role"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
                         <th data-name="type"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;string;json" class="translate">Type</th>
                         <th data-name="unit"      style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
+                        <th data-name="substitute" style="width: 60px"  data-style="width: 60px" class="translate">Subs</th>
                         <th data-name="interval"  style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
                         <th data-buttons="delete" style="width: 30px"></th>
                     </tr>

@@ -7,28 +7,43 @@ ioBroker parser adapter
 
 [![NPM](https://nodei.co/npm/iobroker.parser.png?downloads=true)](https://nodei.co/npm/iobroker.parser/)
 
-Allows to access defined URLs or local files via one web server.
+This adapter allows to parse the data received via URL or in files.
 
-Specified routes will be available under ```http://ip:8082/parser.0/context/...```. Of course port, protocol, "parser.0", can variate depends on settings.
+## Settings
+
+### Default poll interval
+This value will be used, if no poll interval for the entry specified. The interval is in milliseconds and describes how often the link or file will be read.
+
+### Table
+With plus button the new entries will be added to the table.
+
+Table fields:
+
+- *Name* - is the state name and may not consist spaces.
+- *URL or file name* - is the URL link like *https://darksky.net/forecast/48.1371,11.5754/si24/de* for Munich weather.
+- *RegEx* - regular expression, how to extract data from link. There is a good service to test regula expressions: [regex101](https://regex101.com/). E.g. *temp swip">(-?\d+)˚<* for the lin above.
+- *Role* - one of the roles:
+    - custom - user defines itself via *admin" the role
+    - temperature - the value is temperature
+    - value - the value is a number (e.g. dimmer)
+    - blinds - the value is a blind position
+    - switch - the value is switch position (true/false)
+    - button - the value is a button
+    - indicator - boolean indicator
+- *Type* - type of variable. One of boolean, number, string, json.
+- *Unit* - unit of the value. E.g. *°C*
+- *Interval* - poll interval in ms. If not set or 0, so the default interval will be used.
 
 ## Sample settings
-| Context        |      URL                                           |      Description                                   |
-|----------------|:---------------------------------------------------|:---------------------------------------------------|
-| admin/         | http://localhost:8081                              | access to admin page                               |
-| router/        | http://192.168.1.1                                 | access to local router                             |
-| cam/           | http://user:pass@192.168.1.123                     | access to webcam (e.g. call http://ip:8082/parser.0/cam/web/snapshot.jpg) |
-| dir/           | /tmp/                                              | access to local directory "/tmp/"                  |
-| dir/           | tmp/                                               | access to local directory "/opt/iobroker/tmp"      |
-| file.jpg       | /tmp/picture.jpg                                   | access to local file "/tmp/picture.jpg"            |
-
-**Not all devices can be accessed via parser. 
-Some devices wants to be located in the root ```http://ip/``` and cannot run under ```http://ip/parser.0/context/```.
-
-You can read more about context [here](https://www.npmjs.com/package/http-parser-middleware#context-matching)
-
-Additionally the user can define the route path for parser requests.
+| Name              |      URL or file name                                |      RegEx            | Role         | Type    | Unit | Interval |
+|-------------------|:-----------------------------------------------------|:----------------------|--------------|---------|------|----------|
+| temperatureMunich | https://darksky.net/forecast/48.1371,11.5754/si24/de | temp swip">(-?\d+)˚<  | temperature  | number  |  °C  | 180000   |
+| forumRunning      | http:///forum.iobroker.net/                          | Forum                 | indicator    | boolean |      | 60000    |
+| cloudRunning      | https://iobroker.net/                                | Privacy Notice        | indicator    | boolean |      | 60000    |
+| forumRunning      | http:///forum.iobroker.net/                          | Forum                 | indicator    | boolean |      | 60000    |
+| cpuTemperature    | /sys/devices/virtual/thermal/thermal_zone0/temp      | (.*)                  | temperature  | number  |  °C  | 30000    |
 
 ## Changelog
 
-### 0.0.1 (2017-01-09)
+### 0.0.1 (2017-01-16)
 * (bluefox) initial commit
