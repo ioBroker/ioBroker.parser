@@ -1,7 +1,7 @@
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
 var expect = require('chai').expect;
-var fs        = require('fs');
+var fs     = require('fs');
 
 describe('Test package.json and io-package.json', function() {
     it('Test package files', function (done) {

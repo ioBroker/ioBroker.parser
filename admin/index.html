@@ -79,6 +79,9 @@
                         type:       obj.common.type,
                         unit:       obj.common.unit,
                         interval:   obj.native.interval,
+                        substitute: obj.native.substitute,
+                        offset:     obj.native.offset,
+                        factor:     obj.native.factor,
                         obj:        obj
                     });
                 }
@@ -103,6 +106,38 @@
                     } else {
                         $(this).removeClass('error').attr('title', '');
                     }
+                });
+                $('.values-input[data-name="type"]').change(function () {
+                    var id = $(this).data('index');
+                    var val = $(this).val();
+                    if (val === 'number') {
+                        $('.values-input[data-name="factor"][data-index="' + id + '"]').show();
+                        $('.values-input[data-name="offset"][data-index="' + id + '"]').show();
+                    } else {
+                        $('.values-input[data-name="factor"][data-index="' + id + '"]').hide();
+                        $('.values-input[data-name="offset"][data-index="' + id + '"]').hide();
+                    }
+                    if (val === 'boolean' || val === 'json') {
+                        $('.values-input[data-name="unit"][data-index="' + id + '"]').hide();
+                    } else {
+                        $('.values-input[data-name="unit"][data-index="' + id + '"]').show();
+                    }
+                }).each(function () {
+                    var id = $(this).data('index');
+                    var val = $(this).val();
+                    if (val === 'number') {
+                        $('.values-input[data-name="factor"][data-index="' + id + '"]').show();
+                        $('.values-input[data-name="offset"][data-index="' + id + '"]').show();
+                    } else {
+                        $('.values-input[data-name="factor"][data-index="' + id + '"]').hide();
+                        $('.values-input[data-name="offset"][data-index="' + id + '"]').hide();
+                    }
+                    if (val === 'boolean' || val === 'json') {
+                        $('.values-input[data-name="unit"][data-index="' + id + '"]').hide();
+                    } else {
+                        $('.values-input[data-name="unit"][data-index="' + id + '"]').show();
+                    }
+
                 });
             });
         });
@@ -166,7 +201,8 @@
                     break;
                 }
             }
-
+            newValues[v].offset = parseFloat(newValues[v].offset) || 0;
+            newValues[v].factor = parseFloat(newValues[v].factor) || 1;
             if (found) {
                 var _obj = values[t].obj;
                 var changed = false;
@@ -196,28 +232,43 @@
                 }
                 if (_obj.native.regex !== newValues[v].regex) {
                     _obj.native.regex = newValues[v].regex;
-                    changed = true;
+                     changed = true;
                 }
                 if (_obj.native.interval !== newValues[v].interval) {
                     _obj.native.interval = newValues[v].interval;
                     changed = true;
                 }
+                if (_obj.native.substitute !== newValues[v].substitute) {
+                    _obj.native.substitute = newValues[v].substitute;
+                    changed = true;
+                }
+                if (_obj.native.factor !== newValues[v].factor) {
+                    _obj.native.factor = newValues[v].factor;
+                    changed = true;
+                }
+                if (_obj.native.offset !== newValues[v].offset) {
+                    _obj.native.offset = newValues[v].offset;
+                    changed = true;
+                }
                 if (changed) tasks.push(_obj);
             } else {
                 tasks.push({
-                    _id:            adapter + '.' + instance + '.' + newValues[t].name.replace(/\s/g, '_'),
+                    _id:            adapter + '.' + instance + '.' + newValues[v].name.replace(/\s/g, '_'),
                     common: {
-                        name:       newValues[t].name,
-                        write:      !!newValues[t].write,
+                        name:       newValues[v].name,
+                        write:      !!newValues[v].write,
                         read:       true,
-                        unit:       newValues[t].unit,
-                        type:       newValues[t].type,
-                        role:       newValues[t].role
+                        unit:       newValues[v].unit,
+                        type:       newValues[v].type,
+                        role:       newValues[v].role
                     },
                     native: {
-                        link:       newValues[t].link,
-                        regex:      newValues[t].regex,
-                        interval:   newValues[t].interval
+                        link:       newValues[v].link,
+                        regex:      newValues[v].regex,
+                        interval:   newValues[v].interval,
+                        factor:     newValues[v].factor,
+                        offset:     newValues[v].offset,
+                        substitute: newValues[v].substitute
                     },
                     type: 'state'
                 });
@@ -263,18 +314,20 @@
             <table class="table-values" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th data-name="_index" style="width: 30px"></th>
-                        <th data-name="name"      style="width: 110px" data-style="width: 110px" class="translate">Name</th>
+                        <th data-name="_index"     style="width: 30px"></th>
+                        <th data-name="name"       style="width: 110px" data-style="width: 110px" class="translate">Name</th>
                         <!--th data-name="read"      style="width: 50px" data-type="checkbox" class="translate" data-def="true">Read</th-->
                         <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
-                        <th data-name="link"      style="width: 30%" class="translate">URL or file name</th>
-                        <th data-name="regex"     style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
-                        <th data-name="role"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
-                        <th data-name="type"      style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;string;json" class="translate">Type</th>
-                        <th data-name="unit"      style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
+                        <th data-name="link"       style="width: 30%" class="translate">URL or file name</th>
+                        <th data-name="regex"      style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
+                        <th data-name="role"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
+                        <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;string;json" class="translate">Type</th>
+                        <th data-name="unit"       style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
                         <th data-name="substitute" style="width: 60px"  data-style="width: 60px" class="translate">Subs</th>
-                        <th data-name="interval"  style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
-                        <th data-buttons="delete" style="width: 30px"></th>
+                        <th data-name="factor"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="1">Factor</th>
+                        <th data-name="offset"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="0">Offset</th>
+                        <th data-name="interval"   style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
+                        <th data-buttons="delete"  style="width: 30px"></th>
                     </tr>
                 </thead>
             </table>

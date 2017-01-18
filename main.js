@@ -16,7 +16,7 @@ adapter.on('stateChange', function (id, state) {
 
     // Warning, state can be null if it was deleted
     adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
-    
+
     // output to parser
     if (states[id] && states[id].common.write) {
 
@@ -53,22 +53,40 @@ function initPoll(obj) {
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
 
     if (!obj.native.regex) obj.native.regex = '.+';
-    
+
     if (obj.native.regex[0] === '/') {
         obj.native.regex = obj.native.regex.substring(1, obj.native.regex.length - 1);
     }
-    
+
+    if (obj.native.substitute !== '' && obj.native.substitute !== undefined && obj.native.substitute !== null) {
+        if (obj.native.substitute === 'null')  obj.native.substitute = null;
+
+        if (obj.common.type === 'number') {
+            obj.native.substitute = parseFloat(obj.native.substitute) || 0;
+        } else if (obj.common.type === 'boolean') {
+            if (obj.native.substitute === 'true')  obj.native.substitute = true;
+            if (obj.native.substitute === 'false') obj.native.substitute = false;
+            obj.native.substitute = !!obj.native.substitute;
+        }
+    } else {
+        obj.native.substitute = undefined;
+    }
+
     obj.regex = new RegExp(obj.native.regex);
-    
+    obj.native.offset = parseFloat(obj.native.offset) || 0;
+    obj.native.factor = parseFloat(obj.native.factor) || 1;
+
     if (!timers[obj.native.interval]) {
         timers[obj.native.interval] = {
-            count: 1,
-            timer: setInterval(poll, obj.native.interval, obj.native.interval)
+            interval: obj.native.interval,
+            count:    1,
+            timer:    setInterval(poll, obj.native.interval, obj.native.interval)
         };
     } else {
         timers[obj.native.interval].count++;
     }
 }
+
 function deletePoll(obj) {
     timers[obj.native.interval].count--;
     if (!timers[obj.native.interval].count) {
@@ -78,17 +96,46 @@ function deletePoll(obj) {
 }
 adapter.on('ready', main);
 
+function _analyseDataForStates(linkStates, data, error, callback) {
+    if (!linkStates || !linkStates.length) {
+        if (callback) callback();
+    } else {
+        var id = linkStates.shift();
+        analyseData(states[id], data, error, function () {
+            setTimeout(_analyseDataForStates, 0, linkStates, data, error, callback);
+        });
+    }
+}
 
-function analyseData(obj, data, error) {
+function analyseDataForStates(curStates, link, data, error, callback) {
+    if (typeof error === 'function') {
+        callback = error;
+        error = null;
+    }
+
+    var linkStates = [];
+    for (var i = 0; i < curStates.length; i++) {
+        if (states[curStates[i]].native.link === link) {
+            linkStates.push(curStates[i]);
+        }
+    }
+    _analyseDataForStates(linkStates, data, error, callback);
+}
+
+function analyseData(obj, data, error, callback) {
     if (error) {
         adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
         if (obj.value.q !== 0x82) {
-            obj.value.q = 0x82;
+            obj.value.q   = 0x82;
             obj.value.ack = true;
-            adapter.setForeignState(obj._id, obj.value);
+            if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
+
+            adapter.setForeignState(obj._id, obj.value, callback);
+        } else if (callback) {
+            callback();
         }
     } else {
-        var m = states[id].regex.exec(data);
+        var m = obj.regex.exec(data);
         if (m) {
             var newVal;
 
@@ -96,48 +143,79 @@ function analyseData(obj, data, error) {
                 newVal = true;
             } else  {
                 newVal = m.length > 1 ? m[1] : m[0];
-                if (obj.common.type === 'number') newVal = parseFloat(newVal);
+                if (obj.common.type === 'number') {
+                    newVal = parseFloat(newVal);
+                    newVal *= obj.native.factor;
+                    newVal += obj.native.offset;
+                }
             }
 
             if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
-                adapter.setForeignState(obj._id, obj.value);
+                adapter.setForeignState(obj._id, obj.value, callback);
+            } else if (callback) {
+                callback();
             }
         } else {
             if (obj.common.type === 'boolean') {
                 newVal = false;
+                adapter.log.debug('Text not found for ' + obj._id);
                 if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
-                    adapter.setForeignState(obj._id, obj.value);
+                    adapter.setForeignState(obj._id, obj.value, callback);
+                } else if (callback) {
+                    callback();
                 }
             } else  {
-                if (!obj.value.q || !obj.value.ack) {
+                adapter.log.debug('Cannot find number in answer for ' + obj._id);
+                if (obj.value.q !== 0x44 || !obj.value.ack) {
                     obj.value.q   = 0x44;
                     obj.value.ack = true;
-                    adapter.setForeignState(obj._id, obj.value);
+                    if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
+
+                    adapter.setForeignState(obj._id, obj.value, callback);
+                } else if (callback) {
+                    callback();
                 }
             }
         }
     }
 }
 
-function poll(interval) {
-    for (var id in states) {
+function poll(interval, callback) {
+    var id;
+    // first mark all entries as not processed
+    var curStates = [];
+    for (id in states) {
         if (!states.hasOwnProperty(id)) continue;
         if (states[id].native.interval === interval) {
+            states[id].processed = false;
+            curStates.push(id);
+        }
+    }
+
+    for (var i = 0; i < curStates.length; i++) {
+        id = curStates[i];
+        if (!states.hasOwnProperty(id)) continue;
+        if (states[id].native.interval === interval && !states[id].processed) {
             if (states[id].native.link.match(/^https?:\/\//)) {
                 request = request || require('request');
-                request(states[id].native.link, function (error, response, body) {
-                    if (!body) {
-                        analyseData(states[id], null, error || JSON.stringify(response));
-                    } else {
-                        analyseData(states[id], body);
-                    }
-                });
+
+                (function(link) {
+                    adapter.log.debug('Request URL: ' + link);
+                    request(link, function (error, response, body) {
+                        if (!body) {
+                            analyseDataForStates(curStates, link, null, error || JSON.stringify(response), callback);
+                        } else {
+                            analyseDataForStates(curStates, link, body, callback);
+                        }
+                    });
+                })(states[id].native.link);
+
             } else {
                 path = path || require('path');
                 fs   = fs   || require('fs');
@@ -145,18 +223,19 @@ function poll(interval) {
                 if (states[id].native.link[0] !== '/' && !states[id].native.link.match(/^[A-Za-z]:/)) {
                     states[id].native.link = path.normalize(__dirname + '/../../' + states[id].native.link);
                 }
+                adapter.log.debug('Read file: ' + states[id].native.link);
                 if (fs.existsSync(states[id].native.link)) {
                     var data;
                     try {
                         data = fs.readFileSync(states[id].native.link);
                     } catch (e) {
                         adapter.log.error('Cannot read file "' + states[id].native.link + '": ' + e);
-                        analyseData(states[id], null, e);
+                        analyseDataForStates(curStates, states[id].native.link, null, e, callback);
                         return;
                     }
-                    analyseData(states[id], data);                     
+                    analyseDataForStates(curStates, states[id].native.link, data, callback);
                 } else {
-                    analyseData(states[id], null, 'File does not exist');
+                    analyseDataForStates(curStates, states[id].native.link, null, 'File does not exist', callback);
                 }
             }
         }
@@ -181,6 +260,13 @@ function main() {
                 if (!states.hasOwnProperty(id)) continue;
                 states[id].value = values[id] || {val: null};
                 initPoll(states[id]);
+            }
+
+            // trigger all parsers first time
+            for (var timer in timers) {
+                if (timers.hasOwnProperty(timer)) {
+                    poll(timers[timer].interval);
+                }
             }
         });
     });
