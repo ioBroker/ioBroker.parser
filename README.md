@@ -82,5 +82,8 @@ Values can have quality codes:
 
 ## Changelog
 
+### 0.1.1 (2017-01-30)
+* (bluefox) move to common group
+
 ### 0.0.1 (2017-01-16)
 * (bluefox) initial commit

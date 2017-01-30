@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "parser",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
-			"0.1.0": {
+			"0.1.1": {
+                "en": 				"move to common group",
+                "de": 				"Verschiebe ins Allgemein",
+                "ru": 				"Передвинут в общие драйвера"
+            },
+			"0.1.1": {
                 "en": 				"Inital version",
                 "de": 				"Erste Version",
                 "ru": 				"Первая версия"
@@ -23,7 +28,7 @@
         "readme":                   "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
         "keywords":                 ["url", "html", "file", "parser"],
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
-		"type":                     "common",
+		"type":                     "common adapters",
         "config":{
             "minWidth": 800,
             "width ": 1224
