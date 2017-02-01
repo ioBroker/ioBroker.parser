@@ -1,5 +1,5 @@
 <html>
-
+<head>
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
 <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
@@ -8,6 +8,8 @@
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="lib/js/cron/jquery.cron.js"></script>
+<script type="text/javascript" src="lib/js/cron/cron2text.js"></script>
 
 <style>
     .number {
@@ -56,11 +58,17 @@
         "boolean":              {"en": "boolean",           "de": "boolean",            "ru": "boolean"},
         "number":               {"en": "number",            "de": "number",             "ru": "number"},
         "string":               {"en": "string",            "de": "string",             "ru": "string"},
-        "json":                 {"en": "JSON",              "de": "JSON",               "ru": "JSON"}
+        "json":                 {"en": "JSON",              "de": "JSON",               "ru": "JSON"},
+        "Substitute":           {"en": "Substitute",        "de": "Ersatzwert",         "ru": "Substitute"},
+        "Test text":            {"en": "Test text",         "de": "Testtext",           "ru": "Проверочный текст"},
+        "Result":               {"en": "Result",            "de": "Ergebnis",           "ru": "Результат"},
+        "commaNumber":          {"en": "number with comma", "de": "Nummer mit Komma",   "ru": "число c запятой"},
+        "Edit: ":               {"en": "Edit: ",            "de": "Editieren: ",        "ru": "Изменить: "},
+        "Save":                 {"en": "Save",              "de": "Speichern",          "ru": "Сохранить"},
+        "Cancel":               {"en": "Cancel",            "de": "Abbrechen",          "ru": "Отмена"}
     };
 
     var values = [];
-
     /*
      <div id="values">
      <button class="table-button-add" style="margin-left: 10px"></button>
@@ -363,6 +371,28 @@
                                 _values2table(id, values, onChange, onReady);
                             }, 100);
                         });
+                } else if (command === 'edit') {
+                    $(this).button({
+                        icons: {primary: 'ui-icon-pencil'},
+                        text: false
+                    })
+                        .css({width: '1em', height: '1em'})
+                        .click(function () {
+                            var id = $(this).data('index');
+                            var elem = values[id];
+                            if (typeof editLine === 'function') {
+                                setTimeout(function () {
+                                    editLine(id, JSON.parse(JSON.stringify(values[id])), function (err, id, newValues) {
+                                        if (!err) {
+                                            if (JSON.stringify(values[id]) !== JSON.stringify(newValues)) {
+                                                onChange && onChange();
+                                                values[id] = newValues;
+                                                _values2table(id, values, onChange, onReady);
+                                            }                                        }
+                                    });
+                                }, 100);
+                            }
+                        });
                 }
             });
 
@@ -434,6 +464,189 @@
         return values;
     }
 
+    jQuery.fn.scrollToText = function(start, len) {
+        var end = start + len;
+        var e = $(this)[0]; // I don't know why... but $(this) don't want to work today :-/
+        if (!e) return;
+
+        else if (e.setSelectionRange) { e.focus(); e.setSelectionRange(start, end);} /* WebKit */
+        else if (e.createTextRange) { var range = e.createTextRange(); range.collapse(true); range.moveEnd('character', end); range.moveStart('character', start); range.select(); } /* IE */
+        else if (e.selectionStart) { e.selectionStart = start; e.selectionEnd = end; }
+
+        return false;
+
+    };
+
+    function _showResult() {
+        var test       = $('#dialog-edit-test-text').val();
+        var regex      = $('#dialog-edit-regex').val();
+        var type       = $('#dialog-edit-type').val();
+        var offset     = $('#dialog-edit-offset').val();
+        var factor     = $('#dialog-edit-factor').val();
+        var substitute = $('#dialog-edit-substitute').val();
+        if (!regex) regex = '.+';
+
+        if (regex[0] === '/') regex = regex.substring(1, regex.length - 1);
+
+        var comma = false;
+        if (type === 'commaNumber') {
+            comma = true;
+            type = 'number';
+        }
+
+        if (substitute !== '' && substitute !== undefined && substitute !== null) {
+            if (substitute === 'null')  substitute = null;
+
+            if (type === 'number') {
+                substitute = parseFloat(substitute) || 0;
+            } else if (type === 'boolean') {
+                if (substitute === 'true')  substitute = true;
+                if (substitute === 'false') substitute = false;
+                substitute = !!substitute;
+            }
+        } else {
+            substitute = undefined;
+        }
+
+        $('#dialog-edit-error').html('');
+        var len = regex.length;
+        try {
+            regex = new RegExp(regex);
+        } catch (e) {
+            $('#dialog-edit-error').html(e.toString());
+            return;
+        }
+        offset = parseFloat(offset) || 0;
+        factor = parseFloat(factor) || 1;
+        var m = regex.exec(test);
+
+        if (m) {
+            var newVal;
+            var ll = m[1] ? m[0].indexOf(m[1]) : 0;
+            $('#dialog-edit-test-text').data('select', {pos: m.index + ll, length: m[1] ? m[1].length : len});
+
+            if (type === 'boolean') {
+                newVal = true;
+            } else  {
+                newVal = m.length > 1 ? m[1] : m[0];
+                if (type === 'number') {
+                    // 1,000,000 => 1000000
+                    if (!comma) newVal = newVal.replace(/,/g, '');
+                    if (comma) {
+                        // 1.000.000 => 1000000
+                        newVal = newVal.replace(/\./g, '');
+                        // 5,67 => 5.67
+                        newVal = newVal.replace(',', '.');
+                    }
+                    // 1 000 000 => 1000000
+                    newVal = newVal.replace(/\s/g, '');
+                    newVal = parseFloat(newVal);
+                    newVal *= factor;
+                    newVal += offset;
+                }
+            }
+            $('#dialog-edit-result').val(newVal);
+        } else {
+            if (type === 'boolean') {
+                newVal = false;
+                $('#dialog-edit-result').val(newVal);
+            } else  {
+                $('#dialog-edit-result').val(substitute);
+            }
+        }
+    }
+
+    var timeout;
+    function showResult() {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(_showResult, 400);
+    }
+
+    function editLine(id, line, callback) {
+        sendTo(null, 'link', line.link, function (result) {
+            if (result) {
+                if (result.error) {
+                    showMessage(result.error, _('Error'), 'alert');
+                } else {
+                    $('#dialog-edit-test-text').val(result.text || '');
+                }
+            }
+        });
+
+        $('.test-input').each(function () {
+            var $this = $(this);
+            var attr = $this.data('name');
+            if ($this.attr('type') === 'checkbox') {
+                $this.prop('checked', line[attr]);
+            } else {
+                $this.val(line[attr]);
+            }
+        });
+        var $dialog = $('#dialog-test');
+        if (!$dialog.data('inited')) {
+            $dialog.data('inited', true);
+            $dialog.dialog({
+                autoOpen: false,
+                modal:    true,
+                title:    _('Edit: ') + line.name,
+                width:    '95%',
+                //minHeight: 250,
+                buttons: [
+                    {
+                        text: _('Save'),
+                        click: function () {
+                            $(this).dialog('close');
+                            $('.test-input').each(function () {
+                                var $this = $(this);
+                                var attr = $this.data('name');
+                                if ($this.attr('type') === 'checkbox') {
+                                    line[attr] = $this.prop('checked');
+                                } else {
+                                    line[attr] = $this.val();
+                                }
+                            });
+                            callback(null, id, line);
+                        }
+                    },
+                    {
+                        text: _('Cancel'),
+                        click: function () {
+                            $(this).dialog('close');
+                            callback('_canceled', id);
+                        }
+                    }
+                ]
+            });
+            $('#dialog-edit-type').change(function () {
+                var val = $(this).val() ;
+                if (val === 'number' || val === 'commaNumber') {
+                    $('#dialog-edit-factor').show();
+                    $('#dialog-edit-offset').show();
+                } else  {
+                    $('#dialog-edit-factor').hide();
+                    $('#dialog-edit-offset').hide();
+                }
+            });
+            $('.test-input').change(showResult).each(function () {
+                if ($(this).attr('type') !== 'checkbox' && $(this).prop('tagName') !== 'SELECT') $(this).keyup(function () {
+                    $(this).trigger('change');
+                });
+            });
+            $('#dialog-edit-test-text').change(showResult).keyup(function () {
+                $(this).trigger('change');
+            });
+            $('#dialog-edit-show').button({
+                icons: {primary: 'ui-icon-play'},
+                text: false
+            }) .css({width: '1.5em', height: '1.5em'}).click(function () {
+                var select = $('#dialog-edit-test-text').data('select');
+                if (select) $('#dialog-edit-test-text').scrollToText(select.pos, select.length);
+            });
+        }
+        $('#dialog-edit-type').trigger('change');
+        $dialog.dialog('open');
+    }
+
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
@@ -463,7 +676,7 @@
                 var _res   = {};
                 for (var i = 0; i < res.rows.length; i++) {
                     var obj = res.rows[i].value;
-                    values.push({
+                    var line = {
                         name:       obj._id.substring(namespace.length),
                         link:       obj.native.link,
                         read:       obj.common.read,
@@ -477,7 +690,11 @@
                         offset:     obj.native.offset,
                         factor:     obj.native.factor,
                         obj:        obj
-                    });
+                    };
+                    if (line.type === 'number' && obj.native.comma) {
+                        line.type = 'commaNumber';
+                    }
+                    values.push(line);
                 }
             }
 
@@ -568,6 +785,74 @@
         }
     }
 
+    function editCron(value, cb) {
+        //noinspection JSJQueryEfficiency
+        var $dialogCron = $('#dialog-cron');
+        if (!$dialogCron.length) {
+            $('body').append('<div id="dialog-cron" style="display: none"><div id="div-cron"></div></div>');
+            $dialogCron = $('#dialog-cron');
+            $dialogCron.dialog({
+                autoOpen:   false,
+                modal:      true,
+                width:      700,
+                height:     550,
+                resizable:  false,
+                title:      _('Cron expression'),
+                buttons: [
+                    {
+                        id:     'dialog_cron_insert',
+                        text:   _('Insert'),
+                        click:  function () {
+                            var val = $('#div-cron').cron('value');
+                            that.$dialogCron.dialog('close');
+                            that.editor.insert('"' + val + '"');
+                            that.editor.focus();
+                        }
+                    },
+                    {
+                        id:     'dialog_cron_clear',
+                        text: _('Clear'),
+                        click: function () {
+                            $('#div-cron').cron('value', '');
+                        }
+                    },
+                    {
+                        id:     'dialog_cron_callback',
+                        text:   _('Set CRON'),
+                        click:  function () {
+                        }
+                    },
+                    {
+                        text: _('Cancel'),
+                        click: function () {
+                            that.$dialogCron.dialog('close');
+                        }
+                    }
+                ]
+            });
+        }
+        var $divCron = $('#div-cron');
+
+        value = (value || '').replace(/"/g, '').replace(/'/g, '');
+        try {
+            $divCron.cron('value', value);
+        } catch (e) {
+            alert(_('Cannot parse value as cron'));
+        }
+
+        $('#dialog_cron_insert').hide();
+
+        $('#dialog_cron_callback')
+            .show()
+            .unbind('click')
+            .click(function () {
+                var val = $divCron.cron('value');
+                $dialogCron.dialog('close');
+                if (cb) cb(val);
+            });
+
+        $dialogCron.dialog('open');
+    }
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
@@ -619,8 +904,16 @@
                     _obj.common.unit = newValues[v].unit;
                     changed = true;
                 }
-                if (_obj.common.type !== newValues[v].type) {
-                    _obj.common.type = newValues[v].type;
+                var type = newValues[v].type;
+                if (newValues[v].type === 'commaNumber') type = 'number';
+                var comma = (newValues[v].type === 'commaNumber');
+                if (_obj.common.type !== type) {
+                    _obj.common.type = type;
+                    changed = true;
+                }
+                _obj.native.comma = !!_obj.native.comma;
+                if (_obj.native.comma !== comma) {
+                    _obj.native.comma = comma;
                     changed = true;
                 }
                 if (_obj.common.role !== newValues[v].role) {
@@ -694,7 +987,8 @@
         });
     }
 </script>
-
+</head>
+<body>
 <div id="adapter-container">
 
     <table><tr><td><img src="parser.png"></td><td><h3 class="translate">Parser adapter settings</h3></td></tr></table>
@@ -722,17 +1016,44 @@
                         <th data-name="link"       style="width: 30%" class="translate">URL or file name</th>
                         <th data-name="regex"      style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
                         <th data-name="role"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
-                        <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;string;json" class="translate">Type</th>
+                        <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;commaNumber;string;json" class="translate">Type</th>
                         <th data-name="unit"       style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
                         <th data-name="substitute" style="width: 60px"  data-style="width: 60px" class="translate">Subs</th>
                         <th data-name="factor"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="1">Factor</th>
                         <th data-name="offset"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="0">Offset</th>
                         <th data-name="interval"   style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
-                        <th data-buttons="delete"  style="width: 30px"></th>
+                        <th data-buttons="edit delete"  style="width: 60px"></th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
+
+    <div id="dialog-test" style="display: none; width: 90%; height: 300px; min-height: 250px;">
+        <table style="width: 100%;">
+            <colgroup>
+                <col width="150" />
+                <col width="*"/>
+            </colgroup>
+            <!--tr><td><label for="dialog-edit-link"       class="translate">URL or file name</label>:</td><td style=""><input id="dialog-edit-link" style="width: 100%" type="text" data-name="link"></td></tr-->
+            <tr><td><label for="dialog-edit-type" class="translate">Type</label>:</td><td style="">
+                <select id="dialog-edit-type" style="width: 150px" class="test-input" data-name="type">
+                    <option value="boolean" selected="">boolean</option>
+                    <option value="number">number(.)</option>
+                    <option value="commaNumber">number(,)</option>
+                    <option value="string">string</option>
+                    <option value="json">JSON</option>
+                </select>
+            </td></tr>
+            <tr><td><label for="dialog-edit-substitute" class="translate">Substitute</label>:</td><td style=""><input id="dialog-edit-substitute" class="test-input" style="width: 150px" type="text" data-name="substitute"></td></tr>
+            <tr><td><label for="dialog-edit-factor"     class="translate">Factor</label>:</td><td style=""><input id="dialog-edit-factor" class="test-input" style="width: 60px; display: none;" type="text" data-name="factor"></td></tr>
+            <tr><td><label for="dialog-edit-offset"     class="translate">Offset</label>:</td><td style=""><input id="dialog-edit-offset" class="test-input" style="width: 60px; display: none;" type="text" data-name="offset"></td></tr>
+            <tr><td><label for="dialog-edit-regex"      class="translate">RegEx</label>:</td><td style=""><input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"><button id="dialog-edit-show" style="float: right;"></button></td></tr>
+            <tr><td></td><td id="dialog-edit-error" style="color: red"></td></tr>
+            <tr><td><label for="dialog-edit-test-text"  class="translate">Test text</label>:</td><td style=""><textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea></td></tr>
+            <tr><td><label for="dialog-edit-result"     class="translate">Result</label>:</td><td style=""><input readonly id="dialog-edit-result" style="width: 100%" /></td></tr>
+        </table>
+    </div>
 </div>
+</body>
 </html>

@@ -49,6 +49,21 @@ adapter.on('objectChange', function (id, obj) {
     }
 });
 
+adapter.on('message', function (obj) {
+    if (obj) {
+        switch (obj.command) {
+            case 'link':
+                if (obj.callback) {
+                    // read all found serial ports
+                    readLink(obj.message, function (err, text) {
+                        adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback);
+                    });
+                }
+                break;
+        }
+    }
+});
+
 function initPoll(obj) {
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
 
@@ -143,7 +158,19 @@ function analyseData(obj, data, error, callback) {
                 newVal = true;
             } else  {
                 newVal = m.length > 1 ? m[1] : m[0];
+                
                 if (obj.common.type === 'number') {
+                    var comma = obj.native.comma;
+                    if (!comma) newVal = newVal.replace(/,/g, '');
+                    if (comma) {
+                        // 1.000.000 => 1000000
+                        newVal = newVal.replace(/\./g, '');
+                        // 5,67 => 5.67
+                        newVal = newVal.replace(',', '.');
+                    }
+                    // 1 000 000 => 1000000
+                    newVal = newVal.replace(/\s/g, '');
+
                     newVal = parseFloat(newVal);
                     newVal *= obj.native.factor;
                     newVal += obj.native.offset;
@@ -186,6 +213,38 @@ function analyseData(obj, data, error, callback) {
     }
 }
 
+
+function readLink(link, callback) {
+    if (link.match(/^https?:\/\//)) {
+        request = request || require('request');
+
+        adapter.log.debug('Request URL: ' + link);
+        request(link, function (error, response, body) {
+            callback(!body ? error || JSON.stringify(response) : null, body, link);
+        });
+    } else {
+        path = path || require('path');
+        fs   = fs   || require('fs');
+        link.link = link.replace(/\\/g, '/');
+        if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
+            link = path.normalize(__dirname + '/../../' + link);
+        }
+        adapter.log.debug('Read file: ' + link);
+        if (fs.existsSync(link)) {
+            var data;
+            try {
+                data = fs.readFileSync(link);
+            } catch (e) {
+                adapter.log.error('Cannot read file "' + link + '": ' + e);
+                callback(e, null, link);
+                return;
+            }
+            callback(null, data, link);
+        } else {
+            callback('File does not exist', null, link);
+        }
+    }
+}
 function poll(interval, callback) {
     var id;
     // first mark all entries as not processed
@@ -202,42 +261,9 @@ function poll(interval, callback) {
         id = curStates[i];
         if (!states.hasOwnProperty(id)) continue;
         if (states[id].native.interval === interval && !states[id].processed) {
-            if (states[id].native.link.match(/^https?:\/\//)) {
-                request = request || require('request');
-
-                (function(link) {
-                    adapter.log.debug('Request URL: ' + link);
-                    request(link, function (error, response, body) {
-                        if (!body) {
-                            analyseDataForStates(curStates, link, null, error || JSON.stringify(response), callback);
-                        } else {
-                            analyseDataForStates(curStates, link, body, callback);
-                        }
-                    });
-                })(states[id].native.link);
-
-            } else {
-                path = path || require('path');
-                fs   = fs   || require('fs');
-                states[id].native.link = states[id].native.link.replace(/\\/g, '/');
-                if (states[id].native.link[0] !== '/' && !states[id].native.link.match(/^[A-Za-z]:/)) {
-                    states[id].native.link = path.normalize(__dirname + '/../../' + states[id].native.link);
-                }
-                adapter.log.debug('Read file: ' + states[id].native.link);
-                if (fs.existsSync(states[id].native.link)) {
-                    var data;
-                    try {
-                        data = fs.readFileSync(states[id].native.link);
-                    } catch (e) {
-                        adapter.log.error('Cannot read file "' + states[id].native.link + '": ' + e);
-                        analyseDataForStates(curStates, states[id].native.link, null, e, callback);
-                        return;
-                    }
-                    analyseDataForStates(curStates, states[id].native.link, data, callback);
-                } else {
-                    analyseDataForStates(curStates, states[id].native.link, null, 'File does not exist', callback);
-                }
-            }
+            readLink(states[id].native.link, function (error, text, link) {
+                analyseDataForStates(curStates, link, text, error, callback);
+            });
         }
     }
 }

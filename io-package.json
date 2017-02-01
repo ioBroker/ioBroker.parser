@@ -1,14 +1,19 @@
 {
     "common": {
         "name":                     "parser",
-        "version": "0.1.1",
+        "version": "0.2.0",
         "news": {
+            "0.2.0": {
+                "en": 				"Add visual test",
+                "de": 				"Edittests sind hinzugefügt",
+                "ru": 				"Тест при конфигурации"
+            },
 			"0.1.1": {
                 "en": 				"move to common group",
                 "de": 				"Verschiebe ins Allgemein",
                 "ru": 				"Передвинут в общие драйвера"
             },
-			"0.1.1": {
+			"0.1.0": {
                 "en": 				"Inital version",
                 "de": 				"Erste Version",
                 "ru": 				"Первая версия"
@@ -23,6 +28,7 @@
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "loglevel":                 "info",
+        "messagebox":               true,
         "icon":                     "parser.png",
         "webExtension":             "lib/parser.js",
         "readme":                   "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",

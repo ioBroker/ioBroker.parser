@@ -82,6 +82,9 @@ Values can have quality codes:
 
 ## Changelog
 
+### 0.2.0 (2017-02-01)
+* (bluefox) Add visual test
+
 ### 0.1.1 (2017-01-30)
 * (bluefox) move to common group
 
