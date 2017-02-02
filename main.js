@@ -116,6 +116,12 @@ function _analyseDataForStates(linkStates, data, error, callback) {
         if (callback) callback();
     } else {
         var id = linkStates.shift();
+        if (!states[id]) {
+            adapter.log.error('Invalid state ID: ' + id);
+            setTimeout(_analyseDataForStates, 0, linkStates, data, error, callback);
+            return;
+        }
+
         analyseData(states[id], data, error, function () {
             setTimeout(_analyseDataForStates, 0, linkStates, data, error, callback);
         });
