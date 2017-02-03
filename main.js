@@ -164,7 +164,7 @@ function analyseData(obj, data, error, callback) {
                 newVal = true;
             } else  {
                 newVal = m.length > 1 ? m[1] : m[0];
-                
+
                 if (obj.common.type === 'number') {
                     var comma = obj.native.comma;
                     if (!comma) newVal = newVal.replace(/,/g, '');
@@ -231,7 +231,7 @@ function readLink(link, callback) {
     } else {
         path = path || require('path');
         fs   = fs   || require('fs');
-        link.link = link.replace(/\\/g, '/');
+        link = link.replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
             link = path.normalize(__dirname + '/../../' + link);
         }
