@@ -82,6 +82,9 @@ Values can have quality codes:
 
 ## Changelog
 
+### 0.2.1 (2017-02-24)
+* (bluefox) fix error with timestamp
+
 ### 0.2.0 (2017-02-01)
 * (bluefox) Add visual test
 

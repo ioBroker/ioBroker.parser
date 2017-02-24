@@ -151,7 +151,7 @@ function analyseData(obj, data, error, callback) {
             obj.value.ack = true;
             if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
 
-            adapter.setForeignState(obj._id, obj.value, callback);
+            adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
         } else if (callback) {
             callback();
         }
@@ -187,7 +187,7 @@ function analyseData(obj, data, error, callback) {
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
-                adapter.setForeignState(obj._id, obj.value, callback);
+                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
             } else if (callback) {
                 callback();
             }
@@ -199,7 +199,7 @@ function analyseData(obj, data, error, callback) {
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
-                    adapter.setForeignState(obj._id, obj.value, callback);
+                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                 } else if (callback) {
                     callback();
                 }
@@ -210,7 +210,7 @@ function analyseData(obj, data, error, callback) {
                     obj.value.ack = true;
                     if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
 
-                    adapter.setForeignState(obj._id, obj.value, callback);
+                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                 } else if (callback) {
                     callback();
                 }
