@@ -271,7 +271,7 @@ function poll(interval, callback) {
             }
         }
     }
-    adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringfy(curStates));
+    adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
 
     for (var j = 0; j < curLinks.length; j++) {
         adapter.log.debug('Do Link: ' + curLinks[j]);
