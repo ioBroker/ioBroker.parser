@@ -159,7 +159,7 @@ var vars = [
         "native": {
             "link": __dirname + '/testParser.js',
             "regex": "testParser",
-            "interval": "30000",
+            "interval": "15000",
             "substitute": "false",
             "expect": true
         },
@@ -339,6 +339,53 @@ describe('Test ' + adapterShortName + ' adapter', function() {
                 finalCheck(states, vars, done);
             }
         }, 2000);
+    });
+
+    it('Test ' + adapterShortName + ' adapter: values must be there after interval ', function (done) {
+        this.timeout(35000);
+        received = 0;
+        setTimeout(function () {
+            expect(received).to.be.at.least(vars.length +1);
+            console.log('received 1 - ' + received);
+            //[{
+            //    "val": true,
+            //    "ack": true,
+            //    "ts": 1484732154545,
+            //    "q": 0,
+            //    "from": "system.adapter.parser.0",
+            //    "lc": 1484732154483
+            //}, {
+            //    "val": -8,
+            //    "ack": true,
+            //    "ts": 1484732154815,
+            //    "q": 0,
+            //    "from": "system.adapter.parser.0",
+            //    "lc": 1484732154774
+            //}, {
+            //    "val": true,
+            //    "ack": true,
+            //    "ts": 1484732154160,
+            //    "q": 0,
+            //    "from": "system.adapter.parser.0",
+            //    "lc": 1484732154152
+            //}, {
+            //    "val": true,
+            //    "ack": true,
+            //    "ts": 1484732154163,
+            //    "q": 0,
+            //    "from": "system.adapter.parser.0",
+            //    "lc": 1484732154154
+            //}]
+
+            if (received < vars.length) {
+                setTimeout(function () {
+                    console.log('received 2 - ' + received);
+                    finalCheck(states, vars, done);
+                }, 2000);
+            } else {
+                finalCheck(states, vars, done);
+            }
+        }, 32000);
     });
 
     after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
