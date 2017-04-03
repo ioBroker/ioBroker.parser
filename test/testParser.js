@@ -9,6 +9,7 @@ var states  = null;
 var onStateChanged  = null;
 var onObjectChanged = null;
 var received = 0;
+var receivedAll = 0;
 
 var adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
 
@@ -68,7 +69,7 @@ var vars = [
         "native": {
             "link": "http://forum.iobroker.net/",
             "regex": "Forum",
-            "interval": "456",
+            "interval": "20000",
             "substitute": "false",
             "expect": true
         },
@@ -195,6 +196,7 @@ onStateChanged = function (id, state) {
         if (vars[i].received) rec ++;
     }
     received = rec;
+    receivedAll++;
 };
 
 function createStates(_objects, _vars, index, callback) {
@@ -253,7 +255,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
 
-            config.native.pollInterval = '5000';
+            config.native.pollInterval = '15000';
 
             setup.setAdapterConfig(config.common, config.native);
 
@@ -344,9 +346,9 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 
     it('Test ' + adapterShortName + ' adapter: values must be there after interval ', function (done) {
         this.timeout(35000);
-        received = 0;
+        receivedAll = 0;
         setTimeout(function () {
-            expect(received).to.be.at.least(vars.length +1);
+            expect(receivedAll).to.be.at.least(vars.length + 2);
             console.log('received 1 - ' + received);
             //[{
             //    "val": true,
