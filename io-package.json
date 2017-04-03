@@ -1,8 +1,13 @@
 {
     "common": {
         "name":                     "parser",
-        "version": "0.2.1",
+        "version": "0.2.2",
         "news": {
+            "0.2.2": {
+                "en": 				"fix handling of multiple fields for one URL",
+                "de": 				"Fehler bei Behandlung von mehreren Felder mit der gleichen URL behoben",
+                "ru": 				"fix handling of multiple fields for one URL"
+            },
             "0.2.1": {
                 "en": 				"fix error with timestamp",
                 "de": 				"Korrigiert Zeitstempel",

@@ -82,6 +82,9 @@ Values can have quality codes:
 
 ## Changelog
 
+### 0.2.2 (2017-04-03)
+* (Apollon77) fix handling of multiple fields for one URL
+
 ### 0.2.1 (2017-02-24)
 * (bluefox) fix error with timestamp
 
