@@ -146,7 +146,7 @@ function analyseDataForStates(curStates, link, data, error, callback) {
 
 function analyseData(obj, data, error, callback) {
     adapter.log.debug('analyseData CHECK for ' + obj._id + ', old=' + obj.value.val);
-    states[obj._id].procesed = true;
+    states[obj._id].processed = true;
     var newVal;
     if (error) {
         adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
