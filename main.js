@@ -12,7 +12,7 @@ var states;
 
 // is called if a subscribed state changes
 adapter.on('stateChange', function (id, state) {
-    if (!state || state.ack || !comm) return;
+    if (!state || state.ack) return;
 
     // Warning, state can be null if it was deleted
     adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
@@ -144,6 +144,7 @@ function analyseDataForStates(curStates, link, data, error, callback) {
 }
 
 function analyseData(obj, data, error, callback) {
+    var newVal;
     if (error) {
         adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
         if (obj.value.q !== 0x82) {
@@ -158,8 +159,6 @@ function analyseData(obj, data, error, callback) {
     } else {
         var m = obj.regex.exec(data);
         if (m) {
-            var newVal;
-
             if (obj.common.type === 'boolean') {
                 newVal = true;
             } else  {
