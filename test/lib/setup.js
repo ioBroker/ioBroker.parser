@@ -529,7 +529,10 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
                     if (isStartAdapter) {
                         startAdapter(objects, states, callback);
                     } else {
-                        if (callback) callback(objects, states);
+                        if (callback) {
+                            callback(objects, states);
+                            callback= null;
+                        }
                     }
                 }
             },

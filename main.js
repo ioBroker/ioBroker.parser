@@ -187,10 +187,10 @@ function analyseData(obj, data, error, callback) {
             }
 
             if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
+                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=' + newVal);
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
-                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=' + newVal);
                 adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
             } else if (callback) {
                 callback();
@@ -200,10 +200,10 @@ function analyseData(obj, data, error, callback) {
                 newVal = false;
                 adapter.log.debug('Text not found for ' + obj._id);
                 if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
+                    adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ',new=' + newVal);
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
-                    adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ',new=' + newVal);
                     adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                 } else if (callback) {
                     callback();
