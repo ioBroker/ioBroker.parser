@@ -92,6 +92,42 @@ var vars = [
         "type": "state"
     },
     {
+        "_id": "parser.0.temperatureMunich2",
+        "common": {
+            "name": "temperatureMunich2",
+            "write": false,
+            "role": "value.temperature",
+            "read": true,
+            "unit": "°C",
+            "type": "number"
+        },
+        "native": {
+            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
+            "regex": "temp swip\">(-?\\d+)˚<",
+            "interval": "30000",
+            "substitute": "0"
+        },
+        "type": "state"
+    },
+    {
+        "_id": "parser.0.temperatureMunich3",
+        "common": {
+            "name": "temperatureMunich3",
+            "write": false,
+            "role": "value.temperature",
+            "read": true,
+            "unit": "°C",
+            "type": "number"
+        },
+        "native": {
+            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
+            "regex": "temp swip\">(-?\\d+)˚<",
+            "interval": "30000",
+            "substitute": "0"
+        },
+        "type": "state"
+    },
+    {
         "_id": "parser.0.temperatureMunichWrong",
         "common": {
             "name": "temperatureMunich",

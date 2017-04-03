@@ -140,10 +140,13 @@ function analyseDataForStates(curStates, link, data, error, callback) {
             linkStates.push(curStates[i]);
         }
     }
+    adapter.log.debug('Process ' + JSON.stringify(linkStates) + ' for link ' + link);
     _analyseDataForStates(linkStates, data, error, callback);
 }
 
 function analyseData(obj, data, error, callback) {
+    adapter.log.debug('analyseData CHECK for ' + obj._id + ', old=' + obj.value.val);
+    states[obj._id].procesed = true;
     var newVal;
     if (error) {
         adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
@@ -152,6 +155,7 @@ function analyseData(obj, data, error, callback) {
             obj.value.ack = true;
             if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
 
+            adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=Error');
             adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
         } else if (callback) {
             callback();
@@ -186,6 +190,7 @@ function analyseData(obj, data, error, callback) {
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
+                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=' + newVal);
                 adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
             } else if (callback) {
                 callback();
@@ -198,6 +203,7 @@ function analyseData(obj, data, error, callback) {
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
+                    adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ',new=' + newVal);
                     adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                 } else if (callback) {
                     callback();
@@ -252,24 +258,26 @@ function readLink(link, callback) {
 }
 function poll(interval, callback) {
     var id;
-    // first mark all entries as not processed
+    // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
     var curStates = [];
+    var curLinks = [];
     for (id in states) {
         if (!states.hasOwnProperty(id)) continue;
-        if (states[id].native.interval === interval) {
+        if (states[id].native.interval === interval && states[id].processed) {
             states[id].processed = false;
             curStates.push(id);
+            if (curLinks.indexOf(states[id].native.link) === -1) {
+                curLinks.push(states[id].native.link);
+            }
         }
     }
+    adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringfy(curStates));
 
-    for (var i = 0; i < curStates.length; i++) {
-        id = curStates[i];
-        if (!states.hasOwnProperty(id)) continue;
-        if (states[id].native.interval === interval && !states[id].processed) {
-            readLink(states[id].native.link, function (error, text, link) {
-                analyseDataForStates(curStates, link, text, error, callback);
-            });
-        }
+    for (var j = 0; j < curLinks.length; j++) {
+        adapter.log.debug('Do Link: ' + curLinks[j]);
+        readLink(curLinks[j], function (error, text, link) {
+            analyseDataForStates(curStates, link, text, error, callback);
+        });
     }
 }
 
@@ -290,6 +298,7 @@ function main() {
             for (var id in states) {
                 if (!states.hasOwnProperty(id)) continue;
                 states[id].value = values[id] || {val: null};
+                states[id].processed = true;
                 initPoll(states[id]);
             }
 
