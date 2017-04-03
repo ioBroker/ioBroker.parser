@@ -336,9 +336,11 @@ describe('Test ' + adapterShortName + ' adapter', function() {
             if (received < vars.length) {
                 setTimeout(function () {
                     console.log('received 2 - ' + received);
+                    expect(receivedAll).to.be.at.least(vars.length);
                     finalCheck(states, vars, done);
                 }, 2000);
             } else {
+                expect(receivedAll).to.be.at.least(vars.length);
                 finalCheck(states, vars, done);
             }
         }, 2000);
