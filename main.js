@@ -87,9 +87,10 @@ function initPoll(obj) {
         obj.native.substitute = undefined;
     }
 
-    obj.regex = new RegExp(obj.native.regex);
     obj.native.offset = parseFloat(obj.native.offset) || 0;
     obj.native.factor = parseFloat(obj.native.factor) || 1;
+    obj.native.item   = parseFloat(obj.native.item)   || 0;
+    obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
 
     if (!timers[obj.native.interval]) {
         timers[obj.native.interval] = {
@@ -160,8 +161,16 @@ function analyseData(obj, data, error, callback) {
         } else if (callback) {
             callback();
         }
-    } else {
-        var m = obj.regex.exec(data);
+    } else if (obj.regex) {
+        var item = obj.native.item + 1;
+        if (item < 0) item = 1;
+        if (item > 1000) item = 1000;
+        var m;
+        do {
+            m = obj.regex.exec(data);
+            item--;
+        } while(item && m);
+
         if (m) {
             if (obj.common.type === 'boolean') {
                 newVal = true;
@@ -221,6 +230,8 @@ function analyseData(obj, data, error, callback) {
                 }
             }
         }
+    } else {
+        adapter.log.warn('No regex object found for "' + obj._id + '"');
     }
 }
 

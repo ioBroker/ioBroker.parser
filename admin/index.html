@@ -8,8 +8,10 @@
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-<script type="text/javascript" src="lib/js/cron/jquery.cron.js"></script>
-<script type="text/javascript" src="lib/js/cron/cron2text.js"></script>
+<!--script type="text/javascript" src="lib/js/cron/jquery.cron.js"></script>
+<script type="text/javascript" src="lib/js/cron/cron2text.js"></script-->
+<script type="text/javascript" src="words.js"></script>
+
 
 <style>
     .number {
@@ -29,45 +31,6 @@
 </style>
 
 <script type="text/javascript">
-    systemDictionary = {
-        "Proxy adapter settings": {
-            "de": "Proxy Adapter Einstellungen",
-            "ru": "Настройки Proxy драйвера"
-        },
-        "Parser adapter settings": {"en": "Parser adapter settings", "de": "Parser Adaptereinstellungen", "ru": "Настройки драйвера Parser"},
-        "Default poll interval: ": {"en": "Default poll interval: ", "de": "Default Poll-Intervall: ", "ru": "Интервал опроса по умолчанию: "},
-        "ms":                   {"en": "ms",                "de": "ms",                 "ru": "мс"},
-        "Name":                 {"en": "Name",              "de": "Name",               "ru": "Имя"},
-        "URL or file name":     {"en": "URL or file name",  "de": "URL oder Dateiname", "ru": "URL или имя файла"},
-        "Add rule: ":           {"en": "Add rule: ",        "de": "Regel hinzufügen: ", "ru": "Добавить правило: "},
-        "RegEx":                {"en": "RegEx",             "de": "RegEx",              "ru": "RegEx"},
-        "Role":                 {"en": "Role",              "de": "Rolle",              "ru": "Роль"},
-        "Type":                 {"en": "Type",              "de": "Typ",                "ru": "Тип"},
-        "Unit":                 {"en": "Unit",              "de": "Einheit",            "ru": "Единицы"},
-        "Subs":                 {"en": "Subs",              "de": "Ersatz",             "ru": "Subs"},
-        "Factor":               {"en": "Factor",            "de": "Faktor",             "ru": "Фактор"},
-        "Offset":               {"en": "Offset",            "de": "Offset",             "ru": "Сдвиг"},
-        "Interval":             {"en": "Interval",          "de": "Intervall",          "ru": "Инетрвал"},
-        "default":              {"en": "default",           "de": "default",            "ru": "по умолчанию"},
-        "custom":               {"en": "custom",            "de": "eigener",            "ru": "свой"},
-        "temperature":          {"en": "temperature",       "de": "Temperature",        "ru": "температура"},
-        "value":                {"en": "value",             "de": "Wert",               "ru": "значение"},
-        "blinds":               {"en": "blinds",            "de": "Rolladen",           "ru": "окна"},
-        "switch":               {"en": "switch",            "de": "Schalter",           "ru": "переключ."},
-        "indicator":            {"en": "indicator",         "de": "Indikator",          "ru": "индикатор"},
-        "boolean":              {"en": "boolean",           "de": "boolean",            "ru": "boolean"},
-        "number":               {"en": "number",            "de": "number",             "ru": "number"},
-        "string":               {"en": "string",            "de": "string",             "ru": "string"},
-        "json":                 {"en": "JSON",              "de": "JSON",               "ru": "JSON"},
-        "Substitute":           {"en": "Substitute",        "de": "Ersatzwert",         "ru": "Substitute"},
-        "Test text":            {"en": "Test text",         "de": "Testtext",           "ru": "Проверочный текст"},
-        "Result":               {"en": "Result",            "de": "Ergebnis",           "ru": "Результат"},
-        "commaNumber":          {"en": "number with comma", "de": "Nummer mit Komma",   "ru": "число c запятой"},
-        "Edit: ":               {"en": "Edit: ",            "de": "Editieren: ",        "ru": "Изменить: "},
-        "Save":                 {"en": "Save",              "de": "Speichern",          "ru": "Сохранить"},
-        "Cancel":               {"en": "Cancel",            "de": "Abbrechen",          "ru": "Отмена"}
-    };
-
     var values = [];
     /*
      <div id="values">
@@ -482,6 +445,7 @@
         var regex      = $('#dialog-edit-regex').val();
         var type       = $('#dialog-edit-type').val();
         var offset     = $('#dialog-edit-offset').val();
+        var item       = $('#dialog-edit-item').val();
         var factor     = $('#dialog-edit-factor').val();
         var substitute = $('#dialog-edit-substitute').val();
         if (!regex) regex = '.+';
@@ -511,14 +475,21 @@
         $('#dialog-edit-error').html('');
         var len = regex.length;
         try {
-            regex = new RegExp(regex);
+            regex = new RegExp(regex, item ? 'g' : '');
         } catch (e) {
             $('#dialog-edit-error').html(e.toString());
             return;
         }
         offset = parseFloat(offset) || 0;
         factor = parseFloat(factor) || 1;
-        var m = regex.exec(test);
+        item   = (parseFloat(item)  || 0)  + 1;
+        if (item < 0) item = 1;
+        if (item > 1000) item = 1000;
+        var m;
+        do {
+            m = regex.exec(test);
+            item--;
+        } while(item && m);
 
         if (m) {
             var newVal;
@@ -681,6 +652,7 @@
                         link:       obj.native.link,
                         read:       obj.common.read,
                         write:      obj.common.write,
+                        item:       obj.native.item || 0,
                         regex:      obj.native.regex,
                         role:       obj.common.role,
                         type:       obj.common.type,
@@ -785,7 +757,7 @@
         }
     }
 
-    function editCron(value, cb) {
+    /*function editCron(value, cb) {
         //noinspection JSJQueryEfficiency
         var $dialogCron = $('#dialog-cron');
         if (!$dialogCron.length) {
@@ -852,7 +824,7 @@
             });
 
         $dialogCron.dialog('open');
-    }
+    }*/
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
@@ -889,6 +861,7 @@
             }
             newValues[v].offset = parseFloat(newValues[v].offset) || 0;
             newValues[v].factor = parseFloat(newValues[v].factor) || 1;
+            newValues[v].item   = parseFloat(newValues[v].item)   || 0;
             if (found) {
                 var _obj = values[t].obj;
                 var changed = false;
@@ -930,6 +903,10 @@
                 }
                 if (_obj.native.interval !== newValues[v].interval) {
                     _obj.native.interval = newValues[v].interval;
+                    changed = true;
+                }
+                if (_obj.native.item !== newValues[v].item) {
+                    _obj.native.item = newValues[v].item;
                     changed = true;
                 }
                 if (_obj.native.substitute !== newValues[v].substitute) {
@@ -1014,7 +991,8 @@
                         <!--th data-name="read"      style="width: 50px" data-type="checkbox" class="translate" data-def="true">Read</th-->
                         <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
                         <th data-name="link"       style="width: 30%" class="translate">URL or file name</th>
-                        <th data-name="regex"      style="width: 150px" data-style1="width: 150px" class="translate">RegEx</th>
+                        <th data-name="regex"      style="width: 150px"  data-style1="width: 150px" class="translate">RegEx</th>
+                        <th data-name="item"       style="width: 150px"  data-style1="width: 40px" data-type="number" class="translate">Item</th>
                         <th data-name="role"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
                         <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;commaNumber;string;json" class="translate">Type</th>
                         <th data-name="unit"       style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
@@ -1045,13 +1023,14 @@
                     <option value="json">JSON</option>
                 </select>
             </td></tr>
-            <tr><td><label for="dialog-edit-substitute" class="translate">Substitute</label>:</td><td style=""><input id="dialog-edit-substitute" class="test-input" style="width: 150px" type="text" data-name="substitute"></td></tr>
-            <tr><td><label for="dialog-edit-factor"     class="translate">Factor</label>:</td><td style=""><input id="dialog-edit-factor" class="test-input" style="width: 60px; display: none;" type="text" data-name="factor"></td></tr>
-            <tr><td><label for="dialog-edit-offset"     class="translate">Offset</label>:</td><td style=""><input id="dialog-edit-offset" class="test-input" style="width: 60px; display: none;" type="text" data-name="offset"></td></tr>
-            <tr><td><label for="dialog-edit-regex"      class="translate">RegEx</label>:</td><td style=""><input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"><button id="dialog-edit-show" style="float: right;"></button></td></tr>
-            <tr><td></td><td id="dialog-edit-error" style="color: red"></td></tr>
-            <tr><td><label for="dialog-edit-test-text"  class="translate">Test text</label>:</td><td style=""><textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea></td></tr>
-            <tr><td><label for="dialog-edit-result"     class="translate">Result</label>:</td><td style=""><input readonly id="dialog-edit-result" style="width: 100%" /></td></tr>
+            <tr><td><label for="dialog-edit-substitute" class="translate">Substitute</label>:</td><td style=""><input id="dialog-edit-substitute" class="test-input" style="width: 150px" type="text" data-name="substitute"/></td><td class="admin-text" data-id="substitute"></td></tr>
+            <tr><td><label for="dialog-edit-item"       class="translate">Item</label>:</td><td style=""><input id="dialog-edit-item" class="test-input" style="width: 60px;" type="number" data-name="item"/></td><td class="admin-text" data-id="item"></td></tr>
+            <tr><td><label for="dialog-edit-factor"     class="translate">Factor</label>:</td><td style=""><input id="dialog-edit-factor" class="test-input" style="width: 60px; display: none;" type="text" data-name="factor"/></td><td class="admin-text"  data-id="factor"></td></tr>
+            <tr><td><label for="dialog-edit-offset"     class="translate">Offset</label>:</td><td style=""><input id="dialog-edit-offset" class="test-input" style="width: 60px; display: none;" type="text" data-name="offset"/></td><td class="admin-text" data-id="offset"></td></tr>
+            <tr><td><label for="dialog-edit-regex"      class="translate">RegEx</label>:</td><td style=""  colspan="2"><input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"/><button id="dialog-edit-show" style="float: right;"></button></td></tr>
+            <tr><td></td><td id="dialog-edit-error" style="color: red" colspan="2"></td></tr>
+            <tr><td><label for="dialog-edit-test-text"  class="translate">Test text</label>:</td><td style="" colspan="2"><textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea></td></tr>
+            <tr><td><label for="dialog-edit-result"     class="translate">Result</label>:</td><td style="" colspan="2"><input readonly id="dialog-edit-result" style="width: 100%" /></td></tr>
         </table>
     </div>
 </div>

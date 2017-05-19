@@ -31,6 +31,7 @@ Table fields:
     - button - the value is a button
     - indicator - boolean indicator
 - *Type* - type of variable. One of boolean, number, string, json.
+- *Item* - number of the found element, starting from 0.
 - *Unit* - unit of the value. E.g. *°C*
 - *Subs* - substitute values. This value will be used if file or URL is not available.
 - *Factor/Offset* - *calculated value* = *extracted value* * factor + offset , to make immediately modifications of value. Used Only for numbers.
@@ -81,6 +82,9 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Changelog
+
+### 1.0.0 (2017-05-19)
+* (bluefox) Allow set the number of found item
 
 ### 0.2.2 (2017-04-03)
 * (Apollon77) fix handling of multiple fields for one URL

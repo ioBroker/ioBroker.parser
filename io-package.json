@@ -1,8 +1,13 @@
 {
     "common": {
         "name":                     "parser",
-        "version": "0.2.2",
+        "version": "1.0.0",
         "news": {
+            "1.0.0": {
+                "en": 				"Allow set the number of found item",
+                "de": 				"Es ist möglich einen N element zu finden",
+                "ru": 				"Можно находить не только первое вхождение элемента"
+            },
             "0.2.2": {
                 "en": 				"fix handling of multiple fields for one URL",
                 "de": 				"Fehler bei Behandlung von mehreren Felder mit der gleichen URL behoben",
