@@ -42,25 +42,24 @@
 Подробнее о регулярных выражениях можно прочитать здесь: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/RegExp
 
 ### Примеры
+- *.at* matches any three-character string ending with "at", including "hat", "cat", and "bat".
+- *[hc]at* matches "hat" and "cat".
+- *[^b]at* matches all strings matched by .at except "bat".
+- *[^hc]at* matches all strings matched by .at other than "hat" and "cat".
+- *^[hc]at* matches "hat" and "cat", but only at the beginning of the string or line.
+- *[hc]at$* matches "hat" and "cat", but only at the end of the string or line.
+- *\[.\]* matches any single character surrounded by "[" and "]" since the brackets are escaped, for example: "[a]" and "[b]".
+- *s.\** matches s followed by zero or more characters, for example: "s" and "saw" and "seed".
+- *[hc]+at* matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", and so on, but not "at".
+- *[hc]?at* matches "hat", "cat", and "at".
+- *[hc]\*at* matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", "at", and so on.
+- *cat|dog* matches "cat" or "dog".
+- *(\d+)* - get the number from string
+- *now (\w+)* later - get the word between "now" and "later"
 
-.at matches any three-character string ending with "at", including "hat", "cat", and "bat".
-[hc]at matches "hat" and "cat".
-[^b]at matches all strings matched by .at except "bat".
-[^hc]at matches all strings matched by .at other than "hat" and "cat".
-^[hc]at matches "hat" and "cat", but only at the beginning of the string or line.
-[hc]at$ matches "hat" and "cat", but only at the end of the string or line.
-[.] matches any single character surrounded by "[" and "]" since the brackets are escaped, for example: "[a]" and "[b]".
-s.* matches s followed by zero or more characters, for example: "s" and "saw" and "seed".
-[hc]+at matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", and so on, but not "at".
-[hc]?at matches "hat", "cat", and "at".
-[hc]*at matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", "at", and so on.
-cat|dog matches "cat" or "dog".
-(\d+) - get the number from string
-now (\w+) later - get the word between "now" and "later"
-Most useful expressions
+### Наиболее полезные выражения
 
-(-?\d+) get the number negative or positive
-Quality codes
+- (-?\d+) Получить число отрицательное или положительное
 
 ###  Значения могут иметь код качества
 
