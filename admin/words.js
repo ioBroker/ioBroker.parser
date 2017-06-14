@@ -16,7 +16,7 @@ systemDictionary = {
     "Subs":                 {"en": "Subs",              "de": "Ersatz",             "ru": "Subs"},
     "Factor":               {"en": "Factor",            "de": "Faktor",             "ru": "Фактор"},
     "Offset":               {"en": "Offset",            "de": "Offset",             "ru": "Сдвиг"},
-    "Interval":             {"en": "Interval",          "de": "Intervall",          "ru": "Инетрвал"},
+    "Interval":             {"en": "Interval",          "de": "Intervall",          "ru": "Интервал"},
     "default":              {"en": "default",           "de": "default",            "ru": "по умолчанию"},
     "custom":               {"en": "custom",            "de": "eigener",            "ru": "свой"},
     "temperature":          {"en": "temperature",       "de": "Temperature",        "ru": "температура"},
