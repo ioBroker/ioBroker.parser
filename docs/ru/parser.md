@@ -10,7 +10,7 @@
 - *URL или имя файла* - это URL-ссылка, например https://darksky.net/forecast/55.7507,37.6175/si24/en, для погоды в Москве.
 - *RegEx* - регулярное выражение, что бы извлечь данные из ссылки. Существует хороший сервис для тестирования регулярных выражений: regex101. Например. *Temp swip "> (-? \ D +) ˚ <* для парсинга данных температуры.
 - *Роль* - одна из ролей:
-    - свой - пользователь определяет себя через *admin* роль
+    - свой - пользователь определяет собственное значение роли через админку на вкладке Объекты.
     - Температура - значение температуры
     - значение - значение представляет собой число (например, диммер)
     - окна - это значение положение окна(шторы)
@@ -23,6 +23,50 @@
 - *Фактор / сдвиг(смещение)* - вычисленное значение = извлеченное значение * коэффициент(Фактор) + смещение, чтобы немедленно внести изменения в значение. Используется только для чисел.
 - *Интервал* - интервал опроса в мс. Если не установлено или 0, значит, будет использоваться интервал по умолчанию.
 
+## Примеры настроек
+| Имя               |      URL или имя файла                               |      RegEx            | Роль         | Тип     | Единицы | Инетрвал |
+|-------------------|:-----------------------------------------------------|:----------------------|--------------|---------|---------|----------|
+| temperatureMoscow | https://darksky.net/forecast/55.7507,37.6175/si24/en | temp swip">(-?\d+)˚<  | температура  | число   |   °C    | 180000   |
+| forumRunning      | http://forum.iobroker.net/                           | Forum                 | индикатор    | boolean |         | 60000    |
+| cloudRunning      | https://iobroker.net/                                | Privacy Notice        | индикатор    | boolean |         | 60000    |
+| cpuTemperature    | /sys/devices/virtual/thermal/thermal_zone0/temp      | (.*)                  | температура  | число   |     °C  | 30000    |
+
+### О регулярных выражениях
+
+Регулярные выражения - это мощный инструмент для анализа и извлечения данных из строк.
+
+Вы можете эффективно проверить, есть ли какой-либо текст в строке или извлечь какой-либо текст из строки в переменную.
+
+Для булевых типов достаточно написать простой RegEx. Для числовых типов вы должны отметить число с помощью скобок - «()». Например. Для извлечения значения температуры 5 ° C вы должны использовать выражение «(\ d +)». \d - в данном случае означает любое число.
+
+Подробнее о регулярных выражениях можно прочитать здесь: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+
+### Примеры
+
+.at matches any three-character string ending with "at", including "hat", "cat", and "bat".
+[hc]at matches "hat" and "cat".
+[^b]at matches all strings matched by .at except "bat".
+[^hc]at matches all strings matched by .at other than "hat" and "cat".
+^[hc]at matches "hat" and "cat", but only at the beginning of the string or line.
+[hc]at$ matches "hat" and "cat", but only at the end of the string or line.
+[.] matches any single character surrounded by "[" and "]" since the brackets are escaped, for example: "[a]" and "[b]".
+s.* matches s followed by zero or more characters, for example: "s" and "saw" and "seed".
+[hc]+at matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", and so on, but not "at".
+[hc]?at matches "hat", "cat", and "at".
+[hc]*at matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", "at", and so on.
+cat|dog matches "cat" or "dog".
+(\d+) - get the number from string
+now (\w+) later - get the word between "now" and "later"
+Most useful expressions
+
+(-?\d+) get the number negative or positive
+Quality codes
+
+###  Значения могут иметь код качества
+
+0 - OK
+0x82 - URL или файл не может быть прочитан.
+0x44 - Число или строка не найдены по запрашиваемому URL или в файле.
 
 
 http://www.cbr.ru/scripts/XML_daily.asp?date_req
