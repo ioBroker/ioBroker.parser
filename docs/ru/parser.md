@@ -42,20 +42,20 @@
 Подробнее о регулярных выражениях можно прочитать здесь: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/RegExp
 
 ### Примеры
-- *.at* matches any three-character string ending with "at", including "hat", "cat", and "bat".
-- *[hc]at* matches "hat" and "cat".
-- *[^b]at* matches all strings matched by .at except "bat".
-- *[^hc]at* matches all strings matched by .at other than "hat" and "cat".
-- *^[hc]at* matches "hat" and "cat", but only at the beginning of the string or line.
-- *[hc]at$* matches "hat" and "cat", but only at the end of the string or line.
-- *\[.\]* matches any single character surrounded by "[" and "]" since the brackets are escaped, for example: "[a]" and "[b]".
-- *s.\** matches s followed by zero or more characters, for example: "s" and "saw" and "seed".
-- *[hc]+at* matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", and so on, but not "at".
-- *[hc]?at* matches "hat", "cat", and "at".
-- *[hc]\*at* matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", "at", and so on.
-- *cat|dog* matches "cat" or "dog".
-- *(\d+)* - get the number from string
-- *now (\w+)* later - get the word between "now" and "later"
+- *.at* Соответствует любой трехсимвольной строке, заканчивающейся «at», включая «hat», «cat» и «bat».
+- *[hc]at* Соответствует "hat" и "cat".
+- *[^b]at* Соответствует всем строкам, сопоставляемым .at, за исключением «bat».
+- *[^hc]at* Соответствует всем строкам, совпадающим с .at, отличным от «hat» и «cat».
+- *^[hc]at* Соответствует «hat» и «cat», но только в начале строки или строки.
+- *[hc]at$* Соответствует «hat» и «cat», но только в конце слова или строки.
+- *\[.\]* Соответствует любому одиночному символу, окруженному «[» и «]», поскольку скобки экранированы, например: «[a]» и «[b]».
+- *s.\** Соответствует s, за которым следуют ноль или более символов, например: «s» и «saw» и «seed».
+- *[hc]+at* Соответствует «hat», «cat», «hhat», «chat», «hcat», «cchchat» и т.д., Но не «at».
+- *[hc]?at* Соответствует «hat», «cat» и «at».
+- *[hc]\*at* Соответствует «hat», «cat», «hhat», «chat», «hcat», «cchchat», «at» и т.д.
+- *cat|dog* Соответствует «cat» или «dog».
+- *(\d+)* - Получить число из строки
+- *now (\w+)* later - Получить слово между «now» и «later»,
 
 ### Наиболее полезные выражения
 
@@ -67,10 +67,15 @@
 0x82 - URL или файл не может быть прочитан.
 0x44 - Число или строка не найдены по запрашиваемому URL или в файле.
 
+### Пример получения курсов валют с сайта ЦБ
+Вносим в окне настроек следующие параметры:
+| Имя    |      URL или имя файла                            |      RegEx                                | Роль      | Тип              | Единицы | Инетрвал |
+|--------|:--------------------------------------------------|:------------------------------------------|-----------|------------------|---------|----------|
+| USD    | http://www.cbr.ru/scripts/XML_daily.asp?date_req  | >USD<.*\s+.*\s+.*\s+<Value>(.*?)<\/Value> | значение  | число с запятой  |   руб.  | 360000   |
+| EUR    | http://www.cbr.ru/scripts/XML_daily.asp?date_req  | >EUR<.*\s+.*\s+.*\s+<Value>(.*?)<\/Value> | значение  | число с запятой  |   руб.  | 360000   |
+
+![iobroker.parser - example](img/parser_2.png)
+
+Сохраняем кнопкой "Сохранить и выйти", если драйвер не запущен, то запускаем его и на вкладке "Объекты" видим наши значения:
 
 ![iobroker.parser - example](img/parser_1.png)
->USD<.*\s+.*\s+.*\s+<Value>(.*?)<\/Value>
->EUR<.*\s+.*\s+.*\s+<Value>(.*?)<\/Value>
-число с запятой
-
-http://www.cbr.ru/scripts/XML_daily.asp?date_req
