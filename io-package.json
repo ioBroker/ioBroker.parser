@@ -1,61 +1,66 @@
 {
     "common": {
-        "name":                     "parser",
+        "name": "parser",
         "version": "1.0.0",
         "news": {
             "1.0.0": {
-                "en": 				"Allow set the number of found item",
-                "de": 				"Es ist möglich einen N element zu finden",
-                "ru": 				"Можно находить не только первое вхождение элемента"
+                "en": "Allow set the number of found item",
+                "de": "Es ist möglich einen N element zu finden",
+                "ru": "Можно находить не только первое вхождение элемента"
             },
             "0.2.2": {
-                "en": 				"fix handling of multiple fields for one URL",
-                "de": 				"Fehler bei Behandlung von mehreren Felder mit der gleichen URL behoben",
-                "ru": 				"fix handling of multiple fields for one URL"
+                "en": "fix handling of multiple fields for one URL",
+                "de": "Fehler bei Behandlung von mehreren Felder mit der gleichen URL behoben",
+                "ru": "fix handling of multiple fields for one URL"
             },
             "0.2.1": {
-                "en": 				"fix error with timestamp",
-                "de": 				"Korrigiert Zeitstempel",
-                "ru": 				"Исправлено время изменения"
+                "en": "fix error with timestamp",
+                "de": "Korrigiert Zeitstempel",
+                "ru": "Исправлено время изменения"
             },
             "0.2.0": {
-                "en": 				"Add visual test",
-                "de": 				"Edittests sind hinzugefügt",
-                "ru": 				"Тест при конфигурации"
+                "en": "Add visual test",
+                "de": "Edittests sind hinzugefügt",
+                "ru": "Тест при конфигурации"
             },
-			"0.1.1": {
-                "en": 				"move to common group",
-                "de": 				"Verschiebe ins Allgemein",
-                "ru": 				"Передвинут в общие драйвера"
+            "0.1.1": {
+                "en": "move to common group",
+                "de": "Verschiebe ins Allgemein",
+                "ru": "Передвинут в общие драйвера"
             },
-			"0.1.0": {
-                "en": 				"Inital version",
-                "de": 				"Erste Version",
-                "ru": 				"Первая версия"
+            "0.1.0": {
+                "en": "Inital version",
+                "de": "Erste Version",
+                "ru": "Первая версия"
             }
         },
-        "title":                    "parser Adapter",
-        "desc":                     "This adapter allows to extract values from HTTP URLs or from files",
+        "title": "parser Adapter",
+        "desc": "This adapter allows to extract values from HTTP URLs or from files",
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],
-        "license":                  "MIT",
-        "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
-        "loglevel":                 "info",
-        "messagebox":               true,
-        "icon":                     "parser.png",
-        "webExtension":             "lib/parser.js",
-        "readme":                   "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
-        "keywords":                 ["url", "html", "file", "parser"],
-        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
-		"type":                     "common adapters",
-        "config":{
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "loglevel": "info",
+        "messagebox": true,
+        "icon": "parser.png",
+        "webExtension": "lib/parser.js",
+        "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
+        "keywords": [
+            "url",
+            "html",
+            "file",
+            "parser"
+        ],
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
+        "type": "logic",
+        "config": {
             "minWidth": 800,
             "width ": 1224
         }
     },
     "native": {
-        "pollInterval":             "5000"
+        "pollInterval": "5000"
     }
 }
