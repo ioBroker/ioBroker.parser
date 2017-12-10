@@ -230,7 +230,7 @@ function checkStates(_states, _vars, index, result, callback) {
 function finalCheck(__states, _vars, done) {
     checkStates(__states, _vars, 0, [], function (_states) {
         for (var i = 0; i < _states.length; i++) {
-            console.log('Check ' + vars[i]._id);
+            console.log('Check ' + vars[i]._id + ': ' + JSON.stringify(_states[i]));
             expect(_states[i]).to.be.ok;
             expect(_states[i].from).to.be.equal("system.adapter.parser.0");
             expect(_states[i].val).to.be.not.null;

@@ -322,6 +322,10 @@ function main() {
             // Mark all sensors as if they received something
             for (var id in states) {
                 if (!states.hasOwnProperty(id)) continue;
+                if (!states[id].native.link.match(/^https?:\/\//)) {
+                    states[id].native.link = states[id].native.link.replace(/\\/g, '/');
+                }
+
                 states[id].value = values[id] || {val: null};
                 states[id].processed = true;
                 initPoll(states[id]);

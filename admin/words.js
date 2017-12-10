@@ -29,6 +29,7 @@ systemDictionary = {
     "string":               {"en": "string",            "de": "string",             "ru": "string"},
     "json":                 {"en": "JSON",              "de": "JSON",               "ru": "JSON"},
     "Old value":            {"en": "Old value",         "de": "Letztes Wert",       "ru": "Последнее значение"},
+    "Old":                  {"en": "Old",               "de": "Alt",                "ru": "Посл."},
     "Substitute":           {"en": "Substitute",        "de": "Ersatzwert",         "ru": "Substitute"},
     "Test text":            {"en": "Test text",         "de": "Testtext",           "ru": "Проверочный текст"},
     "Result":               {"en": "Result",            "de": "Ergebnis",           "ru": "Результат"},
