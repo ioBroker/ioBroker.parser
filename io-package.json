@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "parser",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
+            "1.0.1": {
+                "en": "Added additional option: old value",
+                "de": "Zusätzliche Option hinzugefügt: altes Wert",
+                "ru": "Добавлена дополнительная опция: прошлое значение"
+            },
             "1.0.0": {
                 "en": "Allow set the number of found item",
                 "de": "Es ist möglich einen N element zu finden",
@@ -35,7 +40,11 @@
             }
         },
         "title": "parser Adapter",
-        "desc": "This adapter allows to extract values from HTTP URLs or from files",
+        "desc": {
+            "en": "This adapter allows to extract values from HTTP URLs or from files",
+            "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
+            "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов"
+        },
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],

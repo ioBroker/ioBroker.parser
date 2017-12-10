@@ -3,8 +3,8 @@
 'use strict';
 
 // you have to require the utils module and call adapter function
-var utils        = require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter      = new utils.Adapter('parser');
+var utils    = require(__dirname + '/lib/utils'); // Get common adapter utils
+var adapter  = new utils.Adapter('parser');
 var request;
 var path;
 var fs;
@@ -72,6 +72,7 @@ function initPoll(obj) {
     if (obj.native.regex[0] === '/') {
         obj.native.regex = obj.native.regex.substring(1, obj.native.regex.length - 1);
     }
+    obj.native.substituteOld = obj.native.substituteOld === 'true' || obj.native.substituteOld === true;
 
     if (obj.native.substitute !== '' && obj.native.substitute !== undefined && obj.native.substitute !== null) {
         if (obj.native.substitute === 'null')  obj.native.substitute = null;
@@ -119,12 +120,12 @@ function _analyseDataForStates(linkStates, data, error, callback) {
         var id = linkStates.shift();
         if (!states[id]) {
             adapter.log.error('Invalid state ID: ' + id);
-            setTimeout(_analyseDataForStates, 0, linkStates, data, error, callback);
+            setImmediate(_analyseDataForStates, linkStates, data, error, callback);
             return;
         }
 
         analyseData(states[id], data, error, function () {
-            setTimeout(_analyseDataForStates, 0, linkStates, data, error, callback);
+            setImmediate(_analyseDataForStates, linkStates, data, error, callback);
         });
     }
 }
@@ -150,16 +151,25 @@ function analyseData(obj, data, error, callback) {
     states[obj._id].processed = true;
     var newVal;
     if (error) {
-        adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
-        if (obj.value.q !== 0x82) {
-            obj.value.q   = 0x82;
-            obj.value.ack = true;
-            if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
+        if (obj.native.substituteOld) {
+            adapter.log.warn('Cannot read link "' + obj.native.link + '": ' + error);
+            if (callback) {
+                callback();
+            }
+        } else {
+            adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
+            if (obj.value.q !== 0x82) {
+                obj.value.q   = 0x82;
+                obj.value.ack = true;
+                if (obj.native.substitute !== undefined) {
+                    obj.value.val = obj.native.substitute;
+                }
 
-            adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=Error');
-            adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
-        } else if (callback) {
-            callback();
+                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=Error');
+                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+            } else if (callback) {
+                callback();
+            }
         }
     } else if (obj.regex) {
         var item = obj.native.item + 1;
@@ -219,14 +229,18 @@ function analyseData(obj, data, error, callback) {
                 }
             } else  {
                 adapter.log.debug('Cannot find number in answer for ' + obj._id);
-                if (obj.value.q !== 0x44 || !obj.value.ack) {
-                    obj.value.q   = 0x44;
-                    obj.value.ack = true;
-                    if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
+                if (obj.native.substituteOld) {
+                    callback && callback();
+                } else {
+                    if (obj.value.q !== 0x44 || !obj.value.ack) {
+                        obj.value.q   = 0x44;
+                        obj.value.ack = true;
+                        if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
 
-                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
-                } else if (callback) {
-                    callback();
+                        adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+                    } else if (callback) {
+                        callback();
+                    }
                 }
             }
         }

@@ -33,6 +33,7 @@ Table fields:
 - *Type* - type of variable. One of boolean, number, string, json.
 - *Item* - number of the found element, starting from 0.
 - *Unit* - unit of the value. E.g. *°C*
+- *Old*  - if the value cannot be read or found on the page so do not update the actual stored value.
 - *Subs* - substitute values. This value will be used if file or URL is not available.
 - *Factor/Offset* - *calculated value* = *extracted value* * factor + offset , to make immediately modifications of value. Used Only for numbers.
 - *Interval* - poll interval in ms. If not set or 0, so the default interval will be used.
@@ -82,6 +83,9 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Changelog
+
+### 1.0.1 (2017-12-10)
+* (bluefox) Added additional option: old value
 
 ### 1.0.0 (2017-05-19)
 * (bluefox) Allow set the number of found item

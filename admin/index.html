@@ -441,13 +441,14 @@
     };
 
     function _showResult() {
-        var test       = $('#dialog-edit-test-text').val();
-        var regex      = $('#dialog-edit-regex').val();
-        var type       = $('#dialog-edit-type').val();
-        var offset     = $('#dialog-edit-offset').val();
-        var item       = $('#dialog-edit-item').val();
-        var factor     = $('#dialog-edit-factor').val();
-        var substitute = $('#dialog-edit-substitute').val();
+        var test          = $('#dialog-edit-test-text').val();
+        var regex         = $('#dialog-edit-regex').val();
+        var type          = $('#dialog-edit-type').val();
+        var offset        = $('#dialog-edit-offset').val();
+        var item          = $('#dialog-edit-item').val();
+        var factor        = $('#dialog-edit-factor').val();
+        var substitute    = $('#dialog-edit-substitute').val();
+        var substituteOld = $('#dialog-edit-substituteOld').prop('checked');
         if (!regex) regex = '.+';
 
         if (regex[0] === '/') regex = regex.substring(1, regex.length - 1);
@@ -613,8 +614,13 @@
                 var select = $('#dialog-edit-test-text').data('select');
                 if (select) $('#dialog-edit-test-text').scrollToText(select.pos, select.length);
             });
+            $('#dialog-edit-substituteOld').change(function () {
+                $('#dialog-edit-substitute').prop('disabled', $(this).prop('checked'));
+            });
         }
+        $('#dialog-edit-substitute').prop('disabled', line.substituteOld);
         $('#dialog-edit-type').trigger('change');
+
         $dialog.dialog('open');
     }
 
@@ -640,28 +646,30 @@
 
         onChange(false);
 
+        $('.table-values').find('th[data-name="substituteOld"]').attr('title',  _('Use last value if cannot read'));
+
         var namespace = adapter + '.' + instance + '.';
 
         socket.emit('getObjectView', 'system', 'state', {startkey: namespace, endkey: namespace + '\u9999'}, function (err, res) {
             if (!err && res) {
-                var _res   = {};
                 for (var i = 0; i < res.rows.length; i++) {
                     var obj = res.rows[i].value;
                     var line = {
-                        name:       obj._id.substring(namespace.length),
-                        link:       obj.native.link,
-                        read:       obj.common.read,
-                        write:      obj.common.write,
-                        item:       obj.native.item || 0,
-                        regex:      obj.native.regex,
-                        role:       obj.common.role,
-                        type:       obj.common.type,
-                        unit:       obj.common.unit,
-                        interval:   obj.native.interval,
-                        substitute: obj.native.substitute,
-                        offset:     obj.native.offset,
-                        factor:     obj.native.factor,
-                        obj:        obj
+                        name:          obj._id.substring(namespace.length),
+                        link:          obj.native.link,
+                        read:          obj.common.read,
+                        write:         obj.common.write,
+                        item:          obj.native.item || 0,
+                        regex:         obj.native.regex,
+                        role:          obj.common.role,
+                        type:          obj.common.type,
+                        unit:          obj.common.unit,
+                        interval:      obj.native.interval,
+                        substitute:    obj.native.substitute,
+                        substituteOld: obj.native.substituteOld,
+                        offset:        obj.native.offset,
+                        factor:        obj.native.factor,
+                        obj:           obj
                     };
                     if (line.type === 'number' && obj.native.comma) {
                         line.type = 'commaNumber';
@@ -724,6 +732,11 @@
                         $('.values-input[data-name="unit"][data-index="' + id + '"]').show();
                     }
 
+                });
+                $('.values-input[data-name="substituteOld"]').change(function () {
+                    $(this).parent().parent().find('.values-input[data-name="substitute"]').prop('disabled', $(this).prop('checked'));
+                }).each(function () {
+                    $(this).parent().parent().find('.values-input[data-name="substitute"]').prop('disabled', $(this).prop('checked'));
                 });
             });
         });
@@ -913,6 +926,10 @@
                     _obj.native.substitute = newValues[v].substitute;
                     changed = true;
                 }
+                if (_obj.native.substituteOld !== newValues[v].substituteOld) {
+                    _obj.native.substituteOld = newValues[v].substituteOld;
+                    changed = true;
+                }
                 if (_obj.native.factor !== newValues[v].factor) {
                     _obj.native.factor = newValues[v].factor;
                     changed = true;
@@ -926,20 +943,21 @@
                 tasks.push({
                     _id:            adapter + '.' + instance + '.' + newValues[v].name.replace(/\s/g, '_'),
                     common: {
-                        name:       newValues[v].name,
-                        write:      !!newValues[v].write,
-                        read:       true,
-                        unit:       newValues[v].unit,
-                        type:       newValues[v].type,
-                        role:       newValues[v].role
+                        name:           newValues[v].name,
+                        write:          !!newValues[v].write,
+                        read:           true,
+                        unit:           newValues[v].unit,
+                        type:           newValues[v].type,
+                        role:           newValues[v].role
                     },
                     native: {
-                        link:       newValues[v].link,
-                        regex:      newValues[v].regex,
-                        interval:   newValues[v].interval,
-                        factor:     newValues[v].factor,
-                        offset:     newValues[v].offset,
-                        substitute: newValues[v].substitute
+                        link:           newValues[v].link,
+                        regex:          newValues[v].regex,
+                        interval:       newValues[v].interval,
+                        factor:         newValues[v].factor,
+                        offset:         newValues[v].offset,
+                        substitute:     newValues[v].substitute,
+                        substituteOld:  newValues[v].substituteOld
                     },
                     type: 'state'
                 });
@@ -996,6 +1014,7 @@
                         <th data-name="role"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
                         <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;commaNumber;string;json" class="translate">Type</th>
                         <th data-name="unit"       style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
+                        <th data-name="substituteOld" style="width: 60px"  data-type="checkbox" data-style="width: 40px" class="translate">Old</th>
                         <th data-name="substitute" style="width: 60px"  data-style="width: 60px" class="translate">Subs</th>
                         <th data-name="factor"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="1">Factor</th>
                         <th data-name="offset"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="0">Offset</th>
@@ -1023,14 +1042,15 @@
                     <option value="json">JSON</option>
                 </select>
             </td></tr>
-            <tr><td><label for="dialog-edit-substitute" class="translate">Substitute</label>:</td><td style=""><input id="dialog-edit-substitute" class="test-input" style="width: 150px" type="text" data-name="substitute"/></td><td class="admin-text" data-id="substitute"></td></tr>
-            <tr><td><label for="dialog-edit-item"       class="translate">Item</label>:</td><td style=""><input id="dialog-edit-item" class="test-input" style="width: 60px;" type="number" data-name="item"/></td><td class="admin-text" data-id="item"></td></tr>
-            <tr><td><label for="dialog-edit-factor"     class="translate">Factor</label>:</td><td style=""><input id="dialog-edit-factor" class="test-input" style="width: 60px; display: none;" type="text" data-name="factor"/></td><td class="admin-text"  data-id="factor"></td></tr>
-            <tr><td><label for="dialog-edit-offset"     class="translate">Offset</label>:</td><td style=""><input id="dialog-edit-offset" class="test-input" style="width: 60px; display: none;" type="text" data-name="offset"/></td><td class="admin-text" data-id="offset"></td></tr>
-            <tr><td><label for="dialog-edit-regex"      class="translate">RegEx</label>:</td><td style=""  colspan="2"><input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"/><button id="dialog-edit-show" style="float: right;"></button></td></tr>
+            <tr><td><label for="dialog-edit-substituteOld" class="translate">Old value</label>:</td><td style=""><input id="dialog-edit-substituteOld" class="test-input" type="checkbox" data-name="substituteOld"/></td><td class="admin-text" data-id="substituteOld"></td></tr>
+            <tr><td><label for="dialog-edit-substitute"     class="translate">Substitute</label>:</td><td style=""><input id="dialog-edit-substitute" class="test-input" style="width: 150px" type="text" data-name="substitute"/></td><td class="admin-text" data-id="substitute"></td></tr>
+            <tr><td><label for="dialog-edit-item"           class="translate">Item</label>:</td><td style=""><input id="dialog-edit-item" class="test-input" style="width: 60px;" type="number" data-name="item"/></td><td class="admin-text" data-id="item"></td></tr>
+            <tr><td><label for="dialog-edit-factor"         class="translate">Factor</label>:</td><td style=""><input id="dialog-edit-factor" class="test-input" style="width: 60px; display: none;" type="text" data-name="factor"/></td><td class="admin-text"  data-id="factor"></td></tr>
+            <tr><td><label for="dialog-edit-offset"         class="translate">Offset</label>:</td><td style=""><input id="dialog-edit-offset" class="test-input" style="width: 60px; display: none;" type="text" data-name="offset"/></td><td class="admin-text" data-id="offset"></td></tr>
+            <tr><td><label for="dialog-edit-regex"          class="translate">RegEx</label>:</td><td style=""  colspan="2"><input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"/><button id="dialog-edit-show" style="float: right;"></button></td></tr>
             <tr><td></td><td id="dialog-edit-error" style="color: red" colspan="2"></td></tr>
-            <tr><td><label for="dialog-edit-test-text"  class="translate">Test text</label>:</td><td style="" colspan="2"><textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea></td></tr>
-            <tr><td><label for="dialog-edit-result"     class="translate">Result</label>:</td><td style="" colspan="2"><input readonly id="dialog-edit-result" style="width: 100%" /></td></tr>
+            <tr><td><label for="dialog-edit-test-text"      class="translate">Test text</label>:</td><td style="" colspan="2"><textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea></td></tr>
+            <tr><td><label for="dialog-edit-result"         class="translate">Result</label>:</td><td style="" colspan="2"><input readonly id="dialog-edit-result" style="width: 100%" /></td></tr>
         </table>
     </div>
 </div>

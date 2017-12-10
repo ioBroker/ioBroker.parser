@@ -28,6 +28,7 @@ systemDictionary = {
     "number":               {"en": "number",            "de": "number",             "ru": "number"},
     "string":               {"en": "string",            "de": "string",             "ru": "string"},
     "json":                 {"en": "JSON",              "de": "JSON",               "ru": "JSON"},
+    "Old value":            {"en": "Old value",         "de": "Letztes Wert",       "ru": "Последнее значение"},
     "Substitute":           {"en": "Substitute",        "de": "Ersatzwert",         "ru": "Substitute"},
     "Test text":            {"en": "Test text",         "de": "Testtext",           "ru": "Проверочный текст"},
     "Result":               {"en": "Result",            "de": "Ergebnis",           "ru": "Результат"},
@@ -41,6 +42,11 @@ systemDictionary = {
         "de": "Die Nummer des gefundenen Elements, beginnend mit 0",
         "ru": "Номер найденного элемента, начинаясь  с 0"
     },
+    "info_substituteOld":      {
+        "en": "No value update if it cannot be read",
+        "de": "Kein Wertupdate, falls das Wert nicht gelesen werden kann",
+        "ru": "Не обновлять значение, если невозможно считать"
+    },
     "info_substitute":      {
         "en": "Substitute value if nothing found",
         "de": "Ersatzwert, falls nichts gefunden wurde",
@@ -50,5 +56,6 @@ systemDictionary = {
     "info_offset":          {
         "en": "Offset. (Result = regex value * factor + offset)",
         "de": "Offset. (Ergebnis = regex Wert * Multiplikator + Offset)",
-        "ru": "Сдвиг. (Результат = regex значение * Множитель + сдвиг)"}
+        "ru": "Сдвиг. (Результат = regex значение * Множитель + сдвиг)"
+    }
 };
