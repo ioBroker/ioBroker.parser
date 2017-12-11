@@ -2,8 +2,8 @@
 var gulp      = require('gulp');
 var fs        = require('fs');
 var srcDir    = __dirname + '/';
-var pkg       = grunt.file.readJSON('package.json');
-var iopackage = grunt.file.readJSON('io-package.json');
+var pkg       = require('./package.json');
+var iopackage = require('./io-package.json');
 var version   = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
 /*var appName   = getAppName();
 
@@ -12,6 +12,22 @@ function getAppName() {
     return parts[parts.length - 1].split('.')[0].toLowerCase();
 }
 */
+gulp.task('updatePackages', function (done) {
+    iopackage.common.version = pkg.version;
+    iopackage.common.news = iopackage.common.news || {};
+    if (!iopackage.common.news[pkg.version]) {
+        var news = iopackage.common.news;
+        var newNews = {};
+
+        newNews[pkg.version] = {
+            en: 'news',
+            de: 'neues',
+            ru: 'новое'
+        };
+        iopackage.common.news = Object.assign(newNews, news);
+    }
+    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
+});
 
 gulp.task('updateReadme', function (done) {
     var readme = fs.readFileSync('README.md').toString();
@@ -27,14 +43,8 @@ gulp.task('updateReadme', function (done) {
                 ('0' + (timestamp.getDate()).toString(10)).slice(-2);
 
             var news = '';
-            if (iopackage.common.news) {
-                for (var i = 0; i < iopackage.common.news.length; i++) {
-                    if (typeof iopackage.common.news[i] === 'string') {
-                        news += '* ' + iopackage.common.news[i] + '\n';
-                    } else {
-                        news += '* ' + iopackage.common.news[i].en + '\n';
-                    }
-                }
+            if (iopackage.common.news && iopackage.common.news[pkg.version]) {
+                news += '* ' + iopackage.common.news[pkg.version].en;
             }
 
             fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
@@ -43,4 +53,4 @@ gulp.task('updateReadme', function (done) {
     done();
 });
 
-gulp.task('default', ['updateReadme']);
+gulp.task('default', ['updatePackages', 'updateReadme']);
