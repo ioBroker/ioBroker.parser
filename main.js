@@ -3,15 +3,15 @@
 'use strict';
 
 // you have to require the utils module and call adapter function
-var utils    = require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter  = new utils.Adapter('parser');
-var request;
-var path;
-var fs;
-var states;
+const utils    = require(__dirname + '/lib/utils'); // Get common adapter utils
+const adapter  = new utils.Adapter('parser');
+let request;
+let path;
+let fs;
+let states;
 
 // is called if a subscribed state changes
-adapter.on('stateChange', function (id, state) {
+adapter.on('stateChange', (id, state) => {
     if (!state || state.ack) return;
 
     // Warning, state can be null if it was deleted
@@ -23,7 +23,7 @@ adapter.on('stateChange', function (id, state) {
     }
 });
 
-adapter.on('objectChange', function (id, obj) {
+adapter.on('objectChange', (id, obj) => {
     if (!id) return;
     if (!obj) {
         if (states[id]) {
@@ -49,15 +49,15 @@ adapter.on('objectChange', function (id, obj) {
     }
 });
 
-adapter.on('message', function (obj) {
+adapter.on('message', obj => {
     if (obj) {
         switch (obj.command) {
             case 'link':
                 if (obj.callback) {
                     // read all found serial ports
-                    readLink(obj.message, function (err, text) {
-                        adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback);
-                    });
+                    readLink(obj.message, (err, text) =>
+                        adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback)
+                    );
                 }
                 break;
         }
@@ -117,16 +117,15 @@ function _analyseDataForStates(linkStates, data, error, callback) {
     if (!linkStates || !linkStates.length) {
         if (callback) callback();
     } else {
-        var id = linkStates.shift();
+        const id = linkStates.shift();
         if (!states[id]) {
             adapter.log.error('Invalid state ID: ' + id);
             setImmediate(_analyseDataForStates, linkStates, data, error, callback);
             return;
         }
 
-        analyseData(states[id], data, error, function () {
-            setImmediate(_analyseDataForStates, linkStates, data, error, callback);
-        });
+        analyseData(states[id], data, error, () =>
+            setImmediate(_analyseDataForStates, linkStates, data, error, callback));
     }
 }
 
@@ -136,8 +135,8 @@ function analyseDataForStates(curStates, link, data, error, callback) {
         error = null;
     }
 
-    var linkStates = [];
-    for (var i = 0; i < curStates.length; i++) {
+    const linkStates = [];
+    for (let i = 0; i < curStates.length; i++) {
         if (states[curStates[i]].native.link === link) {
             linkStates.push(curStates[i]);
         }
@@ -149,7 +148,7 @@ function analyseDataForStates(curStates, link, data, error, callback) {
 function analyseData(obj, data, error, callback) {
     adapter.log.debug('analyseData CHECK for ' + obj._id + ', old=' + obj.value.val);
     states[obj._id].processed = true;
-    var newVal;
+    let newVal;
     if (error) {
         if (obj.native.substituteOld) {
             adapter.log.warn('Cannot read link "' + obj.native.link + '": ' + error);
@@ -172,10 +171,10 @@ function analyseData(obj, data, error, callback) {
             }
         }
     } else if (obj.regex) {
-        var item = obj.native.item + 1;
+        let item = obj.native.item + 1;
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
-        var m;
+        let m;
         do {
             m = obj.regex.exec(data);
             item--;
@@ -188,7 +187,7 @@ function analyseData(obj, data, error, callback) {
                 newVal = m.length > 1 ? m[1] : m[0];
 
                 if (obj.common.type === 'number') {
-                    var comma = obj.native.comma;
+                    const comma = obj.native.comma;
                     if (!comma) newVal = newVal.replace(/,/g, '');
                     if (comma) {
                         // 1.000.000 => 1000000
@@ -255,9 +254,7 @@ function readLink(link, callback) {
         request = request || require('request');
 
         adapter.log.debug('Request URL: ' + link);
-        request(link, function (error, response, body) {
-            callback(!body ? error || JSON.stringify(response) : null, body, link);
-        });
+        request(link, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
     } else {
         path = path || require('path');
         fs   = fs   || require('fs');
@@ -267,7 +264,7 @@ function readLink(link, callback) {
         }
         adapter.log.debug('Read file: ' + link);
         if (fs.existsSync(link)) {
-            var data;
+            let data;
             try {
                 data = fs.readFileSync(link);
             } catch (e) {
@@ -282,10 +279,10 @@ function readLink(link, callback) {
     }
 }
 function poll(interval, callback) {
-    var id;
+    let id;
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
-    var curStates = [];
-    var curLinks = [];
+    const curStates = [];
+    const curLinks = [];
     for (id in states) {
         if (!states.hasOwnProperty(id)) continue;
         if (states[id].native.interval === interval && states[id].processed) {
@@ -298,29 +295,27 @@ function poll(interval, callback) {
     }
     adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
 
-    for (var j = 0; j < curLinks.length; j++) {
+    for (let j = 0; j < curLinks.length; j++) {
         adapter.log.debug('Do Link: ' + curLinks[j]);
-        readLink(curLinks[j], function (error, text, link) {
-            analyseDataForStates(curStates, link, text, error, callback);
-        });
+        readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
     }
 }
 
-var timers = {};
+const timers = {};
 
 function main() {
     adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
 
     // read current existing objects (прочитать текущие существующие объекты)
-    adapter.getForeignObjects(adapter.namespace + '.*', 'state', function (err, _states) {
+    adapter.getForeignObjects(adapter.namespace + '.*', 'state', (err, _states) => {
         states = _states;
-        adapter.getForeignStates(adapter.namespace + '.*', function (err, values) {
+        adapter.getForeignStates(adapter.namespace + '.*', (err, values) => {
             // subscribe on changes
             adapter.subscribeStates('*');
             adapter.subscribeObjects('*');
 
             // Mark all sensors as if they received something
-            for (var id in states) {
+            for (const id in states) {
                 if (!states.hasOwnProperty(id)) continue;
                 if (!states[id].native.link.match(/^https?:\/\//)) {
                     states[id].native.link = states[id].native.link.replace(/\\/g, '/');
@@ -332,7 +327,7 @@ function main() {
             }
 
             // trigger all parsers first time
-            for (var timer in timers) {
+            for (const timer in timers) {
                 if (timers.hasOwnProperty(timer)) {
                     poll(timers[timer].interval);
                 }
