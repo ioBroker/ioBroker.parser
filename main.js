@@ -145,6 +145,20 @@ function analyseDataForStates(curStates, link, data, error, callback) {
     _analyseDataForStates(linkStates, data, error, callback);
 }
 
+const flags = {
+    global: 'g',
+    ignoreCase: 'i',
+    multiline: 'm',
+    dotAll: 's',
+    sticky: 'y',
+    unicode: 'u'
+};
+
+function cloneRegex(regex) {
+    const flags = Object.keys(flags).map(flag => regex[flag] ? flags[flag] : '').join('');
+    return new RegExp(regex.source, flags);
+}
+
 function analyseData(obj, data, error, callback) {
     adapter.log.debug('analyseData CHECK for ' + obj._id + ', old=' + obj.value.val);
     states[obj._id].processed = true;
@@ -175,8 +189,11 @@ function analyseData(obj, data, error, callback) {
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
         let m;
+
+        let regex = cloneRegex(obj.regex);
+
         do {
-            m = obj.regex.exec(data);
+            m = regex.exec(data);
             item--;
         } while(item && m);
 

@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "parser",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "news": {
+            "1.0.2": {
+                "en": "Iterations in regex were corrected",
+                "de": "Iterationen in Regex wurden korrigiert",
+                "ru": "Исправлены итерации в регулярном выражении",
+                "pt": "Iterações na regex foram corrigidas",
+                "nl": "Iteraties in regex werden gecorrigeerd",
+                "fr": "Les itérations en regex ont été corrigées",
+                "it": "Le iterazioni in regex sono state corrette",
+                "es": "Se corrigieron las iteraciones en la expresión regular",
+                "pl": "Iteracje w regex zostały poprawione"
+            },
             "1.0.1": {
                 "en": "Added additional option: old value",
                 "de": "Zusätzliche Option hinzugefügt: altes Wert",
@@ -39,11 +50,28 @@
                 "ru": "Первая версия"
             }
         },
-        "title": "parser Adapter",
+        "title": "Parser",
+        "titleLang": {
+            "en": "Parser",
+            "de": "Parser",
+            "ru": "Синтаксический анализатор",
+            "pt": "Analisador",
+            "nl": "Parser",
+            "fr": "Analyseur",
+            "it": "Parser",
+            "es": "Analizador",
+            "pl": "Analizator składni"
+        },
         "desc": {
             "en": "This adapter allows to extract values from HTTP URLs or from files",
             "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
-            "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов"
+            "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов",
+            "pt": "Este adaptador permite extrair valores de URLs HTTP ou de arquivos",
+            "nl": "Met deze adapter kunnen waarden uit HTTP-URL's of uit bestanden worden geëxtraheerd",
+            "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
+            "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
+            "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
+            "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików"
         },
         "authors": [
             "bluefox <dogafox@gmail.com>"
@@ -53,6 +81,7 @@
         "mode": "daemon",
         "loglevel": "info",
         "messagebox": true,
+        "materialize": true,
         "icon": "parser.png",
         "webExtension": "lib/parser.js",
         "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",

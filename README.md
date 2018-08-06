@@ -84,6 +84,9 @@ Values can have quality codes:
 
 ## Changelog
 
+### 1.0.2 (2018-08-06)
+* (bluefox) Iterations in regex were corrected
+
 ### 1.0.1 (2017-12-10)
 * (bluefox) Added additional option: old value
 

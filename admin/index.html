@@ -632,13 +632,13 @@
             var key = $(this).attr('id');
             var $key = $('#' + key + '.value');
             if ($key.attr('type') === 'checkbox') {
-                $key.prop('checked', settings[key]).change(function() {
+                $key.prop('checked', settings[key]).on('change', function () {
                     onChange();
                 });
             } else {
-                $key.val(settings[key]).change(function() {
+                $key.val(settings[key]).on('change', function () {
                     onChange();
-                }).keyup(function() {
+                }).on('keyup', function () {
                     onChange();
                 });
             }
@@ -838,10 +838,7 @@
 
         $dialogCron.dialog('open');
     }*/
-    // ... and the function save has to exist.
-    // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
-        // example: select elements with class=value and build settings object
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);

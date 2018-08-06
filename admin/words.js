@@ -4,7 +4,7 @@ systemDictionary = {
         "ru": "Настройки Proxy драйвера"
     },
     "Parser adapter settings": {"en": "Parser adapter settings", "de": "Parser Adaptereinstellungen", "ru": "Настройки драйвера Parser"},
-    "Default poll interval: ": {"en": "Default poll interval: ", "de": "Default Poll-Intervall: ", "ru": "Интервал опроса по умолчанию: "},
+    "Default poll interval: ": {"en": "Default poll interval", "de": "Default Poll-Intervall", "ru": "Интервал опроса по умолчанию"},
     "ms":                   {"en": "ms",                "de": "ms",                 "ru": "мс"},
     "Name":                 {"en": "Name",              "de": "Name",               "ru": "Имя"},
     "URL or file name":     {"en": "URL or file name",  "de": "URL oder Dateiname", "ru": "URL или имя файла"},
