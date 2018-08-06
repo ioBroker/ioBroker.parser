@@ -155,8 +155,8 @@ const flags = {
 };
 
 function cloneRegex(regex) {
-    const flags = Object.keys(flags).map(flag => regex[flag] ? flags[flag] : '').join('');
-    return new RegExp(regex.source, flags);
+    const lFlags = Object.keys(flags).map(flag => regex[flag] ? flags[flag] : '').join('');
+    return new RegExp(regex.source, lFlags);
 }
 
 function analyseData(obj, data, error, callback) {
