@@ -90,6 +90,7 @@
         item   = (parseFloat(item)  || 0)  + 1;
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
+        test = (test || '').replace(/\r\n|[\r\n]/, ' ');
         var m;
         do {
             m = regex.exec(test);
@@ -500,7 +501,7 @@
                 if (changed) tasks.push(_obj);
             } else {
                 tasks.push({
-                    _id:            adapter + '.' + instance + '.' + newValues[v].name.replace(/\s/g, '_'),
+                    _id:            adapter + '.' + instance + '.' + newValues[v].name.replace(/[()\[\]\\\/*?\s]/g, '_'),
                     common: {
                         name:           newValues[v].name,
                         write:          !!newValues[v].write,

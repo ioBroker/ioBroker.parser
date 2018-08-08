@@ -487,6 +487,7 @@
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
         var m;
+        test = (test || '').replace(/\r\n|[\r\n]/, ' ');
         do {
             m = regex.exec(test);
             item--;

@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "parser",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "news": {
+            "1.0.3": {
+                "en": "Multi-line search allowed",
+                "de": "Mehrzeilige Suche erlaubt",
+                "ru": "Разрешен многострочный поиск",
+                "pt": "Pesquisa em várias linhas permitida",
+                "nl": "Multi-line search toegestaan",
+                "fr": "Recherche multiligne autorisée",
+                "it": "Ricerca multilinea consentita",
+                "es": "Búsqueda multilínea permitida",
+                "pl": "Dopuszczalne jest wyszukiwanie wielowierszowe"
+            },
             "1.0.2": {
                 "en": "Iterations in regex were corrected",
                 "de": "Iterationen in Regex wurden korrigiert",

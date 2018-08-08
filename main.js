@@ -192,6 +192,8 @@ function analyseData(obj, data, error, callback) {
 
         let regex = cloneRegex(obj.regex);
 
+        data = (data || '').replace(/\r\n|[\r\n]/, ' ');
+
         do {
             m = regex.exec(data);
             item--;

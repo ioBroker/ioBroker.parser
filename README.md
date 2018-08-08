@@ -46,6 +46,8 @@ Table fields:
 | cloudRunning      | https://iobroker.net/                                | Privacy Notice        | indicator    | boolean |      | 60000    |
 | cpuTemperature    | /sys/devices/virtual/thermal/thermal_zone0/temp      | (.*)                  | temperature  | number  |  °C  | 30000    |
 
+*Notice:* In the received text all new lines will be replaces with spaces, to allow multi-line search.
+
 ## About Regular expressions
 Regular expressions is a powerful tool to parse and extract the data from strings.
 
@@ -83,6 +85,8 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Changelog
+### 1.0.3 (2018-08-09)
+* (bluefox) Multi-line search allowed
 
 ### 1.0.2 (2018-08-06)
 * (bluefox) Iterations in regex were corrected
