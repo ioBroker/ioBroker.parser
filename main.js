@@ -192,7 +192,7 @@ function analyseData(obj, data, error, callback) {
 
         let regex = cloneRegex(obj.regex);
 
-        data = (data || '').replace(/\r\n|[\r\n]/, ' ');
+        data = (data || '').toString().replace(/\r\n|[\r\n]/, ' ');
 
         do {
             m = regex.exec(data);
@@ -285,7 +285,7 @@ function readLink(link, callback) {
         if (fs.existsSync(link)) {
             let data;
             try {
-                data = fs.readFileSync(link);
+                data = fs.readFileSync(link).toString('utf8');
             } catch (e) {
                 adapter.log.error('Cannot read file "' + link + '": ' + e);
                 callback(e, null, link);

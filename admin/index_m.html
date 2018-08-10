@@ -90,7 +90,7 @@
         item   = (parseFloat(item)  || 0)  + 1;
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
-        test = (test || '').replace(/\r\n|[\r\n]/, ' ');
+        test = (test || '').toString().replace(/\r\n|[\r\n]/, ' ');
         var m;
         do {
             m = regex.exec(test);

@@ -85,7 +85,7 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Changelog
-### 1.0.3 (2018-08-09)
+### 1.0.4 (2018-08-10)
 * (bluefox) Multi-line search allowed
 
 ### 1.0.2 (2018-08-06)
