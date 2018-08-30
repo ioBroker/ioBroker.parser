@@ -74,7 +74,7 @@ function initPoll(obj) {
     }
     obj.native.substituteOld = obj.native.substituteOld === 'true' || obj.native.substituteOld === true;
 
-    if (obj.native.substitute !== '' && obj.native.substitute !== undefined && obj.native.substitute !== null) {
+    if ((obj.native.substitute !== '' || obj.common.type === 'string') && obj.native.substitute !== undefined && obj.native.substitute !== null) {
         if (obj.native.substitute === 'null')  obj.native.substitute = null;
 
         if (obj.common.type === 'number') {
@@ -192,7 +192,7 @@ function analyseData(obj, data, error, callback) {
 
         let regex = cloneRegex(obj.regex);
 
-        data = (data || '').toString().replace(/\r\n|[\r\n]/, ' ');
+        data = (data || '').toString().replace(/\r\n|[\r\n]/g, ' ');
 
         do {
             m = regex.exec(data);
@@ -254,6 +254,7 @@ function analyseData(obj, data, error, callback) {
                         obj.value.q   = 0x44;
                         obj.value.ack = true;
                         if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
+                        console.log('USe subs: "' + obj.native.substitute + '"');
 
                         adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                     } else if (callback) {

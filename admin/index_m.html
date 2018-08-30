@@ -90,7 +90,7 @@
         item   = (parseFloat(item)  || 0)  + 1;
         if (item < 0) item = 1;
         if (item > 1000) item = 1000;
-        test = (test || '').toString().replace(/\r\n|[\r\n]/, ' ');
+        test = (test || '').toString().replace(/\r\n|[\r\n]/g, ' ');
         var m;
         do {
             m = regex.exec(test);
@@ -150,8 +150,11 @@
                 }
             }
         });
+        var $testInput = $('.test-input');
+        $testInput.data('id', id);
+        $testInput.data('line', JSON.parse(JSON.stringify(line)));
 
-        $('.test-input').each(function () {
+        $testInput.each(function () {
             var $this = $(this);
             var attr = $this.data('name');
             if ($this.attr('type') === 'checkbox') {
@@ -168,6 +171,10 @@
 
             $dialog.find('.btn-save').off('click').on('click', function () {
                 $('#dialog-test').modal('close');
+
+                var $testInput = $('.test-input');
+                var id = $testInput.data('id');
+                var line = $testInput.data('line');
 
                 $('.test-input').each(function () {
                     var $this = $(this);
@@ -196,7 +203,7 @@
                 }
             });
 
-            $('.test-input').on('change', showResult).each(function () {
+            $testInput.on('change', showResult).each(function () {
                 if ($(this).attr('type') !== 'checkbox' && $(this).prop('tagName') !== 'SELECT') $(this).on('keyup', function () {
                     $(this).trigger('change');
                 });
@@ -249,7 +256,7 @@
     function load(settings, onChange) {
         if (!settings) return;
 
-        $('.value').each(function () {
+        $('.config-form .value').each(function () {
             var key = $(this).attr('id');
             var $key = $('#' + key + '.value');
             if ($key.attr('type') === 'checkbox') {
@@ -267,7 +274,7 @@
 
         onChange(false);
 
-        $('.table-values').find('th[data-name="substituteOld"]').attr('title',  _('Use last value if cannot read'));
+        $('.config-form .table-values').find('th[data-name="substituteOld"]').attr('title',  _('Use last value if cannot read'));
 
         var namespace = adapter + '.' + instance + '.';
 
@@ -303,10 +310,10 @@
 
             values2table('values', newValues, onChange, function () {
                 if (!newValues.length) {
-                    $('.table-button-add').trigger('click');
+                    $('.config-form .table-button-add').trigger('click');
                 }
 
-                $('.values-input[data-name="name"]').on('change', function () {
+                $('.config-form .values-input[data-name="name"]').on('change', function () {
                     var val = $(this).val();
                     var error = '';
                     if (!val) {
@@ -324,31 +331,31 @@
                     var id = $(this).data('index');
                     var val = $(this).val();
                     if (val === 'number') {
-                        $('.values-input[data-name="factor"][data-index="' + id + '"]').show();
-                        $('.values-input[data-name="offset"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="factor"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="offset"][data-index="' + id + '"]').show();
                     } else {
-                        $('.values-input[data-name="factor"][data-index="' + id + '"]').hide();
-                        $('.values-input[data-name="offset"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="factor"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="offset"][data-index="' + id + '"]').hide();
                     }
                     if (val === 'boolean' || val === 'json') {
-                        $('.values-input[data-name="unit"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="unit"][data-index="' + id + '"]').hide();
                     } else {
-                        $('.values-input[data-name="unit"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="unit"][data-index="' + id + '"]').show();
                     }
                 }).each(function () {
                     var id = $(this).data('index');
                     var val = $(this).val();
                     if (val === 'number') {
-                        $('.values-input[data-name="factor"][data-index="' + id + '"]').show();
-                        $('.values-input[data-name="offset"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="factor"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="offset"][data-index="' + id + '"]').show();
                     } else {
-                        $('.values-input[data-name="factor"][data-index="' + id + '"]').hide();
-                        $('.values-input[data-name="offset"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="factor"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="offset"][data-index="' + id + '"]').hide();
                     }
                     if (val === 'boolean' || val === 'json') {
-                        $('.values-input[data-name="unit"][data-index="' + id + '"]').hide();
+                        $('.config-form .values-input[data-name="unit"][data-index="' + id + '"]').hide();
                     } else {
-                        $('.values-input[data-name="unit"][data-index="' + id + '"]').show();
+                        $('.config-form .values-input[data-name="unit"][data-index="' + id + '"]').show();
                     }
 
                 });
@@ -411,18 +418,19 @@
                 obj[$this.attr('id')] = $this.val();
             }
         });
-        var newValues;
-        if (typeof table2values !== 'undefined') {
-            newValues = table2values();
-        } else {
-            newValues = _table2values();
-        }
+        var newValues = table2values();
         var tasks = [];
+        var names = [];
         for (var v = 0; v < newValues.length; v++) {
             if (!newValues[v].name) {
                 showMessage(_('Empty names are not allowed'), _('Error'), 'alert');
                 return;
             }
+            if (names.indexOf(newValues[v].name) !== -1) {
+                showError(_('Duplicate names are not allowed'));
+                return;
+            }
+            names.push(newValues[v].name);
             var found = false;
             var t;
             // find same name in old values
@@ -515,6 +523,7 @@
                         regex:          newValues[v].regex,
                         interval:       newValues[v].interval,
                         factor:         newValues[v].factor,
+                        item:           newValues[v].item,
                         offset:         newValues[v].offset,
                         substitute:     newValues[v].substitute,
                         substituteOld:  newValues[v].substituteOld
@@ -546,7 +555,7 @@
 <body>
 <!-- you have to put your config page in a div with id adapter-container -->
 <div class="m adapter-container">
-    <div class="row">
+    <div class="row config-form">
         <div id="tab-main" class="col s12 page">
             <div class="row">
                 <div class="col s6">
@@ -582,7 +591,7 @@
                                 <th data-name="factor"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="1">Factor</th>
                                 <th data-name="offset"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="0">Offset</th>
                                 <th data-name="interval"   style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
-                                <th data-buttons="edit delete up down"></th>
+                                <th data-buttons="edit up down delete copy"></th>
                             </tr>
                             </thead>
                         </table>
