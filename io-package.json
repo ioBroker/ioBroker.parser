@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "parser",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "news": {
+            "1.0.6": {
+                "en": "Substitute values for strings were fixed",
+                "de": "Ersatzwerte für Strings wurden behoben",
+                "ru": "Заменяемые значения для строк были исправлены",
+                "pt": "Valores substitutos para cadeias de caracteres foram corrigidos",
+                "nl": "Vervangende waarden voor tekenreeksen zijn opgelost",
+                "fr": "Les valeurs de remplacement pour les chaînes ont été fixées",
+                "it": "I valori sostitutivi per le stringhe sono stati corretti",
+                "es": "Se corrigieron los valores sustitutos de las cadenas",
+                "pl": "Zastępczy wartości dla ciągów zostały naprawione"
+            },
             "1.0.5": {
                 "en": "Multi-line search allowed",
                 "de": "Mehrzeilige Suche erlaubt",
