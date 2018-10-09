@@ -85,6 +85,9 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Changelog
+### 1.0.7 (2018-10-08)
+* (bluefox) Comma will be replaced automatically by point for the offset and for the factor
+
 ### 1.0.6 (2018-09-22)
 * (bluefox) fix parser
 

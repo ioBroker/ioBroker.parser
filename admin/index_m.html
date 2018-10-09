@@ -440,9 +440,18 @@
                     break;
                 }
             }
+
+            if (typeof newValues[v].factor === 'string') {
+                newValues[v].factor = newValues[v].factor.replace(',', '.');
+            }
+            if (typeof newValues[v].offset === 'string') {
+                newValues[v].offset = newValues[v].offset.replace(',', '.');
+            }
+
             newValues[v].offset = parseFloat(newValues[v].offset) || 0;
             newValues[v].factor = parseFloat(newValues[v].factor) || 1;
-            newValues[v].item   = parseFloat(newValues[v].item)   || 0;
+            newValues[v].item   = parseInt(newValues[v].item, 10) || 0;
+
             if (found) {
                 var _obj = values[t].obj;
                 var changed = false;

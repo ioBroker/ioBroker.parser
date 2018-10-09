@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "parser",
-        "version": "1.0.6",
+        "version": "1.0.7",
         "news": {
+            "1.0.7": {
+                "en": "Comma will be replaced automatically by point for the offset and for the factor",
+                "de": "Komma wird automatisch durch Punkt für den Offset und für den Faktor ersetzt",
+                "ru": "Comma будет автоматически заменена точкой для смещения и для коэффициента",
+                "pt": "Vírgula será substituída automaticamente por ponto para o deslocamento e para o fator",
+                "nl": "Komma wordt automatisch vervangen door een punt voor de offset en voor de factor",
+                "fr": "La virgule sera automatiquement remplacée par un point pour le décalage et pour le facteur",
+                "it": "Virgola verrà sostituita automaticamente dal punto per l'offset e per il fattore",
+                "es": "La coma se reemplazará automáticamente por punto para el desplazamiento y para el factor",
+                "pl": "Przecinek zostanie automatycznie zastąpiony przez punkt przesunięcia i współczynnik"
+            },
             "1.0.6": {
                 "en": "Substitute values for strings were fixed",
                 "de": "Ersatzwerte für Strings wurden behoben",
