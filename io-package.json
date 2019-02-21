@@ -12,7 +12,8 @@
                 "fr": "La virgule sera automatiquement remplacée par un point pour le décalage et pour le facteur",
                 "it": "Virgola verrà sostituita automaticamente dal punto per l'offset e per il fattore",
                 "es": "La coma se reemplazará automáticamente por punto para el desplazamiento y para el factor",
-                "pl": "Przecinek zostanie automatycznie zastąpiony przez punkt przesunięcia i współczynnik"
+                "pl": "Przecinek zostanie automatycznie zastąpiony przez punkt przesunięcia i współczynnik",
+                "zh-cn": "逗号将自动替换的点偏及的因素"
             },
             "1.0.6": {
                 "en": "Substitute values for strings were fixed",
@@ -23,7 +24,8 @@
                 "fr": "Les valeurs de remplacement pour les chaînes ont été fixées",
                 "it": "I valori sostitutivi per le stringhe sono stati corretti",
                 "es": "Se corrigieron los valores sustitutos de las cadenas",
-                "pl": "Zastępczy wartości dla ciągów zostały naprawione"
+                "pl": "Zastępczy wartości dla ciągów zostały naprawione",
+                "zh-cn": "替代值串是固定的"
             },
             "1.0.5": {
                 "en": "Multi-line search allowed",
@@ -34,7 +36,8 @@
                 "fr": "Recherche multiligne autorisée",
                 "it": "Ricerca multilinea consentita",
                 "es": "Búsqueda multilínea permitida",
-                "pl": "Dopuszczalne jest wyszukiwanie wielowierszowe"
+                "pl": "Dopuszczalne jest wyszukiwanie wielowierszowe",
+                "zh-cn": "多线索允许"
             },
             "1.0.2": {
                 "en": "Iterations in regex were corrected",
@@ -45,42 +48,92 @@
                 "fr": "Les itérations en regex ont été corrigées",
                 "it": "Le iterazioni in regex sono state corrette",
                 "es": "Se corrigieron las iteraciones en la expresión regular",
-                "pl": "Iteracje w regex zostały poprawione"
+                "pl": "Iteracje w regex zostały poprawione",
+                "zh-cn": "迭代regex进行了修正"
             },
             "1.0.1": {
                 "en": "Added additional option: old value",
                 "de": "Zusätzliche Option hinzugefügt: altes Wert",
-                "ru": "Добавлена дополнительная опция: прошлое значение"
+                "ru": "Добавлена дополнительная опция: прошлое значение",
+                "pt": "Adicionado opção adicional: valor antigo",
+                "nl": "Extra optie: oude waarde",
+                "fr": "A ajouté une option supplémentaire: l'ancienne valeur",
+                "it": "Aggiunto opzione aggiuntiva: il vecchio valore",
+                "es": "Añadido opción adicional: valor antiguo",
+                "pl": "Dodano dodatkowe opcje: stare wartość",
+                "zh-cn": "增加了额外的选项：旧价值"
             },
             "1.0.0": {
                 "en": "Allow set the number of found item",
                 "de": "Es ist möglich einen N element zu finden",
-                "ru": "Можно находить не только первое вхождение элемента"
+                "ru": "Можно находить не только первое вхождение элемента",
+                "pt": "Permite definir o número de item encontrado",
+                "nl": "Laat het aantal gevonden item",
+                "fr": "Permettent de définir le nombre d'élément trouvé",
+                "it": "Consentono di impostare il numero di elemento trovato",
+                "es": "Permiten establecer el número de elemento encontrado",
+                "pl": "Pozwalają ustawić ilość znalezionego elementu",
+                "zh-cn": "允许设定的数量找到的项目"
             },
             "0.2.2": {
                 "en": "fix handling of multiple fields for one URL",
                 "de": "Fehler bei Behandlung von mehreren Felder mit der gleichen URL behoben",
-                "ru": "fix handling of multiple fields for one URL"
+                "ru": "fix handling of multiple fields for one URL",
+                "pt": "correcção tratamento de vários campos para uma URL",
+                "nl": "fix het hanteren van meerdere velden voor een URL",
+                "fr": "correction de la gestion de plusieurs domaines pour une URL",
+                "it": "fissare la gestione di più campi per un URL",
+                "es": "revisión de manejo de múltiples campos para una URL",
+                "pl": "poprawiono obsługę wielu pól dla jednego adresu URL",
+                "zh-cn": "修正处理的多个领域为一个网址"
             },
             "0.2.1": {
                 "en": "fix error with timestamp",
                 "de": "Korrigiert Zeitstempel",
-                "ru": "Исправлено время изменения"
+                "ru": "Исправлено время изменения",
+                "pt": "correção de erro com carimbo de data / hora",
+                "nl": "fix fout met tijdstempel",
+                "fr": "correction d'erreur avec horodatage",
+                "it": "fissare errore con timestamp",
+                "es": "corrección de error con sello de tiempo",
+                "pl": "Naprawiono błąd z typ timestamp",
+                "zh-cn": "修复的错误有时间戳"
             },
             "0.2.0": {
                 "en": "Add visual test",
                 "de": "Edittests sind hinzugefügt",
-                "ru": "Тест при конфигурации"
+                "ru": "Тест при конфигурации",
+                "pt": "Adicionar teste visual",
+                "nl": "Voeg visuele test",
+                "fr": "Ajouter visual test",
+                "it": "Aggiungere visual test",
+                "es": "Agregar visual de la prueba",
+                "pl": "Dodaj wizualny test",
+                "zh-cn": "添加视觉测试"
             },
             "0.1.1": {
                 "en": "move to common group",
                 "de": "Verschiebe ins Allgemein",
-                "ru": "Передвинут в общие драйвера"
+                "ru": "Передвинут в общие драйвера",
+                "pt": "mover para common grupo",
+                "nl": "verplaatsen naar common groep",
+                "fr": "communes en groupe",
+                "it": "spostare a gruppo comune",
+                "es": "mover a grupo común",
+                "pl": "przejdź do ogólnej grupy",
+                "zh-cn": "移动到公共组"
             },
             "0.1.0": {
                 "en": "Inital version",
                 "de": "Erste Version",
-                "ru": "Первая версия"
+                "ru": "Первая версия",
+                "pt": "Primeiro versão",
+                "nl": "Eerste versie",
+                "fr": "Inital version",
+                "it": "Prima versione",
+                "es": "Inicial de la versión",
+                "pl": "Pierwsza wersja",
+                "zh-cn": "初始版本"
             }
         },
         "title": "Parser",
@@ -93,7 +146,8 @@
             "fr": "Analyseur",
             "it": "Parser",
             "es": "Analizador",
-            "pl": "Analizator składni"
+            "pl": "Analizator składni",
+            "zh-cn": "分析器"
         },
         "desc": {
             "en": "This adapter allows to extract values from HTTP URLs or from files",
@@ -104,7 +158,8 @@
             "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
             "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
             "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
-            "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików"
+            "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików",
+            "zh-cn": "这器允许提取价值从HTTP URLs或从文件"
         },
         "authors": [
             "bluefox <dogafox@gmail.com>"
