@@ -1,7 +1,7 @@
 ![Logo](admin/parser.png)
 ioBroker parser adapter
 =================
-[![NPM version](http://img.shields.io/npm/v/iobroker.parser.svg)](https://www.npmjs.com/package/iobroker.parser)
+![Number of Installations](http://iobroker.live/badges/parser-installed.svg) ![Number of Installations](http://iobroker.live/badges/parser-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.parser.svg)](https://www.npmjs.com/package/iobroker.parser)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.parser.svg)](https://www.npmjs.com/package/iobroker.parser)
 [![Tests](https://travis-ci.org/ioBroker/ioBroker.parser.svg?branch=master)](https://travis-ci.org/ioBroker/ioBroker.parser)
 
