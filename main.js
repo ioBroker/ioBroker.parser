@@ -274,7 +274,10 @@ function readLink(link, callback) {
         request = request || require('request');
 
         adapter.log.debug('Request URL: ' + link);
-        request(link, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
+        request({
+            url: link,
+            rejectUnauthorized: false
+        }, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
     } else {
         path = path || require('path');
         fs   = fs   || require('fs');
