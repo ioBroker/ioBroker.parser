@@ -265,6 +265,9 @@ function analyseData(obj, data, error, callback) {
         }
     } else {
         adapter.log.warn('No regex object found for "' + obj._id + '"');
+        if (callback) {
+            callback();
+        }
     }
 }
 
@@ -276,7 +279,8 @@ function readLink(link, callback) {
         adapter.log.debug('Request URL: ' + link);
         request({
             url: link,
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            timeout: 60000
         }, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
     } else {
         path = path || require('path');
@@ -301,6 +305,7 @@ function readLink(link, callback) {
         }
     }
 }
+
 function poll(interval, callback) {
     let id;
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
