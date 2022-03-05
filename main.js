@@ -27,6 +27,7 @@ adapter.on('objectChange', (id, obj) => {
     if (!id) return;
     if (!obj) {
         if (states[id]) {
+            adapter.log.info(`Parser object ${id} removed`);
             deletePoll(states[id]);
             delete states[id];
         }
@@ -35,14 +36,17 @@ adapter.on('objectChange', (id, obj) => {
         obj.native.interval = parseInt(obj.native.interval, 10);
 
         if (!states[id]) {
+            adapter.log.info(`Parser object ${id} added`);
             states[id] = obj;
             initPoll(states[id], false);
         } else {
             if (states[id].native.interval !== obj.native.interval) {
+                adapter.log.info(`Parser object ${id} interval changed`);
                 deletePoll(states[id]);
                 states[id] = obj;
                 initPoll(states[id], false);
             } else {
+                adapter.log.debug(`Parser object ${id} updated`);
                 states[id] = obj;
                 initPoll(states[id], true);
             }
