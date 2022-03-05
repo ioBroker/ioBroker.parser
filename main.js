@@ -36,14 +36,15 @@ adapter.on('objectChange', (id, obj) => {
 
         if (!states[id]) {
             states[id] = obj;
-            initPoll(states[id]);
+            initPoll(states[id], false);
         } else {
             if (states[id].native.interval !== obj.native.interval) {
                 deletePoll(states[id]);
                 states[id] = obj;
-                initPoll(states[id]);
+                initPoll(states[id], false);
             } else {
                 states[id] = obj;
+                initPoll(states[id], true);
             }
         }
     }
@@ -64,7 +65,7 @@ adapter.on('message', obj => {
     }
 });
 
-function initPoll(obj) {
+function initPoll(obj, update) {
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
 
     if (!obj.native.regex) obj.native.regex = '.+';
@@ -93,14 +94,16 @@ function initPoll(obj) {
     obj.native.item   = parseFloat(obj.native.item)   || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
 
-    if (!timers[obj.native.interval]) {
-        timers[obj.native.interval] = {
-            interval: obj.native.interval,
-            count:    1,
-            timer:    setInterval(poll, obj.native.interval, obj.native.interval)
-        };
-    } else {
-        timers[obj.native.interval].count++;
+    if (!update) {
+        if (!timers[obj.native.interval]) {
+            timers[obj.native.interval] = {
+                interval: obj.native.interval,
+                count: 1,
+                timer: setInterval(poll, obj.native.interval, obj.native.interval)
+            };
+        } else {
+            timers[obj.native.interval].count++;
+        }
     }
 }
 
@@ -313,7 +316,7 @@ function poll(interval, callback) {
     const curLinks = [];
     for (id in states) {
         if (!states.hasOwnProperty(id)) continue;
-        if (states[id].native.interval === interval && states[id].processed) {
+        if (states[id].native.interval === interval && (states[id].processed || states[id].processed === undefined)) {
             states[id].processed = false;
             curStates.push(id);
             if (curLinks.indexOf(states[id].native.link) === -1) {
@@ -350,8 +353,7 @@ function main() {
                 }
 
                 states[id].value = values[id] || {val: null};
-                states[id].processed = true;
-                initPoll(states[id]);
+                initPoll(states[id], false);
             }
 
             // trigger all parsers first time
