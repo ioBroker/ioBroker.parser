@@ -190,7 +190,10 @@
             "sentry": {
                 "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
             }
-        }
+        },
+        "connectionType": "none",
+        "dataSource": "poll",
+        "tier": 3
     },
     "native": {
         "pollInterval": "5000"
