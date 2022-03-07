@@ -107,7 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-### 1.1.0 (2022-03-07)
+### __WORK IN PROGRESS__
 * IMPORTANT: js-controller 2.0 is required at least now!
 * (Apollon77) ignore self signed ssl certificates
 * (Apollon77) make sure object changes do not block further updates of values
