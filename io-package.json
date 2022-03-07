@@ -179,11 +179,17 @@
             "file",
             "parser"
         ],
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
         "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
         "type": "logic",
-        "config": {
-            "minWidth": 800,
-            "width ": 1224
+        "plugins": {
+            "sentry": {
+                "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
+            }
         }
     },
     "native": {
