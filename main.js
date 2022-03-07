@@ -37,17 +37,17 @@ adapter.on('objectChange', (id, obj) => {
 
         if (!states[id]) {
             adapter.log.info(`Parser object ${id} added`);
-            states[id] = obj;
+            states[id] = Object.assign(states[id], obj);
             initPoll(states[id], false);
         } else {
             if (states[id].native.interval !== obj.native.interval) {
                 adapter.log.info(`Parser object ${id} interval changed`);
                 deletePoll(states[id]);
-                states[id] = obj;
+                states[id] = Object.assign(states[id], obj);
                 initPoll(states[id], false);
             } else {
                 adapter.log.debug(`Parser object ${id} updated`);
-                states[id] = obj;
+                states[id] = Object.assign(states[id], obj);
                 initPoll(states[id], true);
             }
         }
@@ -97,6 +97,10 @@ function initPoll(obj, update) {
     obj.native.factor = parseFloat(obj.native.factor) || 1;
     obj.native.item   = parseFloat(obj.native.item)   || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
+
+    if (!obj.native.link.match(/^https?:\/\//)) {
+        obj.native.link = obj.native.link.replace(/\\/g, '/');
+    }
 
     if (!update) {
         if (!timers[obj.native.interval]) {
@@ -352,9 +356,6 @@ function main() {
             // Mark all sensors as if they received something
             for (const id in states) {
                 if (!states.hasOwnProperty(id)) continue;
-                if (!states[id].native.link.match(/^https?:\/\//)) {
-                    states[id].native.link = states[id].native.link.replace(/\\/g, '/');
-                }
 
                 states[id].value = values[id] || {val: null};
                 initPoll(states[id], false);
