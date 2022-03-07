@@ -87,7 +87,7 @@ var vars = [
         },
         "native": {
             "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "temp swip\">(-?\\d+)˚<",
+            "regex": "<span class=\"temp\">(-?\\d+)˚<",
             "interval": "30000",
             "substitute": "0"
         },
@@ -105,7 +105,7 @@ var vars = [
         },
         "native": {
             "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "temp swip\">(-?\\d+)˚<",
+            "regex": "<span class=\"temp\">(-?\\d+)˚<",
             "interval": "30000",
             "substitute": "0"
         },
@@ -123,7 +123,7 @@ var vars = [
         },
         "native": {
             "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "temp swip\">(-?\\d+)˚<",
+            "regex": "<span class=\"temp\">(-?\\d+)˚<",
             "interval": "30000",
             "substitute": "0"
         },
@@ -141,7 +141,7 @@ var vars = [
         },
         "native": {
             "link": "https://darksky.net/forecast/48.1371,11.5754/si24/deasdasdasdasdas",
-            "regex": "temp swip\">(-?\\d+)˚<",
+            "regex": "<span class=\"temp\">(-?\\d+)˚<",
             "interval": "30000",
             "substitute": "0",
             "expect": 0,
