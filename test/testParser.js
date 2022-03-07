@@ -141,7 +141,7 @@ var vars = [
         },
         "native": {
             "link": "https://darksky.net/forecast/48.1371,11.5754/si24/deasdasdasdasdas",
-            "regex": "<span class=\"temp\">(-?\\d+)˚<",
+            "regex": "<span clas=\"temp\">(-?\\d+)˚<",
             "interval": "30000",
             "substitute": "0",
             "expect": 0,
