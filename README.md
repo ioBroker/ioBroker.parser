@@ -107,8 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.0 (2022-03-07)
 * IMPORTANT: js-controller 2.0 is required at least now!
 * (Apollon77) ignore self signed ssl certificates
 * (Apollon77) make sure object changes do not block further updates of values
@@ -169,4 +168,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
