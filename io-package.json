@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "news": {
+      "1.1.2": {
+        "en": "Fix initialization of new parser objects",
+        "de": "Korrigieren Sie die Initialisierung neuer Parser-Objekte",
+        "ru": "Исправить инициализацию новых объектов парсера",
+        "pt": "Corrige a inicialização de novos objetos do analisador",
+        "nl": "Initialisatie van nieuwe parser-objecten repareren",
+        "fr": "Correction de l'initialisation des nouveaux objets d'analyseur",
+        "it": "Correzione dell'inizializzazione di nuovi oggetti parser",
+        "es": "Arreglar la inicialización de nuevos objetos del analizador.",
+        "pl": "Napraw inicjalizację nowych obiektów parsera",
+        "zh-cn": "修复新解析器对象的初始化"
+      },
       "1.1.1": {
         "en": "IMPORTANT: js-controller 2.0 is required at least now!\nignore self signed ssl certificates\nmake sure object changes do not block further updates of values\nAdd Sentry to get crash reports",
         "de": "WICHTIG: js-controller 2.0 wird jetzt mindestens benötigt!\nIgnoriere selbstsignierte SSL-Zertifikate\nStellen Sie sicher, dass Objektänderungen weitere Aktualisierungen von Werten nicht blockieren\nFügen Sie Sentry hinzu, um Absturzberichte zu erhalten",
@@ -74,18 +86,6 @@
         "es": "Añadido opción adicional: valor antiguo",
         "pl": "Dodano dodatkowe opcje: stare wartość",
         "zh-cn": "增加了额外的选项：旧价值"
-      },
-      "1.0.0": {
-        "en": "Allow set the number of found item",
-        "de": "Es ist möglich einen N element zu finden",
-        "ru": "Можно находить не только первое вхождение элемента",
-        "pt": "Permite definir o número de item encontrado",
-        "nl": "Laat het aantal gevonden item",
-        "fr": "Permettent de définir le nombre d'élément trouvé",
-        "it": "Consentono di impostare il numero di elemento trovato",
-        "es": "Permiten establecer el número de elemento encontrado",
-        "pl": "Pozwalają ustawić ilość znalezionego elementu",
-        "zh-cn": "允许设定的数量找到的项目"
       }
     },
     "title": "Parser",

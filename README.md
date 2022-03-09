@@ -107,8 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.2 (2022-03-09)
 * (Apollon77) Fix initialization of new parser objects
 
 ### 1.1.1 (2022-03-07)
