@@ -107,6 +107,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Fix initialization of new parser objects
+
 ### 1.1.1 (2022-03-07)
 * IMPORTANT: js-controller 2.0 is required at least now!
 * (Apollon77) ignore self signed ssl certificates

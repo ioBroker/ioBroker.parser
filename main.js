@@ -37,8 +37,13 @@ adapter.on('objectChange', (id, obj) => {
 
         if (!states[id]) {
             adapter.log.info(`Parser object ${id} added`);
-            states[id] = Object.assign(states[id], obj);
-            initPoll(states[id], false);
+            adapter.getState(id, (err, state) => {
+                states[id] = obj;
+                states[id].value = state || {val: null};
+                if (initPoll(states[id], false)) {
+                    poll(timers[obj.native.interval].interval); // new timer, so start initially once
+                }
+            });
         } else {
             if (states[id].native.interval !== obj.native.interval) {
                 adapter.log.info(`Parser object ${id} interval changed`);
@@ -69,7 +74,7 @@ adapter.on('message', obj => {
     }
 });
 
-function initPoll(obj, update) {
+function initPoll(obj, onlyUpdate) {
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
 
     if (!obj.native.regex) obj.native.regex = '.+';
@@ -102,17 +107,19 @@ function initPoll(obj, update) {
         obj.native.link = obj.native.link.replace(/\\/g, '/');
     }
 
-    if (!update) {
+    if (!onlyUpdate) {
         if (!timers[obj.native.interval]) {
             timers[obj.native.interval] = {
                 interval: obj.native.interval,
                 count: 1,
                 timer: setInterval(poll, obj.native.interval, obj.native.interval)
             };
+            return true;
         } else {
             timers[obj.native.interval].count++;
         }
     }
+    return false;
 }
 
 function deletePoll(obj) {
