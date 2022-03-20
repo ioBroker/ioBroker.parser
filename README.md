@@ -107,6 +107,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) if regex did not match set defined replacement value (or null)
+
 ### 1.1.2 (2022-03-09)
 * (Apollon77) Fix initialization of new parser objects
 

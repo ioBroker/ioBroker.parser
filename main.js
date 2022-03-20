@@ -196,7 +196,7 @@ function analyseData(obj, data, error, callback) {
                     obj.value.val = obj.native.substitute;
                 }
 
-                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=Error');
+                adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=Error`);
                 adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
             } else if (callback) {
                 callback();
@@ -223,7 +223,21 @@ function analyseData(obj, data, error, callback) {
             } else  {
                 newVal = m.length > 1 ? m[1] : m[0];
 
-                if (obj.common.type === 'number') {
+                if (newVal === undefined) {
+                    adapter.log.info(`Regex didn't matched for ${obj._id}, old=${obj.value.val}`)
+                    if (obj.native.substituteOld) {
+                        return callback && callback ();
+                    }
+                    if (obj.value.q !== 0x82) {
+                        obj.value.q = 0x82;
+                        obj.value.ack = true;
+                        if (obj.native.substitute !== undefined) {
+                            obj.value.val = obj.native.substitute;
+                        } else {
+                            obj.value.val = null; // undefined is now allowed
+                        }
+                    }
+                } else if (obj.common.type === 'number') {
                     const comma = obj.native.comma;
                     if (!comma) newVal = newVal.replace(/,/g, '');
                     if (comma) {
