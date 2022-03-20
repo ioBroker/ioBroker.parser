@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "news": {
+      "1.1.3": {
+        "en": "if regex did not match set defined replacement value (or null)",
+        "de": "wenn Regex nicht übereinstimmte definierter Ersatzwert gesetzt (oder null)",
+        "ru": "если регулярное выражение не соответствует заданному значению замены (или null)",
+        "pt": "se regex não correspondeu ao valor de substituição definido definido (ou nulo)",
+        "nl": "als regex niet overeenkomt met de ingestelde vervangingswaarde (of null)",
+        "fr": "si regex ne correspond pas à la valeur de remplacement définie définie (ou nulle)",
+        "it": "se regex non corrispondeva imposta il valore di sostituzione definito (o null)",
+        "es": "si la expresión regular no coincide con el valor de reemplazo definido establecido (o nulo)",
+        "pl": "jeśli wyrażenie regularne nie pasuje do ustawionej zdefiniowanej wartości zastępczej (lub null)",
+        "zh-cn": "如果正则表达式不匹配设置定义的替换值（或 null）"
+      },
       "1.1.2": {
         "en": "Fix initialization of new parser objects",
         "de": "Korrigieren Sie die Initialisierung neuer Parser-Objekte",
@@ -74,18 +86,6 @@
         "es": "Se corrigieron las iteraciones en la expresión regular",
         "pl": "Iteracje w regex zostały poprawione",
         "zh-cn": "迭代regex进行了修正"
-      },
-      "1.0.1": {
-        "en": "Added additional option: old value",
-        "de": "Zusätzliche Option hinzugefügt: altes Wert",
-        "ru": "Добавлена дополнительная опция: прошлое значение",
-        "pt": "Adicionado opção adicional: valor antigo",
-        "nl": "Extra optie: oude waarde",
-        "fr": "A ajouté une option supplémentaire: l'ancienne valeur",
-        "it": "Aggiunto opzione aggiuntiva: il vecchio valore",
-        "es": "Añadido opción adicional: valor antiguo",
-        "pl": "Dodano dodatkowe opcje: stare wartość",
-        "zh-cn": "增加了额外的选项：旧价值"
       }
     },
     "title": "Parser",
