@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "news": {
+      "1.1.4": {
+        "en": "Fix crash case reported by Sentry",
+        "de": "Absturzfall behoben, der von Sentry gemeldet wurde",
+        "ru": "Исправить случай сбоя, о котором сообщил Sentry",
+        "pt": "Corrigir caso de falha relatado pelo Sentinela",
+        "nl": "Herstel crashgeval gemeld door Sentry",
+        "fr": "Correction d'un cas de crash signalé par Sentry",
+        "it": "Risolto il caso di crash segnalato da Sentry",
+        "es": "Solucionar caso de bloqueo informado por Sentry",
+        "pl": "Napraw przypadek awarii zgłoszony przez Sentry",
+        "zh-cn": "修复 Sentry 报告的崩溃案例"
+      },
       "1.1.3": {
         "en": "if regex did not match set defined replacement value (or null)",
         "de": "wenn Regex nicht übereinstimmte definierter Ersatzwert gesetzt (oder null)",
@@ -74,18 +86,6 @@
         "es": "Búsqueda multilínea permitida",
         "pl": "Dopuszczalne jest wyszukiwanie wielowierszowe",
         "zh-cn": "多线索允许"
-      },
-      "1.0.2": {
-        "en": "Iterations in regex were corrected",
-        "de": "Iterationen in Regex wurden korrigiert",
-        "ru": "Исправлены итерации в регулярном выражении",
-        "pt": "Iterações na regex foram corrigidas",
-        "nl": "Iteraties in regex werden gecorrigeerd",
-        "fr": "Les itérations en regex ont été corrigées",
-        "it": "Le iterazioni in regex sono state corrette",
-        "es": "Se corrigieron las iteraciones en la expresión regular",
-        "pl": "Iteracje w regex zostały poprawione",
-        "zh-cn": "迭代regex进行了修正"
       }
     },
     "title": "Parser",
