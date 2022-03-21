@@ -18,7 +18,7 @@ adapter.on('stateChange', (id, state) => {
     adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
 
     // output to parser
-    if (states[id] && states[id].common.write) {
+    if (states[id] && states[id].common && states[id].common.write) {
 
     }
 });
@@ -155,7 +155,7 @@ function analyseDataForStates(curStates, link, data, error, callback) {
 
     const linkStates = [];
     for (let i = 0; i < curStates.length; i++) {
-        if (states[curStates[i]].native.link === link) {
+        if (states[curStates[i]] && states[curStates[i]].native.link === link) {
             linkStates.push(curStates[i]);
         }
     }
