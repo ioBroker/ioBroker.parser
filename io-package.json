@@ -123,7 +123,6 @@
     "messagebox": true,
     "materialize": true,
     "icon": "parser.png",
-    "webExtension": "lib/parser.js",
     "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
     "keywords": [
       "url",
