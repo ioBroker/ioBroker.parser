@@ -107,6 +107,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Ignore objects without configuration for parser and log it
+
 ### 1.1.4 (2022-03-21)
 * (Apollon77) Fix crash case reported by Sentry
 

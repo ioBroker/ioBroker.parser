@@ -32,6 +32,11 @@ adapter.on('objectChange', (id, obj) => {
             delete states[id];
         }
     } else {
+        if (!obj.native) {
+            adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
+            return;
+        }
+
         if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
         obj.native.interval = parseInt(obj.native.interval, 10);
 
@@ -75,6 +80,11 @@ adapter.on('message', obj => {
 });
 
 function initPoll(obj, onlyUpdate) {
+    if (!obj.native) {
+        adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
+        return;
+    }
+
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
 
     if (!obj.native.regex) obj.native.regex = '.+';
