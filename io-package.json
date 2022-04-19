@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "news": {
+      "1.1.5": {
+        "en": "Ignore objects without configuration for parser and log it",
+        "de": "Objekte ohne Konfiguration für Parser ignorieren und protokollieren",
+        "ru": "Игнорировать объекты без конфигурации для парсера и логировать это",
+        "pt": "Ignore objetos sem configuração para analisador e registre-os",
+        "nl": "Negeer objecten zonder configuratie voor parser en log het in",
+        "fr": "Ignorer les objets sans configuration pour l'analyseur et le consigner",
+        "it": "Ignora gli oggetti senza configurazione per il parser e registralo",
+        "es": "Ignorar objetos sin configuración para el analizador y registrarlo",
+        "pl": "Ignoruj obiekty bez konfiguracji dla parsera i loguj je",
+        "zh-cn": "忽略没有解析器配置的对象并记录它"
+      },
       "1.1.4": {
         "en": "Fix crash case reported by Sentry",
         "de": "Absturzfall behoben, der von Sentry gemeldet wurde",
@@ -74,18 +86,6 @@
         "es": "Se corrigieron los valores sustitutos de las cadenas",
         "pl": "Zastępczy wartości dla ciągów zostały naprawione",
         "zh-cn": "替代值串是固定的"
-      },
-      "1.0.5": {
-        "en": "Multi-line search allowed",
-        "de": "Mehrzeilige Suche erlaubt",
-        "ru": "Разрешен многострочный поиск",
-        "pt": "Pesquisa em várias linhas permitida",
-        "nl": "Multi-line search toegestaan",
-        "fr": "Recherche multiligne autorisée",
-        "it": "Ricerca multilinea consentita",
-        "es": "Búsqueda multilínea permitida",
-        "pl": "Dopuszczalne jest wyszukiwanie wielowierszowe",
-        "zh-cn": "多线索允许"
       }
     },
     "title": "Parser",

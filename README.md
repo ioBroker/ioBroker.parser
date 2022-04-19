@@ -107,8 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.5 (2022-04-19)
 * (Apollon77) Ignore objects without configuration for parser and log it
 
 ### 1.1.4 (2022-03-21)
