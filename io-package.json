@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "news": {
+      "1.1.6": {
+        "en": "Set method to \"GET\" when requesting URLs",
+        "de": "Setzen Sie die Methode auf \"GET\", wenn Sie URLs anfordern",
+        "ru": "Установите метод «GET» при запросе URL-адресов",
+        "pt": "Defina o método como \"GET\" ao solicitar URLs",
+        "nl": "Stel methode in op \"GET\" bij het opvragen van URL's",
+        "fr": "Définir la méthode sur \"GET\" lors de la demande d'URL",
+        "it": "Imposta il metodo su \"GET\" quando richiedi gli URL",
+        "es": "Establezca el método en \"GET\" al solicitar URL",
+        "pl": "Ustaw metodę na „GET” podczas żądania adresów URL",
+        "zh-cn": "请求 URL 时将方法设置为“GET”"
+      },
       "1.1.5": {
         "en": "Ignore objects without configuration for parser and log it",
         "de": "Objekte ohne Konfiguration für Parser ignorieren und protokollieren",
@@ -74,18 +86,6 @@
         "es": "La coma se reemplazará automáticamente por punto para el desplazamiento y para el factor",
         "pl": "Przecinek zostanie automatycznie zastąpiony przez punkt przesunięcia i współczynnik",
         "zh-cn": "逗号将自动替换的点偏及的因素"
-      },
-      "1.0.6": {
-        "en": "Substitute values for strings were fixed",
-        "de": "Ersatzwerte für Strings wurden behoben",
-        "ru": "Заменяемые значения для строк были исправлены",
-        "pt": "Valores substitutos para cadeias de caracteres foram corrigidos",
-        "nl": "Vervangende waarden voor tekenreeksen zijn opgelost",
-        "fr": "Les valeurs de remplacement pour les chaînes ont été fixées",
-        "it": "I valori sostitutivi per le stringhe sono stati corretti",
-        "es": "Se corrigieron los valores sustitutos de las cadenas",
-        "pl": "Zastępczy wartości dla ciągów zostały naprawione",
-        "zh-cn": "替代值串是固定的"
       }
     },
     "title": "Parser",

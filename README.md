@@ -107,8 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.6 (2022-05-28)
 * (Apollon77) Set method to "GET" when requesting URLs
 
 ### 1.1.5 (2022-04-19)
