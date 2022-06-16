@@ -107,6 +107,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Fix potential crash cases reported by Sentry
+
 ### 1.1.6 (2022-05-28)
 * (Apollon77) Set method to "GET" when requesting URLs
 

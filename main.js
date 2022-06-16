@@ -113,7 +113,7 @@ function initPoll(obj, onlyUpdate) {
     obj.native.item   = parseFloat(obj.native.item)   || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
 
-    if (!obj.native.link.match(/^https?:\/\//)) {
+    if (!obj.native.link || !obj.native.link.match(/^https?:\/\//)) {
         obj.native.link = obj.native.link.replace(/\\/g, '/');
     }
 
@@ -319,12 +319,16 @@ function readLink(link, callback) {
         request = request || require('request');
 
         adapter.log.debug('Request URL: ' + link);
-        request({
-            method: 'GET',
-            url: link,
-            rejectUnauthorized: false,
-            timeout: 60000
-        }, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
+        try {
+            request({
+                method: 'GET',
+                url: link,
+                rejectUnauthorized: false,
+                timeout: 60000
+            }, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
+        } catch (err) {
+            callback(err);
+        }
     } else {
         path = path || require('path');
         fs   = fs   || require('fs');
@@ -379,8 +383,18 @@ function main() {
 
     // read current existing objects (прочитать текущие существующие объекты)
     adapter.getForeignObjects(adapter.namespace + '.*', 'state', (err, _states) => {
+        if (err) {
+            adapter.log.error('Cannot get objects: ' + err.message);
+            adapter.stop();
+            return;
+        }
         states = _states;
         adapter.getForeignStates(adapter.namespace + '.*', (err, values) => {
+            if (err) {
+                adapter.log.error('Cannot get state values: ' + err.message);
+                adapter.stop();
+                return;
+            }
             // subscribe on changes
             adapter.subscribeStates('*');
             adapter.subscribeObjects('*');
