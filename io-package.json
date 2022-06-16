@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "news": {
+      "1.1.7": {
+        "en": "Fix potential crash cases reported by Sentry",
+        "de": "Behebt mögliche Crashfälle, die von Sentry gemeldet wurden",
+        "ru": "Исправление потенциальных аварийных случаев, сообщенных Sentry",
+        "pt": "Corrigir casos potenciais de acidente relatados pela Sentry",
+        "nl": "Vertaling:",
+        "fr": "Correction des cas de crash potentiels signalés par Sentry",
+        "it": "Fissare potenziali casi di crash segnalati da Sentry",
+        "es": "Fijar posibles casos de accidentes reportados por Sentry",
+        "pl": "Fixowe przypadki katastrofy (ang.)",
+        "zh-cn": "Sentry报告的潜在事故"
+      },
       "1.1.6": {
         "en": "Set method to \"GET\" when requesting URLs",
         "de": "Setzen Sie die Methode auf \"GET\", wenn Sie URLs anfordern",
@@ -74,18 +86,6 @@
         "es": "IMPORTANTE: ¡Se requiere js-controller 2.0 al menos ahora!\nignorar los certificados SSL autofirmados\nasegúrese de que los cambios de objetos no bloqueen más actualizaciones de valores\nAgregue Sentry para obtener informes de fallas",
         "pl": "WAŻNE: js-controller 2.0 jest wymagany przynajmniej teraz!\nzignoruj samopodpisane certyfikaty ssl\nupewnij się, że zmiany obiektów nie blokują dalszych aktualizacji wartości\nDodaj Sentry, aby otrzymywać raporty o awariach",
         "zh-cn": "重要提示：至少现在需要 js-controller 2.0！\n忽略自签名 ssl 证书\n确保对象更改不会阻止值的进一步更新\n添加 Sentry 以获取崩溃报告"
-      },
-      "1.0.7": {
-        "en": "Comma will be replaced automatically by point for the offset and for the factor",
-        "de": "Komma wird automatisch durch Punkt für den Offset und für den Faktor ersetzt",
-        "ru": "Comma будет автоматически заменена точкой для смещения и для коэффициента",
-        "pt": "Vírgula será substituída automaticamente por ponto para o deslocamento e para o fator",
-        "nl": "Komma wordt automatisch vervangen door een punt voor de offset en voor de factor",
-        "fr": "La virgule sera automatiquement remplacée par un point pour le décalage et pour le facteur",
-        "it": "Virgola verrà sostituita automaticamente dal punto per l'offset e per il fattore",
-        "es": "La coma se reemplazará automáticamente por punto para el desplazamiento y para el factor",
-        "pl": "Przecinek zostanie automatycznie zastąpiony przez punkt przesunięcia i współczynnik",
-        "zh-cn": "逗号将自动替换的点偏及的因素"
       }
     },
     "title": "Parser",
