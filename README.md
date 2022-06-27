@@ -107,8 +107,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.8 (2022-06-27)
 * (Apollon77) Check that a link is configured
 
 ### 1.1.7 (2022-06-16)
