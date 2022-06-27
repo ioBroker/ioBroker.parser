@@ -107,6 +107,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Check that a link is configured
+
 ### 1.1.7 (2022-06-16)
 * (Apollon77) Fix potential crash cases reported by Sentry
 

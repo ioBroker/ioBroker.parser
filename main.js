@@ -82,7 +82,7 @@ adapter.on('message', obj => {
 function initPoll(obj, onlyUpdate) {
     if (!obj.native) {
         adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
-        return;
+        return false;
     }
 
     if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
@@ -113,7 +113,10 @@ function initPoll(obj, onlyUpdate) {
     obj.native.item   = parseFloat(obj.native.item)   || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
 
-    if (!obj.native.link || !obj.native.link.match(/^https?:\/\//)) {
+    if (!obj.native.link) {
+        adapter.log.warn(`No link configured for ${obj._id}, ignoring it`);
+        return false;
+    } else if (!obj.native.link.match(/^https?:\/\//)) {
         obj.native.link = obj.native.link.replace(/\\/g, '/');
     }
 
