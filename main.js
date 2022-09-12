@@ -137,6 +137,7 @@ function initPoll(obj, onlyUpdate) {
 }
 
 function deletePoll(obj) {
+    if (timers[obj.native.interval] === undefined) return;
     timers[obj.native.interval].count--;
     if (!timers[obj.native.interval].count) {
         clearInterval(timers[obj.native.interval]);
