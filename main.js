@@ -5,7 +5,8 @@
 // you have to require the utils module and call adapter function
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const adapter  = new utils.Adapter('parser');
-let request;
+const https = require('https');
+let axios;
 let path;
 let fs;
 let states;
@@ -317,18 +318,23 @@ function analyseData(obj, data, error, callback) {
 }
 
 
-function readLink(link, callback) {
+async function readLink(link, callback) {
     if (link.match(/^https?:\/\//)) {
-        request = request || require('request');
+        axios = axios || require('axios');
 
         adapter.log.debug('Request URL: ' + link);
         try {
-            request({
+            const res = await axios({
                 method: 'GET',
                 url: link,
-                rejectUnauthorized: false,
-                timeout: 60000
-            }, (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link));
+                httpsAgent: new https.Agent({
+                    rejectUnauthorized: adapter.config.acceptInvalidCertificates === false
+                }),
+                insecureHTTPParser: !!adapter.config.useInsecureHTTPParser,
+                timeout: adapter.config.requestTimeout
+            });
+            callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
+            // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
         } catch (err) {
             callback(err);
         }
@@ -383,6 +389,7 @@ const timers = {};
 
 function main() {
     adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
+    adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
 
     // read current existing objects (прочитать текущие существующие объекты)
     adapter.getForeignObjects(adapter.namespace + '.*', 'state', (err, _states) => {

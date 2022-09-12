@@ -135,6 +135,11 @@
         "js-controller": ">=2.0.0"
       }
     ],
+    "globalDependencies": [
+      {
+        "admin": ">=3.0.0"
+      }
+    ],
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
     "type": "logic",
     "plugins": {
@@ -147,6 +152,9 @@
     "tier": 3
   },
   "native": {
-    "pollInterval": "5000"
+    "pollInterval": "5000",
+    "requestTimeout": "60000",
+    "acceptInvalidCertificates": true,
+    "useInsecureHTTPParser": false
   }
 }

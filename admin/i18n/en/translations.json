@@ -39,5 +39,8 @@
     "string": "string",
     "switch": "switch",
     "temperature": "temperature",
-    "value": "value"
+    "value": "value",
+    "Request Timeout": "Request Timeout",
+    "Accept invalid certificates": "Accept invalid certificates",
+    "Use insecure HTTP parser": "Use insecure HTTP parser"
 }

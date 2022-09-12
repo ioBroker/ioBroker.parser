@@ -577,6 +577,21 @@
                     <label for="pollInterval" class="translate">Default poll interval: </label>
                     <span class="translate">ms</span>
                 </div>
+                <div class="input-field col s12 m6 l5">
+                    <input class="value" type="number" min="100" id="requestTimeout"/>
+                    <label for="requestTimeout" class="translate">Request Timeout</label>
+                    <span class="translate">ms</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6 l5">
+                    <input class="value" type="checkbox" id="acceptInvalidCertificates"/>
+                    <label for="acceptInvalidCertificates" class="translate">Accept invalid certificates</label>
+                </div>
+                <div class="input-field col s12 m6 l5">
+                    <input class="value" type="checkbox" id="useInsecureHTTPParser"/>
+                    <label for="useInsecureHTTPParser" class="translate">Use insecure HTTP parser</label>
+                </div>
             </div>
             <div class="row">
                 <div class="col s12" id="values">
