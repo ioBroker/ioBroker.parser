@@ -120,7 +120,7 @@ Values can have quality codes:
 
 ### __WORK IN PROGRESS__
 * (Apollon77) Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)
-* (Apollon77) Allow to specify if an "insecure HTTP parser" is used which also enables HTTP implemenations that are not compliant to specifications
+* (Apollon77) Allow to specify if an "insecure HTTP parser" is used which also enables HTTP implementations that are not compliant to specifications
 * (Apollon77) Allow to specify the HTTP request timeout
 
 ### 1.1.8 (2022-06-27)
