@@ -197,12 +197,12 @@ function analyseData(obj, data, error, callback) {
     let newVal;
     if (error) {
         if (obj.native.substituteOld) {
-            adapter.log.warn('Cannot read link "' + obj.native.link + '": ' + error);
+            adapter.log.info('Cannot read link "' + obj.native.link + '": ' + error);
             if (callback) {
                 callback();
             }
         } else {
-            adapter.log.error('Cannot read link "' + obj.native.link + '": ' + error);
+            adapter.log.warn('Cannot read link "' + obj.native.link + '": ' + error);
             if (obj.value.q !== 0x82) {
                 obj.value.q   = 0x82;
                 obj.value.ack = true;
@@ -300,7 +300,7 @@ function analyseData(obj, data, error, callback) {
                         obj.value.q   = 0x44;
                         obj.value.ack = true;
                         if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
-                        console.log('USe subs: "' + obj.native.substitute + '"');
+                        console.log('Use substitution: "' + obj.native.substitute + '"');
 
                         adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                     } else if (callback) {
@@ -336,7 +336,7 @@ async function readLink(link, callback) {
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
         } catch (err) {
-            callback(err);
+            callback(err.data ? err.data : err, null, link);
         }
     } else {
         path = path || require('path');
@@ -351,7 +351,7 @@ async function readLink(link, callback) {
             try {
                 data = fs.readFileSync(link).toString('utf8');
             } catch (e) {
-                adapter.log.error('Cannot read file "' + link + '": ' + e);
+                adapter.log.warn('Cannot read file "' + link + '": ' + e);
                 callback(e, null, link);
                 return;
             }
