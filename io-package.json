@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.1.8",
+    "version": "1.2.0",
     "news": {
+      "1.2.0": {
+        "en": "Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)\nAllow to specify if an \"insecure HTTP parser\" is used which also enables HTTP implementations that are not compliant to specifications\nAllow to specify the HTTP request timeout",
+        "de": "Geben Sie an, ob selbstsignierte/ungültige SSL-Zertifikate ignoriert oder nicht (Standard ist, wie bisher ignoriert)\nGeben Sie an, ob ein \"unsicherer HTTP-Parser\" verwendet wird, der auch HTTP-Implementierungen ermöglicht, die nicht den Spezifikationen entsprechen\nErlauben Sie, den HTTP-Anforderungszeitpunkt anzugeben",
+        "ru": "Разрешить указать, если самоподписанные / недействительные SSL сертификаты игнорируются или нет (по умолчанию не следует игнорировать, как до сих пор)\nРазрешить указать, используется ли «небезопасный HTTP-парсер», что также позволяет HTTP-реализациям, которые не соответствуют спецификациям\nРазрешить указать timeout запроса HTTP",
+        "pt": "Permitir especificar se certificados SSL auto-assinados/inválidos são ignorados ou não (o padrão é ignorar como até agora)\nPermitir especificar se um \"parser HTTP inseguro\" é usado que também permite implementações HTTP que não estão em conformidade com as especificações\nPermitir especificar o prazo de solicitação HTTP",
+        "nl": "Sta toe te specificeren of zelf toegewezen/invalide SSL certificaten worden genegeerd of niet (default is om te negeren als tot nu toe\nOm te specificeren of een \"onduidelijke HTP-papieren\" gebruikt wordt, die ook HTP implementaties in staat stelt die niet compliceren voor specifieke details\nMag ik de HTP verzoeken verlenen",
+        "fr": "Permettre de spécifier si les certificats SSL autosignés/invalides sont ignorés ou non (par défaut, il faut ignorer comme maintenant)\nPermet de spécifier si un \"Parser HTTP insecure\" est utilisé qui permet également des implémentations HTTP qui ne sont pas conformes aux spécifications\nPermet de spécifier le délai de requête HTTP",
+        "it": "Consentire di specificare se i certificati SSL auto-firmati/non validi vengono ignorati o meno (default deve ignorare fino ad ora)\nConsentire di specificare se viene utilizzato un \"insecure HTTP parser\" che consente anche implementazioni HTTP che non sono conformi alle specifiche\nConsentire di specificare il timeout della richiesta HTTP",
+        "es": "Permitir especificar si los certificados SSL auto-firmados o inválidos son ignorados o no (por defecto es ignorar como hasta ahora)\nPermitir especificar si se utiliza un \"paraser HTTP seguro\" que también permite implementaciones HTTP que no cumplen con las especificaciones\nPermitir especificar el tiempo de solicitud HTTP",
+        "pl": "Określenie, jeśli podpisywane certyfikaty SSL są ignorowane lub nie (obrona jest ignorowana jak do dziś)\nAllow do specyfikowania, jeśli używa się \"niebezpiecznego HTTP parser\", co umożliwia również implementacje HTTP, które nie są zgodne z specyfikacją\nAllow, aby zdefiniować HTTP żądanie czasu dostępu",
+        "zh-cn": "请允许我具体说明,如果自我设计/自评的SSL证书遭到忽视或不(现在的意外情况是忽视)\n允许具体说明是否使用了“无保障的HTTP parser”,这也使不符合规格的技术转让中心得以实施。\n允许具体说明海贸总协定要求的时间"
+      },
       "1.1.8": {
         "en": "Check that a link is configured",
         "de": "Überprüfen Sie, ob ein Link konfiguriert ist",
@@ -74,18 +86,6 @@
         "es": "si la expresión regular no coincide con el valor de reemplazo definido establecido (o nulo)",
         "pl": "jeśli wyrażenie regularne nie pasuje do ustawionej zdefiniowanej wartości zastępczej (lub null)",
         "zh-cn": "如果正则表达式不匹配设置定义的替换值（或 null）"
-      },
-      "1.1.2": {
-        "en": "Fix initialization of new parser objects",
-        "de": "Korrigieren Sie die Initialisierung neuer Parser-Objekte",
-        "ru": "Исправить инициализацию новых объектов парсера",
-        "pt": "Corrige a inicialização de novos objetos do analisador",
-        "nl": "Initialisatie van nieuwe parser-objecten repareren",
-        "fr": "Correction de l'initialisation des nouveaux objets d'analyseur",
-        "it": "Correzione dell'inizializzazione di nuovi oggetti parser",
-        "es": "Arreglar la inicialización de nuevos objetos del analizador.",
-        "pl": "Napraw inicjalizację nowych obiektów parsera",
-        "zh-cn": "修复新解析器对象的初始化"
       }
     },
     "title": "Parser",
