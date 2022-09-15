@@ -332,7 +332,9 @@ async function readLink(link, callback) {
                     rejectUnauthorized: adapter.config.acceptInvalidCertificates === false
                 }),
                 insecureHTTPParser: !!adapter.config.useInsecureHTTPParser,
-                timeout: adapter.config.requestTimeout
+                timeout: adapter.config.requestTimeout,
+                transformResponse: [], // do not have any JSON parsing or such
+                responseType: 'text'
             });
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)

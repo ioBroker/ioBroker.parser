@@ -117,6 +117,10 @@ Values can have quality codes:
 
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Always use raw response and not try to parse it
+
 ### 1.2.0 (2022-09-12)
 * (Apollon77) Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)
 * (Apollon77) Allow to specify if an "insecure HTTP parser" is used which also enables HTTP implementations that are not compliant to specifications
