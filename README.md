@@ -117,8 +117,7 @@ Values can have quality codes:
 
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.2.1 (2022-09-15)
 * (Apollon77) Always use raw response and not try to parse it
 
 ### 1.2.0 (2022-09-12)

@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "news": {
+      "1.2.1": {
+        "en": "Always use raw response and not try to parse it",
+        "de": "Verwenden Sie immer rohe Reaktion und nicht versuchen, es zu parse",
+        "ru": "Всегда используйте реагирование сырья и не пытайтесь его парсить",
+        "pt": "Sempre use a resposta crua e não tente analisá-la",
+        "nl": "Gebruik altijd rauwe reactie en probeer het niet te verdubbelen",
+        "fr": "Toujours utiliser la réponse brute et ne pas essayer de la parser",
+        "it": "Utilizzare sempre la risposta cruda e non cercare di analizzarlo",
+        "es": "Utilice siempre la respuesta cruda y no trate de analizarla",
+        "pl": "Zawsze wykorzystuje surową reakcję i nie starają się ją złożyć",
+        "zh-cn": "使用原始反应,不试图将其稀释。"
+      },
       "1.2.0": {
         "en": "Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)\nAllow to specify if an \"insecure HTTP parser\" is used which also enables HTTP implementations that are not compliant to specifications\nAllow to specify the HTTP request timeout",
         "de": "Geben Sie an, ob selbstsignierte/ungültige SSL-Zertifikate ignoriert oder nicht (Standard ist, wie bisher ignoriert)\nGeben Sie an, ob ein \"unsicherer HTTP-Parser\" verwendet wird, der auch HTTP-Implementierungen ermöglicht, die nicht den Spezifikationen entsprechen\nErlauben Sie, den HTTP-Anforderungszeitpunkt anzugeben",
@@ -74,18 +86,6 @@
         "es": "Solucionar caso de bloqueo informado por Sentry",
         "pl": "Napraw przypadek awarii zgłoszony przez Sentry",
         "zh-cn": "修复 Sentry 报告的崩溃案例"
-      },
-      "1.1.3": {
-        "en": "if regex did not match set defined replacement value (or null)",
-        "de": "wenn Regex nicht übereinstimmte definierter Ersatzwert gesetzt (oder null)",
-        "ru": "если регулярное выражение не соответствует заданному значению замены (или null)",
-        "pt": "se regex não correspondeu ao valor de substituição definido definido (ou nulo)",
-        "nl": "als regex niet overeenkomt met de ingestelde vervangingswaarde (of null)",
-        "fr": "si regex ne correspond pas à la valeur de remplacement définie définie (ou nulle)",
-        "it": "se regex non corrispondeva imposta il valore di sostituzione definito (o null)",
-        "es": "si la expresión regular no coincide con el valor de reemplazo definido establecido (o nulo)",
-        "pl": "jeśli wyrażenie regularne nie pasuje do ustawionej zdefiniowanej wartości zastępczej (lub null)",
-        "zh-cn": "如果正则表达式不匹配设置定义的替换值（或 null）"
       }
     },
     "title": "Parser",
