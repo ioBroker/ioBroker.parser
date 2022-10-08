@@ -382,15 +382,13 @@ function poll(interval, callback) {
     }
     adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
 
-    // RAR add delay test
-    const delayMs = 200;
     let delay = 0;
     for (let j = 0; j < curLinks.length; j++) {
         setTimeout((curLink, callback) => {
             adapter.log.debug('Do Link: ' + curLink);
             readLink(curLink, (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
         }, delay, curLinks[j], callback);
-        delay += delayMs;
+        delay += adapter.config.requestDelay;
     }
 }
 
@@ -399,6 +397,7 @@ const timers = {};
 function main() {
     adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
     adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
+    adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
 
     // read current existing objects (прочитать текущие существующие объекты)
     adapter.getForeignObjects(adapter.namespace + '.*', 'state', (err, _states) => {
