@@ -24,14 +24,17 @@ Do not use a too aggressive poll interval especially for website URLs. For examp
 ### 2. Request timeout
 Specify how long the adapter waits for an HTTP response when doing website queries
 
-### 3. Accept invalid certificates
+### 3. Delay between requests
+Specify how long the adapter waits between making HTTP requests when performing website queries. Useful when retrieving data from slow hosts or over slow connections to avoid overloading either one. Zero (default) means no delay.
+
+### 4. Accept invalid certificates
 Specify if self-signed/invalid SSL/TLS certificates are accepted or declined when doing HTTPS requests
 
-### 4. Use insecure HTTP parser
+### 5. Use insecure HTTP parser
 Specify to use an insecure HTTP parser that accepts invalid HTTP headers. This may allow interoperability with non-conformant HTTP implementations.
 Using the insecure parser should be avoided.
 
-### 5. Table
+### 6. Table
 Click the "Plus" button to add a new entry to the table.
 
 **Performance Note:**
