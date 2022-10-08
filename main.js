@@ -382,9 +382,15 @@ function poll(interval, callback) {
     }
     adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
 
+    // RAR add delay test
+    const delayMs = 200;
+    let delay = 0;
     for (let j = 0; j < curLinks.length; j++) {
-        adapter.log.debug('Do Link: ' + curLinks[j]);
-        readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
+        setTimeout((curLink, callback) => {
+            adapter.log.debug('Do Link: ' + curLink);
+            readLink(curLink, (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
+        }, delay, curLinks[j], callback);
+        delay += delayMs;
     }
 }
 
