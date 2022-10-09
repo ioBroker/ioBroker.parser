@@ -384,7 +384,7 @@ function poll(interval, callback) {
 
     let delay = 0;
     for (let j = 0; j < curLinks.length; j++) {
-        setTimeout((curLink, callback) => {
+        adapter.setTimeout((curLink, callback) => {
             adapter.log.debug('Do Link: ' + curLink);
             readLink(curLink, (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
         }, delay, curLinks[j], callback);
