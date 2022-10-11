@@ -318,9 +318,12 @@ function analyseData(obj, data, error, callback) {
     }
 }
 
+function isRemoteLink(link) {
+    return link.match(/^https?:\/\//);
+}
 
 async function readLink(link, callback) {
-    if (link.match(/^https?:\/\//)) {
+    if (isRemoteLink(link)) {
         axios = axios || require('axios');
 
         adapter.log.debug('Request URL: ' + link);
@@ -365,6 +368,60 @@ async function readLink(link, callback) {
     }
 }
 
+// Keep a per-host queue for remote requests
+
+const hostnamesQueue = [];
+const hostnamesRequestTime = [];
+function processRemoteQueue(hostname) {
+    hostnamesRequestTime[hostname] = new Date();
+    readLink(hostnamesQueue[hostname][0].link, hostnamesQueue[hostname][0].callback);
+}
+function addToRemoteQueue(link, callback) {
+    adapter.log.debug('Queue ' + link);
+    const url = new URL(link);
+
+    if (!(url.hostname in hostnamesQueue)) {
+        // No queue object yet, make one
+        adapter.log.debug('Creating request queue for ' + url.hostname);
+        hostnamesQueue[url.hostname] = [];
+    }
+    const requestQueue = hostnamesQueue[url.hostname];
+    requestQueue.push({
+        link: link,
+        callback: callback
+    });
+
+    if (requestQueue.length == 1) {
+        // First item in queue, process it. Otherwise will get done when current request is removed.
+        processRemoteQueue(url.hostname);
+    }
+}
+function removeFromRemoteQueue(link) {
+    adapter.log.debug('Dequeue ' + link);
+    const url = new URL(link);
+    const requestQueue = hostnamesQueue[url.hostname];
+
+    // Remove first entry (should be request that just finished)
+    requestQueue.shift();
+
+    // And process next request if there is one
+    if (requestQueue.length > 0) {
+        // Make sure correct delay has passed or wait until for that point
+        const delay = new Date() - hostnamesRequestTime[url.hostname];
+        adapter.log.debug('Next delay for ' + url.hostname + ' is ' + delay);
+        if (delay < adapter.config.requestDelay) {
+            adapter.setTimeout(processRemoteQueue, delay, url.hostname);
+        } else {
+            // Request already took longer than timeout so start instantly.
+            // Issue a warning because this means delay is probably too short.
+            adapter.log.warn('No delay before next request to ' + url.hostname);
+            processRemoteQueue(url.hostname);
+        }
+    } else {
+        adapter.log.debug('Request queue for ' + url.hostname + ' is now empty');
+    }
+}
+
 function poll(interval, callback) {
     let id;
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
@@ -382,13 +439,21 @@ function poll(interval, callback) {
     }
     adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
 
-    let delay = 0;
     for (let j = 0; j < curLinks.length; j++) {
-        adapter.setTimeout((curLink, callback) => {
-            adapter.log.debug('Do Link: ' + curLink);
-            readLink(curLink, (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
-        }, delay, curLinks[j], callback);
-        delay += adapter.config.requestDelay;
+        const thisLink = curLinks[j];
+        adapter.log.debug('Do Link: ' + thisLink);
+
+        if (isRemoteLink(thisLink) && adapter.config.requestDelay) {
+            // Queue handler...
+            addToRemoteQueue(thisLink, (error, text, link) => {
+                // Remove from queue before performing actual analyse callback
+                removeFromRemoteQueue(link);
+                analyseDataForStates(curStates, link, text, error, callback)
+            });
+        } else {
+            // Just read it instantly
+            readLink(thisLink, (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
+        }
     }
 }
 
