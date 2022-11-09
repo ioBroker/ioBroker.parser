@@ -364,15 +364,15 @@ async function readLink(link, callback) {
         fs   = fs   || require('fs');
         link = link.replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
-            link = path.normalize(__dirname + '/../../' + link);
+            link = path.normalize(`${__dirname}/../../${link}`);
         }
-        adapter.log.debug('Read file: ' + link);
+        adapter.log.debug(`Read file: ${link}`);
         if (fs.existsSync(link)) {
             let data;
             try {
                 data = fs.readFileSync(link).toString('utf8');
             } catch (e) {
-                adapter.log.warn('Cannot read file "' + link + '": ' + e);
+                adapter.log.warn(`Cannot read file "${link}": ${e}`);
                 callback(e, null, link);
                 return;
             }
