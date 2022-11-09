@@ -39,5 +39,9 @@
     "string": "chaîne",
     "switch": "commutateur",
     "temperature": "la température de",
-    "value": "valeur"
+    "value": "valeur",
+    "Request Timeout": "Délai d'expiration de la demande",
+    "Request Delay": "Délai de demande",
+    "Accept invalid certificates": "Accepter les certificats invalides",
+    "Use insecure HTTP parser": "Utiliser un analyseur HTTP non sécurisé"
 }

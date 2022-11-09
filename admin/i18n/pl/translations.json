@@ -39,5 +39,9 @@
     "string": "wiersz",
     "switch": "przełącznik",
     "temperature": "temperatura",
-    "value": "wartość"
+    "value": "wartość",
+    "Request Timeout": "Limit czasu żądania",
+    "Request Delay": "Opóźnienie żądania",
+    "Accept invalid certificates": "Zaakceptuj nieważne certyfikaty",
+    "Use insecure HTTP parser": "Użyj niezabezpieczonego parsera HTTP"
 }

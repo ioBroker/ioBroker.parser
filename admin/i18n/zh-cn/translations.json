@@ -39,5 +39,9 @@
     "string": "字符串",
     "switch": "开关",
     "temperature": "温度",
-    "value": "值"
+    "value": "值",
+    "Request Timeout": "请求超时",
+    "Request Delay": "请求延迟",
+    "Accept invalid certificates": "接受无效证书",
+    "Use insecure HTTP parser": "使用不安全的 HTTP 解析器"
 }

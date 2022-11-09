@@ -39,5 +39,9 @@
     "string": "string",
     "switch": "interruttore",
     "temperature": "temperatura",
-    "value": "valore"
+    "value": "valore",
+    "Request Timeout": "Richiedi timeout",
+    "Request Delay": "Richiedi ritardo",
+    "Accept invalid certificates": "Accetta certificati non validi",
+    "Use insecure HTTP parser": "Usa un parser HTTP non sicuro"
 }

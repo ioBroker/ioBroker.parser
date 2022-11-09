@@ -1,6 +1,6 @@
 ![Logo](admin/parser.png)
-ioBroker parser adapter
-=================
+# ioBroker parser adapter
+
 ![Number of Installations](http://iobroker.live/badges/parser-installed.svg)
 ![Number of Installations](http://iobroker.live/badges/parser-stable.svg)
 [![NPM version](http://img.shields.io/npm/v/iobroker.parser.svg)](https://www.npmjs.com/package/iobroker.parser)
@@ -29,7 +29,7 @@ Specify how long the adapter waits between making HTTP requests when performing 
 
 This delay is on a per-host basis. If remote queries are configured to fetch from multiple remote hosts each host will be queried in parallel.
 
-The delay is a minimum value between initiating each request. Ie. if a query takes longer than this delay parameter to be read, the next will start instantly the read completes.
+The delay is a minimum value between initiating each request. I.e. if a query takes longer than this delay parameter to be read, the next will start instantly the read completes.
 
 ### 4. Accept invalid certificates
 Specify if self-signed/invalid SSL/TLS certificates are accepted or declined when doing HTTPS requests
@@ -47,11 +47,11 @@ If you enter the same URL or filename more than once into different table rows, 
 **Table fields:**
 
 - ***Name*** - name of state that is being created under `parser.<instance number>`. Spaces are not allowed. You can use dots "." as separator to create sub folders. Example: `Shares.Microsoft.Current` will result in `parser.<instance number>.Shares.Micosoft.Current`.
-- ***URL or file name*** - either an URL of a website or the path to a file of which we want to retrieve information. Examples `https://darksky.net/forecast/48.1371,11.5754/si24/de` (weather information Munich), or `/opt/iobroker/test/testdata.txt` (file from within ioBroker).
+- ***URL or file name*** - either a URL of a website or the path to a file of which we want to retrieve information. Examples `https://darksky.net/forecast/48.1371,11.5754/si24/de` (weather information Munich), or `/opt/iobroker/test/testdata.txt` (file from within ioBroker).
 - ***RegEx*** - regular expression, how to extract data from link. There is a good service to test regula expressions: [regex101](https://regex101.com/). E.g. *temp swip">(-?\d+)˚<* for the line above.
 - ***Item*** (German: "Num") - a regex can find (match) multiple entries. With this option you can define which match to be chosen. 0 = first match, 1 = second match, 2 = third match, etc. Default is 0 (first match).
 - ***Role*** - one of the roles:
-    - custom - user defines itself via *admin" the role
+    - custom - user defines itself via *admin* the role
     - temperature - the value is temperature
     - value - the value is a number (e.g. dimmer)
     - blinds - the value is a blind position
@@ -63,7 +63,7 @@ If you enter the same URL or filename more than once into different table rows, 
 - ***Old***  - If activated, the state will *not* be updated if the value cannot be read or found in the provided date (URL or file), so it will keep the former value in this case.
 - ***Subs*** - Optional: substitute URL or file name. This substitute URL/filename will be used if the URL/file name of the first column is not available.
 - ***Factor/Offset*** (for "Type" numbers only) - allows to modify the retrieved data prior to set into the state: 
-*calculated value* = *extracted value* * factor + offset , to make immediately modifications of value
+  - *calculated value* = *extracted value* * factor + offset , to make immediately modifications of value
 - ***Interval*** - poll interval in ms (milliseconds). If blank or 0, the default poll interval will be used. Please see further information above.
 
 ## Sample settings
@@ -75,8 +75,6 @@ If you enter the same URL or filename more than once into different table rows, 
 | cpuTemperature    | `/sys/devices/virtual/thermal/thermal_zone0/temp`      | `(.*)`                  | temperature  | number  |  °C  | 30000    |
 | stockPrice.Visa    | `https://www.finanzen.net/aktien/visa-aktie`      | `\d{0,3},\d{2}(?=<span>EUR<\/span>)` | value  | number  |  €  | 86400000    |
 
-
-
 *Note:* While applying regex to the retrieved URL/file data, all line breaks will be replaced with spaces to allow multi-line search.
 
 ## About Regular expressions (RegExp)
@@ -87,7 +85,6 @@ For boolean types, the regex is rather simple. For numeric types, you should mar
 Further information on RegExp:
   * [MDN/Mozilla Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)
   * [regex101: online tool to create and test regular expressions](https://regex101.com/)
-
 
 ### Examples
 - *.at* matches any three-character string ending with "at", including "hat", "cat", and "bat".
@@ -119,11 +116,17 @@ Values can have quality codes:
 - 0x44 - Number or string value not found in the text
 
 ## Support
-1. General: [ioBroker Forum](https://forum.iobroker.net/). German speaking users: see [ioBroker forum thread Parser-Adapter](https://forum.iobroker.net/topic/4494/adapter-parser-regex).
+1. General: [ioBroker Forum](https://forum.iobroker.net/). German-speaking users: see [ioBroker forum thread Parser-Adapter](https://forum.iobroker.net/topic/4494/adapter-parser-regex).
 2. In case of any issues, please check out [ioBroker Parser Adapter: Github Issues](https://github.com/ioBroker/ioBroker.parser/issues).
 
-
+<!--
+	### **WORK IN PROGRESS**
+-->
 ## Changelog
+### **WORK IN PROGRESS**
+* (raintonr) added delay option for slow connections
+* (bluefox) added compact mode
+
 ### 1.2.1 (2022-09-15)
 * (Apollon77) Always use raw response and not try to parse it
 

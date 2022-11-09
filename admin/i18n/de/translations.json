@@ -39,5 +39,9 @@
     "string": "string",
     "switch": "Schalter",
     "temperature": "Temperature",
-    "value": "Wert"
+    "value": "Wert",
+    "Request Timeout": "Zeitüberschreitung der Anforderung",
+    "Request Delay": "Anfrageverzögerung",
+    "Accept invalid certificates": "Akzeptieren Sie ungültige Zertifikate",
+    "Use insecure HTTP parser": "Verwenden Sie einen unsicheren HTTP-Parser"
 }

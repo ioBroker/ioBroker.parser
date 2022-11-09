@@ -39,5 +39,9 @@
     "string": "cadeia",
     "switch": "mudar",
     "temperature": "temperatura",
-    "value": "valor"
+    "value": "valor",
+    "Request Timeout": "Solicitar tempo limite",
+    "Request Delay": "Solicitar atraso",
+    "Accept invalid certificates": "Aceitar certificados inválidos",
+    "Use insecure HTTP parser": "Usar analisador HTTP inseguro"
 }

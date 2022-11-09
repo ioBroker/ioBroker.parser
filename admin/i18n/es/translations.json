@@ -39,5 +39,9 @@
     "string": "cadena",
     "switch": "interruptor de",
     "temperature": "la temperatura",
-    "value": "valor"
+    "value": "valor",
+    "Request Timeout": "Pide tiempo fuera",
+    "Request Delay": "Solicitud de retraso",
+    "Accept invalid certificates": "Aceptar certificados no válidos",
+    "Use insecure HTTP parser": "Usar analizador HTTP inseguro"
 }

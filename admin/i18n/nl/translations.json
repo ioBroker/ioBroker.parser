@@ -39,5 +39,9 @@
     "string": "string",
     "switch": "switch",
     "temperature": "temperatuur",
-    "value": "waarde"
+    "value": "waarde",
+    "Request Timeout": "Verzoek time-out",
+    "Request Delay": "Verzoek vertraging",
+    "Accept invalid certificates": "Accepteer ongeldige certificaten",
+    "Use insecure HTTP parser": "Gebruik onveilige HTTP-parser"
 }

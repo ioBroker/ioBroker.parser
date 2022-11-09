@@ -35,13 +35,21 @@
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
   },
   "main": "main.js",
+  "files": [
+    "admin/",
+    "docs/",
+    "main.js",
+    "LICENSE",
+    "io-package.json"
+  ],
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
-    "translate": "translate-adapter"
+    "translate": "translate-adapter",
+    "i18n2words": "node words.js"
   },
   "license": "MIT"
 }

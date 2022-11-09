@@ -10,27 +10,25 @@
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
     <script type="text/javascript" src="words.js"></script>
-
-
-<style>
-    .error {
-        border: 1px solid red;
-    }
-    #dialog-test {
-        top: 1em !important;
-        height: calc(100% - 6em) !important;
-        width: calc(100% - 4em) !important;
-        max-height: 700px !important;
-    }
-    #dialog-test .row {
-        margin-bottom: 0;
-    }
-</style>
+    <style>
+        .error {
+            border: 1px solid red;
+        }
+        #dialog-test {
+            top: 1em !important;
+            height: calc(100% - 6em) !important;
+            width: calc(100% - 4em) !important;
+            max-height: 700px !important;
+        }
+        #dialog-test .row {
+            margin-bottom: 0;
+        }
+    </style>
 
 <script type="text/javascript">
     var values = [];
 
-    jQuery.fn.scrollToText = function(start, len) {
+    jQuery.fn.scrollToText = function (start, len) {
         var end = start + len;
         var e = $(this)[0]; // I don't know why... but $(this) don't want to work today :-/
         if (!e) return;
@@ -40,7 +38,6 @@
         else if (e.selectionStart) { e.selectionStart = start; e.selectionEnd = end; }
 
         return false;
-
     };
 
     function _showResult() {
@@ -228,7 +225,6 @@
                 M.updateTextFields('#dialog-test');
             });
 
-
             $dialog.modal();
         }
 
@@ -254,7 +250,9 @@
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
-        if (!settings) return;
+        if (!settings) {
+            return;
+        }
 
         $('.config-form .value').each(function () {
             var key = $(this).attr('id');
@@ -278,7 +276,7 @@
 
         var namespace = adapter + '.' + instance + '.';
 
-        socket.emit('getObjectView', 'system', 'state', {startkey: namespace, endkey: namespace + '\u9999'}, function (err, res) {
+        socket.emit('getObjectView', 'system', 'state', { startkey: namespace, endkey: namespace + '\u9999' }, function (err, res) {
             if (!err && res) {
                 for (var i = 0; i < res.rows.length; i++) {
                     var obj = res.rows[i].value;
@@ -656,25 +654,25 @@
             <div class="row">
                 <div class="input-field col s6 l3">
                     <input id="dialog-edit-substitute" class="test-input" type="text" data-name="substitute"/>
-                    <label for="dialog-edit-substitute"     class="translate">Substitute</label>
+                    <label for="dialog-edit-substitute" class="translate">Substitute</label>
                 </div>
                 <div class="input-field col s6 l3">
                     <input id="dialog-edit-item" class="test-input" type="number" data-name="item"/>
-                    <label for="dialog-edit-item"           class="translate">Item</label>
+                    <label for="dialog-edit-item" class="translate">Item</label>
                 </div>
                 <div class="input-field col s6 l3">
                     <input id="dialog-edit-factor" class="test-input" type="text" data-name="factor"/>
-                    <label for="dialog-edit-factor"         class="translate">Factor</label>
+                    <label for="dialog-edit-factor" class="translate">Factor</label>
                 </div>
                 <div class="input-field col s6 l3">
                     <input id="dialog-edit-offset" class="test-input" type="text" data-name="offset"/>
-                    <label for="dialog-edit-offset"         class="translate">Offset</label>
+                    <label for="dialog-edit-offset" class="translate">Offset</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s11">
                     <input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"/>
-                    <label for="dialog-edit-regex"          class="translate">RegEx</label>
+                    <label for="dialog-edit-regex" class="translate">RegEx</label>
                     <a id="dialog-edit-show" class="btn-floating waves-effect waves-light green table-button-add"><i class="material-icons">play_arrow</i></a>
                 </div>
             </div>
@@ -686,7 +684,7 @@
             <div class="row">
                 <div class="input-field col s12">
                     <textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea>
-                    <label for="dialog-edit-test-text"      class="translate">Test text</label>
+                    <label for="dialog-edit-test-text" class="translate">Test text</label>
                 </div>
             </div>
             <div class="row">

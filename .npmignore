@@ -1,8 +1,0 @@
-# exclude all dot-files and directories
-.*
-
-Gruntfile.js
-tasks
-test
-.travis.yml
-appveyor.yml

@@ -39,5 +39,9 @@
     "string": "string",
     "switch": "переключ.",
     "temperature": "температура",
-    "value": "значение"
+    "value": "значение",
+    "Request Timeout": "Время ожидания запроса",
+    "Request Delay": "Запросить задержку",
+    "Accept invalid certificates": "Принимать недействительные сертификаты",
+    "Use insecure HTTP parser": "Использовать небезопасный парсер HTTP"
 }

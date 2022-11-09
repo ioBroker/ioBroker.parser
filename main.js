@@ -1,84 +1,99 @@
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
+/* jshint -W097 */
+/* jshint strict: false */
+/* jslint node: true */
 'use strict';
 
 // you have to require the utils module and call adapter function
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const adapter  = new utils.Adapter('parser');
+const adapterName = require('./package.json').name.split('.').pop();
 const https = require('https');
 let axios;
 let path;
 let fs;
 let states;
 
-// is called if a subscribed state changes
-adapter.on('stateChange', (id, state) => {
-    if (!state || state.ack) return;
+let adapter;
 
-    // Warning, state can be null if it was deleted
-    adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {name: adapterName});
+    adapter = new utils.Adapter(options);
 
-    // output to parser
-    if (states[id] && states[id].common && states[id].common.write) {
-
-    }
-});
-
-adapter.on('objectChange', (id, obj) => {
-    if (!id) return;
-    if (!obj) {
-        if (states[id]) {
-            adapter.log.info(`Parser object ${id} removed`);
-            deletePoll(states[id]);
-            delete states[id];
-        }
-    } else {
-        if (!obj.native) {
-            adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
+    // is called if a subscribed state changes
+    adapter.on('stateChange', (id, state) => {
+        if (!state || state.ack) {
             return;
         }
 
-        if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
-        obj.native.interval = parseInt(obj.native.interval, 10);
+        // Warning, state can be null if it was deleted
+        adapter.log.debug(`stateChange ${id} ${JSON.stringify(state)}`);
 
-        if (!states[id]) {
-            adapter.log.info(`Parser object ${id} added`);
-            adapter.getState(id, (err, state) => {
-                states[id] = obj;
-                states[id].value = state || {val: null};
-                if (initPoll(states[id], false)) {
-                    poll(timers[obj.native.interval].interval); // new timer, so start initially once
-                }
-            });
-        } else {
-            if (states[id].native.interval !== obj.native.interval) {
-                adapter.log.info(`Parser object ${id} interval changed`);
+        // output to parser
+        if (states[id] && states[id].common && states[id].common.write) {
+
+        }
+    });
+
+    adapter.on('objectChange', (id, obj) => {
+        if (!id) {
+            return;
+        }
+        if (!obj) {
+            if (states[id]) {
+                adapter.log.info(`Parser object ${id} removed`);
                 deletePoll(states[id]);
-                states[id] = Object.assign(states[id], obj);
-                initPoll(states[id], false);
+                delete states[id];
+            }
+        } else {
+            if (!obj.native) {
+                adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
+                return;
+            }
+
+            obj.native.interval = parseInt(obj.native.interval || adapter.config.pollInterval, 10);
+
+            if (!states[id]) {
+                adapter.log.info(`Parser object ${id} added`);
+                adapter.getState(id, (err, state) => {
+                    states[id] = obj;
+                    states[id].value = state || {val: null};
+                    if (initPoll(states[id], false)) {
+                        poll(timers[obj.native.interval].interval); // new timer, so start initially once
+                    }
+                });
             } else {
-                adapter.log.debug(`Parser object ${id} updated`);
-                states[id] = Object.assign(states[id], obj);
-                initPoll(states[id], true);
+                if (states[id].native.interval !== obj.native.interval) {
+                    adapter.log.info(`Parser object ${id} interval changed`);
+                    deletePoll(states[id]);
+                    states[id] = Object.assign(states[id], obj);
+                    initPoll(states[id], false);
+                } else {
+                    adapter.log.debug(`Parser object ${id} updated`);
+                    states[id] = Object.assign(states[id], obj);
+                    initPoll(states[id], true);
+                }
             }
         }
-    }
-});
+    });
 
-adapter.on('message', obj => {
-    if (obj) {
-        switch (obj.command) {
-            case 'link':
-                if (obj.callback) {
-                    // read all found serial ports
-                    readLink(obj.message, (err, text) =>
-                        adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback)
-                    );
-                }
-                break;
+    adapter.on('message', obj => {
+        if (obj) {
+            switch (obj.command) {
+                case 'link':
+                    if (obj.callback) {
+                        // read all found serial ports
+                        readLink(obj.message, (err, text) =>
+                            adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback));
+                    }
+                    break;
+            }
         }
-    }
-});
+    });
+
+    adapter.on('ready', main);
+
+    return adapter;
+}
 
 function initPoll(obj, onlyUpdate) {
     if (!obj.native) {
@@ -86,9 +101,8 @@ function initPoll(obj, onlyUpdate) {
         return false;
     }
 
-    if (!obj.native.interval) obj.native.interval = adapter.config.pollInterval;
-
-    if (!obj.native.regex) obj.native.regex = '.+';
+    obj.native.interval = obj.native.interval || adapter.config.pollInterval;
+    obj.native.regex = obj.native.regex || '.+';
 
     if (obj.native.regex[0] === '/') {
         obj.native.regex = obj.native.regex.substring(1, obj.native.regex.length - 1);
@@ -137,14 +151,15 @@ function initPoll(obj, onlyUpdate) {
 }
 
 function deletePoll(obj) {
-    if (timers[obj.native.interval] === undefined) return;
+    if (timers[obj.native.interval] === undefined) {
+        return;
+    }
     timers[obj.native.interval].count--;
     if (!timers[obj.native.interval].count) {
         clearInterval(timers[obj.native.interval]);
         delete timers[obj.native.interval];
     }
 }
-adapter.on('ready', main);
 
 function _analyseDataForStates(linkStates, data, error, callback) {
     if (!linkStates || !linkStates.length) {
@@ -184,7 +199,7 @@ const flags = {
     multiline: 'm',
     dotAll: 's',
     sticky: 'y',
-    unicode: 'u'
+    unicode: 'u',
 };
 
 function cloneRegex(regex) {
@@ -369,20 +384,20 @@ async function readLink(link, callback) {
 }
 
 // Keep a per-host queue for remote requests
-
 const hostnamesQueue = [];
 const hostnamesRequestTime = [];
 function processRemoteQueue(hostname) {
-    hostnamesRequestTime[hostname] = new Date();
+    hostnamesRequestTime[hostname] = Date.now();
     readLink(hostnamesQueue[hostname][0].link, hostnamesQueue[hostname][0].callback);
 }
+
 function addToRemoteQueue(link, callback) {
-    adapter.log.debug('Queue ' + link);
+    adapter.log.debug(`Queue ${link}`);
     const url = new URL(link);
 
     if (!(url.hostname in hostnamesQueue)) {
         // No queue object yet, make one
-        adapter.log.debug('Creating request queue for ' + url.hostname);
+        adapter.log.debug(`Creating request queue for ${url.hostname}`);
         hostnamesQueue[url.hostname] = [];
     }
     const requestQueue = hostnamesQueue[url.hostname];
@@ -391,34 +406,35 @@ function addToRemoteQueue(link, callback) {
         callback: callback
     });
 
-    if (requestQueue.length == 1) {
-        // First item in queue, process it. Otherwise will get done when current request is removed.
+    if (requestQueue.length === 1) {
+        // First item in queue, process it. Otherwise, will get done when current request is removed.
         processRemoteQueue(url.hostname);
     }
 }
+
 function removeFromRemoteQueue(link) {
-    adapter.log.debug('Dequeue ' + link);
+    adapter.log.debug(`Dequeue ${link}`);
     const url = new URL(link);
     const requestQueue = hostnamesQueue[url.hostname];
 
-    // Remove first entry (should be request that just finished)
+    // Remove first entry (should be the request that just finished)
     requestQueue.shift();
 
     // And process next request if there is one
     if (requestQueue.length > 0) {
         // Make sure correct delay has passed or wait until for that point
-        const delay = new Date() - hostnamesRequestTime[url.hostname];
-        adapter.log.debug('Next delay for ' + url.hostname + ' is ' + delay);
+        const delay = Date.now() - hostnamesRequestTime[url.hostname];
+        adapter.log.debug(`Next delay for ${url.hostname} is ${delay}`);
         if (delay < adapter.config.requestDelay) {
             adapter.setTimeout(processRemoteQueue, delay, url.hostname);
         } else {
             // Request already took longer than timeout so start instantly.
             // Issue a warning because this means delay is probably too short.
-            adapter.log.warn('No delay before next request to ' + url.hostname);
+            adapter.log.warn(`No delay before next request to ${url.hostname}`);
             processRemoteQueue(url.hostname);
         }
     } else {
-        adapter.log.debug('Request queue for ' + url.hostname + ' is now empty');
+        adapter.log.debug(`Request queue for ${url.hostname} is now empty`);
     }
 }
 
@@ -428,7 +444,9 @@ function poll(interval, callback) {
     const curStates = [];
     const curLinks = [];
     for (id in states) {
-        if (!states.hasOwnProperty(id)) continue;
+        if (!states.hasOwnProperty(id)) {
+            continue;
+        }
         if (states[id].native.interval === interval && (states[id].processed || states[id].processed === undefined)) {
             states[id].processed = false;
             curStates.push(id);
@@ -437,11 +455,11 @@ function poll(interval, callback) {
             }
         }
     }
-    adapter.log.debug('States for current Interval (' + interval + '): ' + JSON.stringify(curStates));
+    adapter.log.debug(`States for current Interval (${interval}): ${JSON.stringify(curStates)}`);
 
     for (let j = 0; j < curLinks.length; j++) {
         const thisLink = curLinks[j];
-        adapter.log.debug('Do Link: ' + thisLink);
+        adapter.log.debug(`Do Link: ${thisLink}`);
 
         if (isRemoteLink(thisLink) && adapter.config.requestDelay) {
             // Queue handler...
@@ -465,16 +483,16 @@ function main() {
     adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
 
     // read current existing objects (прочитать текущие существующие объекты)
-    adapter.getForeignObjects(adapter.namespace + '.*', 'state', (err, _states) => {
+    adapter.getForeignObjects(`${adapter.namespace}.*`, 'state', (err, _states) => {
         if (err) {
             adapter.log.error('Cannot get objects: ' + err.message);
             adapter.stop();
             return;
         }
         states = _states;
-        adapter.getForeignStates(adapter.namespace + '.*', (err, values) => {
+        adapter.getForeignStates(`${adapter.namespace}.*`, (err, values) => {
             if (err) {
-                adapter.log.error('Cannot get state values: ' + err.message);
+                adapter.log.error(`Cannot get state values: ${err.message}`);
                 adapter.stop();
                 return;
             }
@@ -484,7 +502,9 @@ function main() {
 
             // Mark all sensors as if they received something
             for (const id in states) {
-                if (!states.hasOwnProperty(id)) continue;
+                if (!states.hasOwnProperty(id)) {
+                    continue;
+                }
 
                 states[id].value = values[id] || {val: null};
                 initPoll(states[id], false);
@@ -498,4 +518,12 @@ function main() {
             }
         });
     });
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
