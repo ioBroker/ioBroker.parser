@@ -154,6 +154,7 @@
   "native": {
     "pollInterval": "5000",
     "requestTimeout": "60000",
+    "requestDelay": "0",
     "acceptInvalidCertificates": true,
     "useInsecureHTTPParser": false
   }

@@ -41,6 +41,7 @@
     "temperature": "temperature",
     "value": "value",
     "Request Timeout": "Request Timeout",
+    "Request Delay": "Request Delay",
     "Accept invalid certificates": "Accept invalid certificates",
     "Use insecure HTTP parser": "Use insecure HTTP parser"
 }
