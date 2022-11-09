@@ -103,13 +103,11 @@ Further information on RegExp:
 - *now (\w+)* later - get the word between "now" and "later"
 
 ### Other useful expressions
-
 - (-?\d+) get number (both negative and positive numbers)
 - [+-]?([0-9]+.?[0-9]|.[0-9]+) get a number with decimal places (and . as decimal separator)
 - [+-]?([0-9]+,?[0-9]|,[0-9]+) get a number with decimal places (and , as decimal separator)
 
 ## Quality codes
-
 Values can have quality codes:
 - 0 - OK
 - 0x82 - The URL or file cannot be read.
@@ -117,13 +115,13 @@ Values can have quality codes:
 
 ## Support
 1. General: [ioBroker Forum](https://forum.iobroker.net/). German-speaking users: see [ioBroker forum thread Parser-Adapter](https://forum.iobroker.net/topic/4494/adapter-parser-regex).
-2. In case of any issues, please check out [ioBroker Parser Adapter: Github Issues](https://github.com/ioBroker/ioBroker.parser/issues).
+2. In case of any issues, please check out [ioBroker Parser Adapter: GitHub Issues](https://github.com/ioBroker/ioBroker.parser/issues).
 
 <!--
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.3.0 (2022-11-09)
 * (raintonr) added delay option for slow connections
 * (bluefox) added compact mode
 

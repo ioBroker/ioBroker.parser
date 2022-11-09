@@ -1,171 +1,171 @@
 {
-    "common": {
-        "name": "parser",
-        "version": "1.2.1",
-        "news": {
-            "1.2.1": {
-                "en": "Always use raw response and not try to parse it",
-                "de": "Verwenden Sie immer rohe Reaktion und nicht versuchen, es zu parse",
-                "ru": "Всегда используйте реагирование сырья и не пытайтесь его парсить",
-                "pt": "Sempre use a resposta crua e não tente analisá-la",
-                "nl": "Gebruik altijd rauwe reactie en probeer het niet te verdubbelen",
-                "fr": "Toujours utiliser la réponse brute et ne pas essayer de la parser",
-                "it": "Utilizzare sempre la risposta cruda e non cercare di analizzarlo",
-                "es": "Utilice siempre la respuesta cruda y no trate de analizarla",
-                "pl": "Zawsze wykorzystuje surową reakcję i nie starają się ją złożyć",
-                "zh-cn": "使用原始反应,不试图将其稀释。",
-                "uk": "Завжди використовуйте необроблену відповідь і не намагайтеся її розібрати"
-            },
-            "1.2.0": {
-                "en": "Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)\nAllow to specify if an \"insecure HTTP parser\" is used which also enables HTTP implementations that are not compliant to specifications\nAllow to specify the HTTP request timeout",
-                "de": "Geben Sie an, ob selbstsignierte/ungültige SSL-Zertifikate ignoriert oder nicht (Standard ist, wie bisher ignoriert)\nGeben Sie an, ob ein \"unsicherer HTTP-Parser\" verwendet wird, der auch HTTP-Implementierungen ermöglicht, die nicht den Spezifikationen entsprechen\nErlauben Sie, den HTTP-Anforderungszeitpunkt anzugeben",
-                "ru": "Разрешить указать, если самоподписанные / недействительные SSL сертификаты игнорируются или нет (по умолчанию не следует игнорировать, как до сих пор)\nРазрешить указать, используется ли «небезопасный HTTP-парсер», что также позволяет HTTP-реализациям, которые не соответствуют спецификациям\nРазрешить указать timeout запроса HTTP",
-                "pt": "Permitir especificar se certificados SSL auto-assinados/inválidos são ignorados ou não (o padrão é ignorar como até agora)\nPermitir especificar se um \"parser HTTP inseguro\" é usado que também permite implementações HTTP que não estão em conformidade com as especificações\nPermitir especificar o prazo de solicitação HTTP",
-                "nl": "Sta toe te specificeren of zelf toegewezen/invalide SSL certificaten worden genegeerd of niet (default is om te negeren als tot nu toe\nOm te specificeren of een \"onduidelijke HTP-papieren\" gebruikt wordt, die ook HTP implementaties in staat stelt die niet compliceren voor specifieke details\nMag ik de HTP verzoeken verlenen",
-                "fr": "Permettre de spécifier si les certificats SSL autosignés/invalides sont ignorés ou non (par défaut, il faut ignorer comme maintenant)\nPermet de spécifier si un \"Parser HTTP insecure\" est utilisé qui permet également des implémentations HTTP qui ne sont pas conformes aux spécifications\nPermet de spécifier le délai de requête HTTP",
-                "it": "Consentire di specificare se i certificati SSL auto-firmati/non validi vengono ignorati o meno (default deve ignorare fino ad ora)\nConsentire di specificare se viene utilizzato un \"insecure HTTP parser\" che consente anche implementazioni HTTP che non sono conformi alle specifiche\nConsentire di specificare il timeout della richiesta HTTP",
-                "es": "Permitir especificar si los certificados SSL auto-firmados o inválidos son ignorados o no (por defecto es ignorar como hasta ahora)\nPermitir especificar si se utiliza un \"paraser HTTP seguro\" que también permite implementaciones HTTP que no cumplen con las especificaciones\nPermitir especificar el tiempo de solicitud HTTP",
-                "pl": "Określenie, jeśli podpisywane certyfikaty SSL są ignorowane lub nie (obrona jest ignorowana jak do dziś)\nAllow do specyfikowania, jeśli używa się \"niebezpiecznego HTTP parser\", co umożliwia również implementacje HTTP, które nie są zgodne z specyfikacją\nAllow, aby zdefiniować HTTP żądanie czasu dostępu",
-                "zh-cn": "请允许我具体说明,如果自我设计/自评的SSL证书遭到忽视或不(现在的意外情况是忽视)\n允许具体说明是否使用了“无保障的HTTP parser”,这也使不符合规格的技术转让中心得以实施。\n允许具体说明海贸总协定要求的时间",
-                "uk": "Дозволити вказати, чи ігнорувати самопідписані/недійсні сертифікати SSL (за замовчуванням ігнорувати як досі)\nДозволити вказувати, чи використовується «незахищений аналізатор HTTP», який також дозволяє реалізацію HTTP, яка не відповідає специфікаціям\nДозволяє вказати тайм-аут запиту HTTP"
-            },
-            "1.1.8": {
-                "en": "Check that a link is configured",
-                "de": "Überprüfen Sie, ob ein Link konfiguriert ist",
-                "ru": "Проверьте, что ссылка настроена",
-                "pt": "Verifique se um link está configurado",
-                "nl": "Controleer dat een link in beslag genomen is",
-                "fr": "Vérifiez qu'un lien est configuré",
-                "it": "Controllare che un link sia configurato",
-                "es": "Compruebe que un enlace está configurado",
-                "pl": "Check, że połączenie jest skonfigurowane",
-                "zh-cn": "核对股",
-                "uk": "Перевірте, чи налаштовано посилання"
-            },
-            "1.1.7": {
-                "en": "Fix potential crash cases reported by Sentry",
-                "de": "Behebt mögliche Crashfälle, die von Sentry gemeldet wurden",
-                "ru": "Исправление потенциальных аварийных случаев, сообщенных Sentry",
-                "pt": "Corrigir casos potenciais de acidente relatados pela Sentry",
-                "nl": "Vertaling:",
-                "fr": "Correction des cas de crash potentiels signalés par Sentry",
-                "it": "Fissare potenziali casi di crash segnalati da Sentry",
-                "es": "Fijar posibles casos de accidentes reportados por Sentry",
-                "pl": "Fixowe przypadki katastrofy (ang.)",
-                "zh-cn": "Sentry报告的潜在事故",
-                "uk": "Виправте потенційні випадки збоїв, про які повідомляє Sentry"
-            },
-            "1.1.6": {
-                "en": "Set method to \"GET\" when requesting URLs",
-                "de": "Setzen Sie die Methode auf \"GET\", wenn Sie URLs anfordern",
-                "ru": "Установите метод «GET» при запросе URL-адресов",
-                "pt": "Defina o método como \"GET\" ao solicitar URLs",
-                "nl": "Stel methode in op \"GET\" bij het opvragen van URL's",
-                "fr": "Définir la méthode sur \"GET\" lors de la demande d'URL",
-                "it": "Imposta il metodo su \"GET\" quando richiedi gli URL",
-                "es": "Establezca el método en \"GET\" al solicitar URL",
-                "pl": "Ustaw metodę na „GET” podczas żądania adresów URL",
-                "zh-cn": "请求 URL 时将方法设置为“GET”",
-                "uk": "Установіть для методу \"GET\" під час запиту URL-адрес"
-            },
-            "1.1.5": {
-                "en": "Ignore objects without configuration for parser and log it",
-                "de": "Objekte ohne Konfiguration für Parser ignorieren und protokollieren",
-                "ru": "Игнорировать объекты без конфигурации для парсера и логировать это",
-                "pt": "Ignore objetos sem configuração para analisador e registre-os",
-                "nl": "Negeer objecten zonder configuratie voor parser en log het in",
-                "fr": "Ignorer les objets sans configuration pour l'analyseur et le consigner",
-                "it": "Ignora gli oggetti senza configurazione per il parser e registralo",
-                "es": "Ignorar objetos sin configuración para el analizador y registrarlo",
-                "pl": "Ignoruj obiekty bez konfiguracji dla parsera i loguj je",
-                "zh-cn": "忽略没有解析器配置的对象并记录它",
-                "uk": "Ігнорувати об’єкти без конфігурації для синтаксичного аналізатора та реєструвати це"
-            },
-            "1.1.4": {
-                "en": "Fix crash case reported by Sentry",
-                "de": "Absturzfall behoben, der von Sentry gemeldet wurde",
-                "ru": "Исправить случай сбоя, о котором сообщил Sentry",
-                "pt": "Corrigir caso de falha relatado pelo Sentinela",
-                "nl": "Herstel crashgeval gemeld door Sentry",
-                "fr": "Correction d'un cas de crash signalé par Sentry",
-                "it": "Risolto il caso di crash segnalato da Sentry",
-                "es": "Solucionar caso de bloqueo informado por Sentry",
-                "pl": "Napraw przypadek awarii zgłoszony przez Sentry",
-                "zh-cn": "修复 Sentry 报告的崩溃案例",
-                "uk": "Виправте випадок збою, про який повідомляє Sentry"
-            }
-        },
-        "title": "Parser",
-        "titleLang": {
-            "en": "Parser",
-            "de": "Parser",
-            "ru": "Синтаксический анализатор",
-            "pt": "Analisador",
-            "nl": "Parser",
-            "fr": "Analyseur",
-            "it": "Parser",
-            "es": "Analizador",
-            "pl": "Analizator składni",
-            "zh-cn": "分析器",
-            "uk": "Парсер"
-        },
-        "desc": {
-            "en": "This adapter allows to extract values from HTTP URLs or from files",
-            "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
-            "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов",
-            "pt": "Este adaptador permite extrair valores de URLs HTTP ou de arquivos",
-            "nl": "Met deze adapter kunnen waarden uit HTTP-URL's of uit bestanden worden geëxtraheerd",
-            "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
-            "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
-            "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
-            "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików",
-            "zh-cn": "这器允许提取价值从HTTP URLs或从文件",
-            "uk": "Цей адаптер дозволяє отримувати значення з URL-адрес HTTP або з файлів"
-        },
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "loglevel": "info",
-        "messagebox": true,
-        "materialize": true,
-        "icon": "parser.png",
-        "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
-        "keywords": [
-            "url",
-            "html",
-            "file",
-            "parser"
-        ],
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=3.0.0"
-            }
-        ],
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
-        "type": "logic",
-        "plugins": {
-            "sentry": {
-                "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
-            }
-        },
-        "compact": true,
-        "connectionType": "none",
-        "dataSource": "poll",
-        "tier": 3
+  "common": {
+    "name": "parser",
+    "version": "1.3.0",
+    "news": {
+      "1.3.0": {
+        "en": "added delay option for slow connections\nadded compact mode",
+        "de": "zusätzliche verzögerungsoption für langsame verbindungen\nkompakter modus",
+        "ru": "добавлена опция задержки для медленных подключений\nдобавлен компактный режим",
+        "pt": "opção de atraso adicionado para conexões lentas\nmodo compacto adicionado",
+        "nl": "vertraagde optie voor langzame connecties\nvoegde compact mode toe",
+        "fr": "option de retard supplémentaire pour les connexions lente\nen mode compact",
+        "it": "opzione di ritardo aggiunto per connessioni lente\nmodalità compatta aggiunta",
+        "es": "opción de retardo añadido para conexiones lentas\nmodo compacto añadido",
+        "pl": "dodanie opóźnienia\ntryb dodania",
+        "uk": "доданий варіант затримки для повільних підключень\nдодано компактний режим",
+        "zh-cn": "延迟联系的选择\n增加合同模式"
+      },
+      "1.2.1": {
+        "en": "Always use raw response and not try to parse it",
+        "de": "Verwenden Sie immer rohe Reaktion und nicht versuchen, es zu parse",
+        "ru": "Всегда используйте реагирование сырья и не пытайтесь его парсить",
+        "pt": "Sempre use a resposta crua e não tente analisá-la",
+        "nl": "Gebruik altijd rauwe reactie en probeer het niet te verdubbelen",
+        "fr": "Toujours utiliser la réponse brute et ne pas essayer de la parser",
+        "it": "Utilizzare sempre la risposta cruda e non cercare di analizzarlo",
+        "es": "Utilice siempre la respuesta cruda y no trate de analizarla",
+        "pl": "Zawsze wykorzystuje surową reakcję i nie starają się ją złożyć",
+        "zh-cn": "使用原始反应,不试图将其稀释。",
+        "uk": "Завжди використовуйте необроблену відповідь і не намагайтеся її розібрати"
+      },
+      "1.2.0": {
+        "en": "Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)\nAllow to specify if an \"insecure HTTP parser\" is used which also enables HTTP implementations that are not compliant to specifications\nAllow to specify the HTTP request timeout",
+        "de": "Geben Sie an, ob selbstsignierte/ungültige SSL-Zertifikate ignoriert oder nicht (Standard ist, wie bisher ignoriert)\nGeben Sie an, ob ein \"unsicherer HTTP-Parser\" verwendet wird, der auch HTTP-Implementierungen ermöglicht, die nicht den Spezifikationen entsprechen\nErlauben Sie, den HTTP-Anforderungszeitpunkt anzugeben",
+        "ru": "Разрешить указать, если самоподписанные / недействительные SSL сертификаты игнорируются или нет (по умолчанию не следует игнорировать, как до сих пор)\nРазрешить указать, используется ли «небезопасный HTTP-парсер», что также позволяет HTTP-реализациям, которые не соответствуют спецификациям\nРазрешить указать timeout запроса HTTP",
+        "pt": "Permitir especificar se certificados SSL auto-assinados/inválidos são ignorados ou não (o padrão é ignorar como até agora)\nPermitir especificar se um \"parser HTTP inseguro\" é usado que também permite implementações HTTP que não estão em conformidade com as especificações\nPermitir especificar o prazo de solicitação HTTP",
+        "nl": "Sta toe te specificeren of zelf toegewezen/invalide SSL certificaten worden genegeerd of niet (default is om te negeren als tot nu toe\nOm te specificeren of een \"onduidelijke HTP-papieren\" gebruikt wordt, die ook HTP implementaties in staat stelt die niet compliceren voor specifieke details\nMag ik de HTP verzoeken verlenen",
+        "fr": "Permettre de spécifier si les certificats SSL autosignés/invalides sont ignorés ou non (par défaut, il faut ignorer comme maintenant)\nPermet de spécifier si un \"Parser HTTP insecure\" est utilisé qui permet également des implémentations HTTP qui ne sont pas conformes aux spécifications\nPermet de spécifier le délai de requête HTTP",
+        "it": "Consentire di specificare se i certificati SSL auto-firmati/non validi vengono ignorati o meno (default deve ignorare fino ad ora)\nConsentire di specificare se viene utilizzato un \"insecure HTTP parser\" che consente anche implementazioni HTTP che non sono conformi alle specifiche\nConsentire di specificare il timeout della richiesta HTTP",
+        "es": "Permitir especificar si los certificados SSL auto-firmados o inválidos son ignorados o no (por defecto es ignorar como hasta ahora)\nPermitir especificar si se utiliza un \"paraser HTTP seguro\" que también permite implementaciones HTTP que no cumplen con las especificaciones\nPermitir especificar el tiempo de solicitud HTTP",
+        "pl": "Określenie, jeśli podpisywane certyfikaty SSL są ignorowane lub nie (obrona jest ignorowana jak do dziś)\nAllow do specyfikowania, jeśli używa się \"niebezpiecznego HTTP parser\", co umożliwia również implementacje HTTP, które nie są zgodne z specyfikacją\nAllow, aby zdefiniować HTTP żądanie czasu dostępu",
+        "zh-cn": "请允许我具体说明,如果自我设计/自评的SSL证书遭到忽视或不(现在的意外情况是忽视)\n允许具体说明是否使用了“无保障的HTTP parser”,这也使不符合规格的技术转让中心得以实施。\n允许具体说明海贸总协定要求的时间",
+        "uk": "Дозволити вказати, чи ігнорувати самопідписані/недійсні сертифікати SSL (за замовчуванням ігнорувати як досі)\nДозволити вказувати, чи використовується «незахищений аналізатор HTTP», який також дозволяє реалізацію HTTP, яка не відповідає специфікаціям\nДозволяє вказати тайм-аут запиту HTTP"
+      },
+      "1.1.8": {
+        "en": "Check that a link is configured",
+        "de": "Überprüfen Sie, ob ein Link konfiguriert ist",
+        "ru": "Проверьте, что ссылка настроена",
+        "pt": "Verifique se um link está configurado",
+        "nl": "Controleer dat een link in beslag genomen is",
+        "fr": "Vérifiez qu'un lien est configuré",
+        "it": "Controllare che un link sia configurato",
+        "es": "Compruebe que un enlace está configurado",
+        "pl": "Check, że połączenie jest skonfigurowane",
+        "zh-cn": "核对股",
+        "uk": "Перевірте, чи налаштовано посилання"
+      },
+      "1.1.7": {
+        "en": "Fix potential crash cases reported by Sentry",
+        "de": "Behebt mögliche Crashfälle, die von Sentry gemeldet wurden",
+        "ru": "Исправление потенциальных аварийных случаев, сообщенных Sentry",
+        "pt": "Corrigir casos potenciais de acidente relatados pela Sentry",
+        "nl": "Vertaling:",
+        "fr": "Correction des cas de crash potentiels signalés par Sentry",
+        "it": "Fissare potenziali casi di crash segnalati da Sentry",
+        "es": "Fijar posibles casos de accidentes reportados por Sentry",
+        "pl": "Fixowe przypadki katastrofy (ang.)",
+        "zh-cn": "Sentry报告的潜在事故",
+        "uk": "Виправте потенційні випадки збоїв, про які повідомляє Sentry"
+      },
+      "1.1.6": {
+        "en": "Set method to \"GET\" when requesting URLs",
+        "de": "Setzen Sie die Methode auf \"GET\", wenn Sie URLs anfordern",
+        "ru": "Установите метод «GET» при запросе URL-адресов",
+        "pt": "Defina o método como \"GET\" ao solicitar URLs",
+        "nl": "Stel methode in op \"GET\" bij het opvragen van URL's",
+        "fr": "Définir la méthode sur \"GET\" lors de la demande d'URL",
+        "it": "Imposta il metodo su \"GET\" quando richiedi gli URL",
+        "es": "Establezca el método en \"GET\" al solicitar URL",
+        "pl": "Ustaw metodę na „GET” podczas żądania adresów URL",
+        "zh-cn": "请求 URL 时将方法设置为“GET”",
+        "uk": "Установіть для методу \"GET\" під час запиту URL-адрес"
+      },
+      "1.1.5": {
+        "en": "Ignore objects without configuration for parser and log it",
+        "de": "Objekte ohne Konfiguration für Parser ignorieren und protokollieren",
+        "ru": "Игнорировать объекты без конфигурации для парсера и логировать это",
+        "pt": "Ignore objetos sem configuração para analisador e registre-os",
+        "nl": "Negeer objecten zonder configuratie voor parser en log het in",
+        "fr": "Ignorer les objets sans configuration pour l'analyseur et le consigner",
+        "it": "Ignora gli oggetti senza configurazione per il parser e registralo",
+        "es": "Ignorar objetos sin configuración para el analizador y registrarlo",
+        "pl": "Ignoruj obiekty bez konfiguracji dla parsera i loguj je",
+        "zh-cn": "忽略没有解析器配置的对象并记录它",
+        "uk": "Ігнорувати об’єкти без конфігурації для синтаксичного аналізатора та реєструвати це"
+      }
     },
-    "native": {
-        "pollInterval": "5000",
-        "requestTimeout": "60000",
-        "requestDelay": "0",
-        "acceptInvalidCertificates": true,
-        "useInsecureHTTPParser": false
-    }
+    "title": "Parser",
+    "titleLang": {
+      "en": "Parser",
+      "de": "Parser",
+      "ru": "Синтаксический анализатор",
+      "pt": "Analisador",
+      "nl": "Parser",
+      "fr": "Analyseur",
+      "it": "Parser",
+      "es": "Analizador",
+      "pl": "Analizator składni",
+      "zh-cn": "分析器",
+      "uk": "Парсер"
+    },
+    "desc": {
+      "en": "This adapter allows to extract values from HTTP URLs or from files",
+      "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
+      "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов",
+      "pt": "Este adaptador permite extrair valores de URLs HTTP ou de arquivos",
+      "nl": "Met deze adapter kunnen waarden uit HTTP-URL's of uit bestanden worden geëxtraheerd",
+      "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
+      "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
+      "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
+      "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików",
+      "zh-cn": "这器允许提取价值从HTTP URLs或从文件",
+      "uk": "Цей адаптер дозволяє отримувати значення з URL-адрес HTTP або з файлів"
+    },
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "loglevel": "info",
+    "messagebox": true,
+    "materialize": true,
+    "icon": "parser.png",
+    "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
+    "keywords": [
+      "url",
+      "html",
+      "file",
+      "parser"
+    ],
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=3.0.0"
+      }
+    ],
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
+    "type": "logic",
+    "plugins": {
+      "sentry": {
+        "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
+      }
+    },
+    "compact": true,
+    "connectionType": "none",
+    "dataSource": "poll",
+    "tier": 3
+  },
+  "native": {
+    "pollInterval": "5000",
+    "requestTimeout": "60000",
+    "requestDelay": "0",
+    "acceptInvalidCertificates": true,
+    "useInsecureHTTPParser": false
+  }
 }
