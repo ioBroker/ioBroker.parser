@@ -121,7 +121,7 @@ Values can have quality codes:
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.3.0 (2022-11-09)
+### **WORK IN PROGRESS**
 * (raintonr) added delay option for slow connections
 * (bluefox) added compact mode
 

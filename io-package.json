@@ -3,19 +3,6 @@
     "name": "parser",
     "version": "1.3.0",
     "news": {
-      "1.3.0": {
-        "en": "added delay option for slow connections\nadded compact mode",
-        "de": "zusätzliche verzögerungsoption für langsame verbindungen\nkompakter modus",
-        "ru": "добавлена опция задержки для медленных подключений\nдобавлен компактный режим",
-        "pt": "opção de atraso adicionado para conexões lentas\nmodo compacto adicionado",
-        "nl": "vertraagde optie voor langzame connecties\nvoegde compact mode toe",
-        "fr": "option de retard supplémentaire pour les connexions lente\nen mode compact",
-        "it": "opzione di ritardo aggiunto per connessioni lente\nmodalità compatta aggiunta",
-        "es": "opción de retardo añadido para conexiones lentas\nmodo compacto añadido",
-        "pl": "dodanie opóźnienia\ntryb dodania",
-        "uk": "доданий варіант затримки для повільних підключень\nдодано компактний режим",
-        "zh-cn": "延迟联系的选择\n增加合同模式"
-      },
       "1.2.1": {
         "en": "Always use raw response and not try to parse it",
         "de": "Verwenden Sie immer rohe Reaktion und nicht versuchen, es zu parse",
