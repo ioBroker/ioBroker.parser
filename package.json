@@ -29,7 +29,7 @@
     "@iobroker/dev-server": "^0.6.0",
     "@iobroker/adapter-dev": "^1.2.0",
     "mocha": "^10.1.0",
-    "chai": "^4.3.6"
+    "chai": "^4.3.7"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
