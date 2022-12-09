@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "news": {
+      "1.3.2": {
+        "en": "In error cases return error as string",
+        "de": "In Fehlerfällen Rückgabefehler als String",
+        "ru": "В случаях ошибки возвращает ошибку как строка",
+        "pt": "Em casos de erro retornam erro como string",
+        "nl": "In foute gevallen terugkeren fouten als string",
+        "fr": "Dans les cas d'erreur retour erreur comme chaîne",
+        "it": "Nei casi di errore ritorna errore come stringa",
+        "es": "En casos de error devuelve el error como cadena",
+        "pl": "Ustępowanie błędów powracają jako błąd strunowy",
+        "uk": "У випадках повернення помилок як рядок",
+        "zh-cn": "错失情况"
+      },
       "1.3.1": {
         "en": "added delay option for slow connections\nadded compact mode",
         "de": "zusätzliche verzögerungsoption für langsame verbindungen\nkompakter modus",
@@ -80,19 +93,6 @@
         "pl": "Ustaw metodę na „GET” podczas żądania adresów URL",
         "zh-cn": "请求 URL 时将方法设置为“GET”",
         "uk": "Установіть для методу \"GET\" під час запиту URL-адрес"
-      },
-      "1.1.5": {
-        "en": "Ignore objects without configuration for parser and log it",
-        "de": "Objekte ohne Konfiguration für Parser ignorieren und protokollieren",
-        "ru": "Игнорировать объекты без конфигурации для парсера и логировать это",
-        "pt": "Ignore objetos sem configuração para analisador e registre-os",
-        "nl": "Negeer objecten zonder configuratie voor parser en log het in",
-        "fr": "Ignorer les objets sans configuration pour l'analyseur et le consigner",
-        "it": "Ignora gli oggetti senza configurazione per il parser e registralo",
-        "es": "Ignorar objetos sin configuración para el analizador y registrarlo",
-        "pl": "Ignoruj obiekty bez konfiguracji dla parsera i loguj je",
-        "zh-cn": "忽略没有解析器配置的对象并记录它",
-        "uk": "Ігнорувати об’єкти без конфігурації для синтаксичного аналізатора та реєструвати це"
       }
     },
     "title": "Parser",
