@@ -357,7 +357,7 @@ async function readLink(link, callback) {
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
         } catch (err) {
-            callback(err.data ? err.data : err, null, link);
+            callback(err.data ? err.data : err.toString(), null, link);
         }
     } else {
         path = path || require('path');
