@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Aceitar certificados inválidos",
     "Add rule: ": "Adicionar regra: ",
     "Cancel": "Cancelar",
+    "Click here for Sample rules": "Clique aqui para regras de amostra",
     "Default poll interval: ": "Padrão intervalo de sondagem",
     "Edit: ": "Editar: ",
     "Factor": "Factor",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Analisador de configurações do adaptador",
     "Proxy adapter settings": "Configurações do adaptador proxy",
     "RegEx": "RegEx",
+    "Request Delay": "Solicitar atraso",
+    "Request Timeout": "Solicitar tempo limite",
     "Result": "Resultado",
     "Role": "Papel",
     "Save": "Salvar",
@@ -22,6 +26,7 @@
     "Type": "Tipo",
     "URL or file name": "URL ou nome de arquivo",
     "Unit": "Unidade",
+    "Use insecure HTTP parser": "Usar analisador HTTP inseguro",
     "blinds": "persianas",
     "boolean": "boolean",
     "commaNumber": "número com vírgula",
@@ -39,9 +44,5 @@
     "string": "cadeia",
     "switch": "mudar",
     "temperature": "temperatura",
-    "value": "valor",
-    "Request Timeout": "Solicitar tempo limite",
-    "Request Delay": "Solicitar atraso",
-    "Accept invalid certificates": "Aceitar certificados inválidos",
-    "Use insecure HTTP parser": "Usar analisador HTTP inseguro"
+    "value": "valor"
 }

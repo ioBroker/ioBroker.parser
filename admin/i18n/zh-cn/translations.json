@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "接受无效证书",
     "Add rule: ": "添加规则： ",
     "Cancel": "取消",
+    "Click here for Sample rules": "点击这里查看示例规则",
     "Default poll interval: ": "默认的调查间隔时间",
     "Edit: ": "编辑： ",
     "Factor": "因子",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "分析器设置适配器",
     "Proxy adapter settings": "代理适配器设置",
     "RegEx": "RegEx",
+    "Request Delay": "请求延迟",
+    "Request Timeout": "请求超时",
     "Result": "结果，",
     "Role": "作用",
     "Save": "保存",
@@ -22,6 +26,7 @@
     "Type": "类型",
     "URL or file name": "网址或文件的名字",
     "Unit": "单元",
+    "Use insecure HTTP parser": "使用不安全的 HTTP 解析器",
     "blinds": "百叶窗",
     "boolean": "布尔",
     "commaNumber": "数量有逗号",
@@ -39,9 +44,5 @@
     "string": "字符串",
     "switch": "开关",
     "temperature": "温度",
-    "value": "值",
-    "Request Timeout": "请求超时",
-    "Request Delay": "请求延迟",
-    "Accept invalid certificates": "接受无效证书",
-    "Use insecure HTTP parser": "使用不安全的 HTTP 解析器"
+    "value": "值"
 }

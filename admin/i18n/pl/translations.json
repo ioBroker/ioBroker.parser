@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Zaakceptuj nieważne certyfikaty",
     "Add rule: ": "Dodać regułę: ",
     "Cancel": "Cofnij",
+    "Click here for Sample rules": "Kliknij tutaj, aby uzyskać przykładowe reguły",
     "Default poll interval: ": "Ankieta domyślnie",
     "Edit: ": "Edytuj: ",
     "Factor": "Czynnik",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Ustawienia karty sieciowej parser ",
     "Proxy adapter settings": "Ustawienia adaptera proxy",
     "RegEx": "Wyrażenie regularne",
+    "Request Delay": "Opóźnienie żądania",
+    "Request Timeout": "Limit czasu żądania",
     "Result": "Wynik",
     "Role": "Rola",
     "Save": "Zapisz",
@@ -22,6 +26,7 @@
     "Type": "Typ",
     "URL or file name": "Adres URL lub nazwę pliku ",
     "Unit": "Blok",
+    "Use insecure HTTP parser": "Użyj niezabezpieczonego parsera HTTP",
     "blinds": "żaluzje",
     "boolean": "logiczne",
     "commaNumber": "liczba z przecinkiem",
@@ -39,9 +44,5 @@
     "string": "wiersz",
     "switch": "przełącznik",
     "temperature": "temperatura",
-    "value": "wartość",
-    "Request Timeout": "Limit czasu żądania",
-    "Request Delay": "Opóźnienie żądania",
-    "Accept invalid certificates": "Zaakceptuj nieważne certyfikaty",
-    "Use insecure HTTP parser": "Użyj niezabezpieczonego parsera HTTP"
+    "value": "wartość"
 }

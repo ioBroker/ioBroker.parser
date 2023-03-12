@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Принимать недействительные сертификаты",
     "Add rule: ": "Добавить правило: ",
     "Cancel": "Отмена",
+    "Click here for Sample rules": "Нажмите здесь для примеров правил",
     "Default poll interval: ": "Интервал опроса по умолчанию",
     "Edit: ": "Изменить: ",
     "Factor": "Фактор",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Настройки драйвера Parser",
     "Proxy adapter settings": "Настройки Proxy драйвера",
     "RegEx": "RegEx",
+    "Request Delay": "Запросить задержку",
+    "Request Timeout": "Время ожидания запроса",
     "Result": "Результат",
     "Role": "Роль",
     "Save": "Сохранить",
@@ -22,6 +26,7 @@
     "Type": "Тип",
     "URL or file name": "URL или имя файла",
     "Unit": "Единицы",
+    "Use insecure HTTP parser": "Использовать небезопасный парсер HTTP",
     "blinds": "окна",
     "boolean": "boolean",
     "commaNumber": "число c запятой",
@@ -39,9 +44,5 @@
     "string": "string",
     "switch": "переключ.",
     "temperature": "температура",
-    "value": "значение",
-    "Request Timeout": "Время ожидания запроса",
-    "Request Delay": "Запросить задержку",
-    "Accept invalid certificates": "Принимать недействительные сертификаты",
-    "Use insecure HTTP parser": "Использовать небезопасный парсер HTTP"
+    "value": "значение"
 }
