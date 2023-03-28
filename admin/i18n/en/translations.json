@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Accept invalid certificates",
     "Add rule: ": "Add rule: ",
     "Cancel": "Cancel",
+    "Click here for Sample rules": "Click here for Sample rules",
     "Default poll interval: ": "Default poll interval",
     "Edit: ": "Edit: ",
     "Factor": "Factor",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Parser adapter settings",
     "Proxy adapter settings": "Proxy adapter settings",
     "RegEx": "RegEx",
+    "Request Delay": "Request Delay",
+    "Request Timeout": "Request Timeout",
     "Result": "Result",
     "Role": "Role",
     "Save": "Save",
@@ -22,6 +26,7 @@
     "Type": "Type",
     "URL or file name": "URL or file name",
     "Unit": "Unit",
+    "Use insecure HTTP parser": "Use insecure HTTP parser",
     "blinds": "blinds",
     "boolean": "boolean",
     "commaNumber": "number with comma",
@@ -39,9 +44,5 @@
     "string": "string",
     "switch": "switch",
     "temperature": "temperature",
-    "value": "value",
-    "Request Timeout": "Request Timeout",
-    "Request Delay": "Request Delay",
-    "Accept invalid certificates": "Accept invalid certificates",
-    "Use insecure HTTP parser": "Use insecure HTTP parser"
+    "value": "value"
 }

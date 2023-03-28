@@ -74,6 +74,7 @@ If you enter the same URL or filename more than once into different table rows, 
 | cloudRunning      | `https://iobroker.net/`                                | `Privacy Notice`        | indicator    | boolean |      | 60000    |
 | cpuTemperature    | `/sys/devices/virtual/thermal/thermal_zone0/temp`      | `(.*)`                  | temperature  | number  |  °C  | 30000    |
 | stockPrice.Visa    | `https://www.finanzen.net/aktien/visa-aktie`      | `\d{0,3},\d{2}(?=<span>EUR<\/span>)` | value  | number  |  €  | 86400000    |
+| kleinanzeigen    | `https://www.ebay-kleinanzeigen.de/s-iobroker/k0`      | `data-href="(.*?).">` | default  | string  |    | 600000    |
 
 *Note:* While applying regex to the retrieved URL/file data, all line breaks will be replaced with spaces to allow multi-line search.
 
@@ -106,6 +107,16 @@ Further information on RegExp:
 - (-?\d+) get number (both negative and positive numbers)
 - [+-]?([0-9]+.?[0-9]|.[0-9]+) get a number with decimal places (and . as decimal separator)
 - [+-]?([0-9]+,?[0-9]|,[0-9]+) get a number with decimal places (and , as decimal separator)
+
+## Notification Example
+### Telegram
+```Javascript
+on("parser.0.kleinanzeigen", (obj) => {
+        sendTo("telegram.0", {
+            text: "https://www.ebay-kleinanzeigen.de" + obj.state.val,
+        });
+});
+```
 
 ## Quality codes
 Values can have quality codes:

@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Accepteer ongeldige certificaten",
     "Add rule: ": "Regel toevoegen: ",
     "Cancel": "Annuleren",
+    "Click here for Sample rules": "Klik hier voor voorbeeldregels",
     "Default poll interval: ": "Standaard poll interval",
     "Edit: ": "Edit: ",
     "Factor": "Factor",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Parser-adapter instellingen",
     "Proxy adapter settings": "Proxy-adapterinstellingen",
     "RegEx": "RegEx",
+    "Request Delay": "Verzoek vertraging",
+    "Request Timeout": "Verzoek time-out",
     "Result": "Resultaat",
     "Role": "Rol",
     "Save": "Opslaan",
@@ -22,6 +26,7 @@
     "Type": "Type",
     "URL or file name": "URL of bestandsnaam",
     "Unit": "Eenheid",
+    "Use insecure HTTP parser": "Gebruik onveilige HTTP-parser",
     "blinds": "blinds",
     "boolean": "boolean",
     "commaNumber": "een getal met een komma",
@@ -39,9 +44,5 @@
     "string": "string",
     "switch": "switch",
     "temperature": "temperatuur",
-    "value": "waarde",
-    "Request Timeout": "Verzoek time-out",
-    "Request Delay": "Verzoek vertraging",
-    "Accept invalid certificates": "Accepteer ongeldige certificaten",
-    "Use insecure HTTP parser": "Gebruik onveilige HTTP-parser"
+    "value": "waarde"
 }

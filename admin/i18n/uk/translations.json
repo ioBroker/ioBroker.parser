@@ -1,6 +1,8 @@
 {
+    "Accept invalid certificates": "Приймати недійсні сертифікати",
     "Add rule: ": "Додати правило:",
     "Cancel": "Скасувати",
+    "Click here for Sample rules": "Натисніть тут для прикладів правил",
     "Default poll interval: ": "Інтервал опитування за замовчуванням",
     "Edit: ": "Редагувати:",
     "Factor": "Фактор",
@@ -13,6 +15,8 @@
     "Parser adapter settings": "Параметри адаптера аналізатора",
     "Proxy adapter settings": "Налаштування адаптера проксі",
     "RegEx": "RegEx",
+    "Request Delay": "Відстрочка запиту",
+    "Request Timeout": "Час очікування запиту минув",
     "Result": "Результат",
     "Role": "Роль",
     "Save": "зберегти",
@@ -22,6 +26,7 @@
     "Type": "Тип",
     "URL or file name": "URL-адреса або ім'я файлу",
     "Unit": "одиниця",
+    "Use insecure HTTP parser": "Використовувати незахищений аналізатор HTTP",
     "blinds": "жалюзі",
     "boolean": "логічний",
     "commaNumber": "число з комою",
@@ -39,9 +44,5 @@
     "string": "рядок",
     "switch": "перемикач",
     "temperature": "температура",
-    "value": "значення",
-    "Request Timeout": "Час очікування запиту минув",
-    "Request Delay": "Відстрочка запиту",
-    "Accept invalid certificates": "Приймати недійсні сертифікати",
-    "Use insecure HTTP parser": "Використовувати незахищений аналізатор HTTP"
+    "value": "значення"
 }
