@@ -139,6 +139,9 @@
       "file",
       "parser"
     ],
+    "adminUI": {
+      "config": "json"
+    },
     "dependencies": [
       {
         "js-controller": ">=2.0.0"

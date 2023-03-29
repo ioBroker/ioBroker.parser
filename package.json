@@ -19,8 +19,8 @@
     "url": "https://github.com/ioBroker/ioBroker.parser"
   },
   "dependencies": {
-    "axios": "^1.2.2",
-    "@iobroker/adapter-core": "^2.6.7"
+    "axios": "^1.3.4",
+    "@iobroker/adapter-core": "^2.6.8"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
@@ -29,7 +29,8 @@
     "@iobroker/dev-server": "^0.6.0",
     "@iobroker/adapter-dev": "^1.2.0",
     "mocha": "^10.2.0",
-    "chai": "^4.3.7"
+    "chai": "^4.3.7",
+    "gulp": "^4.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
@@ -44,12 +45,15 @@
   ],
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit",
+    "build": "gulp",
+    "prepublishOnly": "gulp",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
     "translate": "translate-adapter",
-    "i18n2words": "node words.js"
+    "i18n2words": "node words.js",
+    "update-packages": "ncu --upgrade && cd src-admin && ncu --upgrade && cd .."
   },
   "license": "MIT"
 }

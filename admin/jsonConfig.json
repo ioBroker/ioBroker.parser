@@ -1,0 +1,58 @@
+{
+  "i18n": true,
+  "type": "panel",
+  "items": {
+    "pollInterval": {
+      "type": "number",
+      "label": "parser_Default poll interval",
+      "help": "parser_ms",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+    "requestTimeout": {
+      "type": "number",
+      "label": "parser_Request Timeout",
+      "help": "parser_ms",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+    "requestDelay": {
+      "newLine": true,
+      "type": "number",
+      "label": "parser_Request Delay",
+      "help": "parser_ms",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+    "acceptInvalidCertificates": {
+      "newLine": true,
+      "type": "checkbox",
+      "label": "parser_Accept invalid certificates",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+    "useInsecureHTTPParser": {
+      "type": "checkbox",
+      "label": "parser_Use insecure HTTP parser",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+    "_divider": {
+        "newLine": true,
+        "type": "divider"
+    },
+    "_table": {
+      "newLine": true,
+      "type": "custom",
+      "i18n": true,
+      "url": "custom/customComponents.js",
+      "name": "ConfigCustomParserSet/Components/ParserComponent",
+      "sm": 12
+    }
+  }
+}

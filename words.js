@@ -196,4 +196,4 @@ function languages2words(src) {
     writeWordJs(bigOne, src);
 }
 
-languages2words(__dirname + '/admin/');
+languages2words(`${__dirname}/admin/`);

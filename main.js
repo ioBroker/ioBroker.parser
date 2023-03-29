@@ -19,21 +19,6 @@ function startAdapter(options) {
     Object.assign(options, {name: adapterName});
     adapter = new utils.Adapter(options);
 
-    // is called if a subscribed state changes
-    adapter.on('stateChange', (id, state) => {
-        if (!state || state.ack) {
-            return;
-        }
-
-        // Warning, state can be null if it was deleted
-        adapter.log.debug(`stateChange ${id} ${JSON.stringify(state)}`);
-
-        // output to parser
-        if (states[id] && states[id].common && states[id].common.write) {
-
-        }
-    });
-
     adapter.on('objectChange', (id, obj) => {
         if (!id) {
             return;
@@ -110,13 +95,19 @@ function initPoll(obj, onlyUpdate) {
     obj.native.substituteOld = obj.native.substituteOld === 'true' || obj.native.substituteOld === true;
 
     if ((obj.native.substitute !== '' || obj.common.type === 'string') && obj.native.substitute !== undefined && obj.native.substitute !== null) {
-        if (obj.native.substitute === 'null')  obj.native.substitute = null;
+        if (obj.native.substitute === 'null')  {
+            obj.native.substitute = null;
+        }
 
         if (obj.common.type === 'number') {
             obj.native.substitute = parseFloat(obj.native.substitute) || 0;
         } else if (obj.common.type === 'boolean') {
-            if (obj.native.substitute === 'true')  obj.native.substitute = true;
-            if (obj.native.substitute === 'false') obj.native.substitute = false;
+            if (obj.native.substitute === 'true')  {
+                obj.native.substitute = true;
+            }
+            if (obj.native.substitute === 'false') {
+                obj.native.substitute = false;
+            }
             obj.native.substitute = !!obj.native.substitute;
         }
     } else {
@@ -147,6 +138,7 @@ function initPoll(obj, onlyUpdate) {
             timers[obj.native.interval].count++;
         }
     }
+
     return false;
 }
 
@@ -167,7 +159,7 @@ function _analyseDataForStates(linkStates, data, error, callback) {
     } else {
         const id = linkStates.shift();
         if (!states[id]) {
-            adapter.log.error('Invalid state ID: ' + id);
+            adapter.log.error(`Invalid state ID: ${id}`);
             setImmediate(_analyseDataForStates, linkStates, data, error, callback);
             return;
         }
@@ -189,7 +181,7 @@ function analyseDataForStates(curStates, link, data, error, callback) {
             linkStates.push(curStates[i]);
         }
     }
-    adapter.log.debug('Process ' + JSON.stringify(linkStates) + ' for link ' + link);
+    adapter.log.debug(`Process ${JSON.stringify(linkStates)} for link ${link}`);
     _analyseDataForStates(linkStates, data, error, callback);
 }
 
@@ -208,17 +200,17 @@ function cloneRegex(regex) {
 }
 
 function analyseData(obj, data, error, callback) {
-    adapter.log.debug('analyseData CHECK for ' + obj._id + ', old=' + obj.value.val);
+    adapter.log.debug(`analyseData CHECK for ${obj._id}, old=${obj.value.val}`);
     states[obj._id].processed = true;
     let newVal;
     if (error) {
         if (obj.native.substituteOld) {
-            adapter.log.info('Cannot read link "' + obj.native.link + '": ' + error);
+            adapter.log.info(`Cannot read link "${obj.native.link}": ${error}`);
             if (callback) {
                 callback();
             }
         } else {
-            adapter.log.warn('Cannot read link "' + obj.native.link + '": ' + error);
+            adapter.log.warn(`Cannot read link "${obj.native.link}": ${error}`);
             if (obj.value.q !== 0x82) {
                 obj.value.q   = 0x82;
                 obj.value.ack = true;
@@ -286,7 +278,7 @@ function analyseData(obj, data, error, callback) {
             }
 
             if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
-                adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ', new=' + newVal);
+                adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=${newVal}`);
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
@@ -297,9 +289,9 @@ function analyseData(obj, data, error, callback) {
         } else {
             if (obj.common.type === 'boolean') {
                 newVal = false;
-                adapter.log.debug('Text not found for ' + obj._id);
+                adapter.log.debug(`Text not found for ${obj._id}`);
                 if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
-                    adapter.log.debug('analyseData for ' + obj._id + ', old=' + obj.value.val + ',new=' + newVal);
+                    adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val},new=${newVal}`);
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
@@ -308,15 +300,17 @@ function analyseData(obj, data, error, callback) {
                     callback();
                 }
             } else  {
-                adapter.log.debug('Cannot find number in answer for ' + obj._id);
+                adapter.log.debug(`Cannot find number in answer for ${obj._id}`);
                 if (obj.native.substituteOld) {
                     callback && callback();
                 } else {
                     if (obj.value.q !== 0x44 || !obj.value.ack) {
                         obj.value.q   = 0x44;
                         obj.value.ack = true;
-                        if (obj.native.substitute !== undefined) obj.value.val = obj.native.substitute;
-                        console.log('Use substitution: "' + obj.native.substitute + '"');
+                        if (obj.native.substitute !== undefined) {
+                            obj.value.val = obj.native.substitute;
+                        }
+                        console.log(`Use substitution: "${obj.native.substitute}"`);
 
                         adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
                     } else if (callback) {
@@ -326,7 +320,7 @@ function analyseData(obj, data, error, callback) {
             }
         }
     } else {
-        adapter.log.warn('No regex object found for "' + obj._id + '"');
+        adapter.log.warn(`No regex object found for "${obj._id}"`);
         if (callback) {
             callback();
         }
@@ -334,14 +328,14 @@ function analyseData(obj, data, error, callback) {
 }
 
 function isRemoteLink(link) {
-    return link.match(/^https?:\/\//);
+    return (link || '').match(/^https?:\/\//);
 }
 
 async function readLink(link, callback) {
     if (isRemoteLink(link)) {
         axios = axios || require('axios');
 
-        adapter.log.debug('Request URL: ' + link);
+        adapter.log.debug(`Request URL: ${link}`);
         try {
             const res = await axios({
                 method: 'GET',
@@ -352,7 +346,7 @@ async function readLink(link, callback) {
                 insecureHTTPParser: !!adapter.config.useInsecureHTTPParser,
                 timeout: adapter.config.requestTimeout,
                 transformResponse: [], // do not have any JSON parsing or such
-                responseType: 'text'
+                responseType: 'text',
             });
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
@@ -362,11 +356,13 @@ async function readLink(link, callback) {
     } else {
         path = path || require('path');
         fs   = fs   || require('fs');
-        link = link.replace(/\\/g, '/');
+        link = (link || '').replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
             link = path.normalize(`${__dirname}/../../${link}`);
         }
+
         adapter.log.debug(`Read file: ${link}`);
+
         if (fs.existsSync(link)) {
             let data;
             try {
@@ -401,10 +397,7 @@ function addToRemoteQueue(link, callback) {
         hostnamesQueue[url.hostname] = [];
     }
     const requestQueue = hostnamesQueue[url.hostname];
-    requestQueue.push({
-        link: link,
-        callback: callback
-    });
+    requestQueue.push({link, callback});
 
     if (requestQueue.length === 1) {
         // First item in queue, process it. Otherwise, will get done when current request is removed.
@@ -450,7 +443,7 @@ function poll(interval, callback) {
         if (states[id].native.interval === interval && (states[id].processed || states[id].processed === undefined)) {
             states[id].processed = false;
             curStates.push(id);
-            if (curLinks.indexOf(states[id].native.link) === -1) {
+            if (!curLinks.includes(states[id].native.link)) {
                 curLinks.push(states[id].native.link);
             }
         }
@@ -477,47 +470,47 @@ function poll(interval, callback) {
 
 const timers = {};
 
-function main() {
-    adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
+async function main() {
+    adapter.config.pollInterval   = parseInt(adapter.config.pollInterval, 10)   || 5000;
     adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
-    adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
+    adapter.config.requestDelay   = parseInt(adapter.config.requestDelay, 10)   || 0;
 
     // read current existing objects (прочитать текущие существующие объекты)
-    adapter.getForeignObjects(`${adapter.namespace}.*`, 'state', (err, _states) => {
-        if (err) {
-            adapter.log.error('Cannot get objects: ' + err.message);
-            adapter.stop();
-            return;
+    try {
+        states = adapter.getForeignObjectsAsync(`${adapter.namespace}.*`, 'state');
+    } catch (err) {
+        adapter.log.error(`Cannot get objects: ${err.message}`);
+        adapter.stop();
+        return;
+    }
+    let values;
+    try {
+        values = await adapter.getForeignStatesAsync(`${adapter.namespace}.*`);
+    } catch (err) {
+        adapter.log.error(`Cannot get state values: ${err.message}`);
+        adapter.stop();
+        return;
+    }
+    // subscribe on changes
+    await adapter.subscribeStatesAsync('*');
+    await adapter.subscribeForeignObjectsAsync('*');
+
+    // Mark all sensors as if they received something
+    for (const id in states) {
+        if (!states.hasOwnProperty(id)) {
+            continue;
         }
-        states = _states;
-        adapter.getForeignStates(`${adapter.namespace}.*`, (err, values) => {
-            if (err) {
-                adapter.log.error(`Cannot get state values: ${err.message}`);
-                adapter.stop();
-                return;
-            }
-            // subscribe on changes
-            adapter.subscribeStates('*');
-            adapter.subscribeObjects('*');
 
-            // Mark all sensors as if they received something
-            for (const id in states) {
-                if (!states.hasOwnProperty(id)) {
-                    continue;
-                }
+        states[id].value = values[id] || {val: null};
+        initPoll(states[id], false);
+    }
 
-                states[id].value = values[id] || {val: null};
-                initPoll(states[id], false);
-            }
-
-            // trigger all parsers first time
-            for (const timer in timers) {
-                if (timers.hasOwnProperty(timer)) {
-                    poll(timers[timer].interval);
-                }
-            }
-        });
-    });
+    // trigger all parsers first time
+    for (const timer in timers) {
+        if (timers.hasOwnProperty(timer)) {
+            poll(timers[timer].interval);
+        }
+    }
 }
 
 // If started as allInOne/compact mode => return function to create instance

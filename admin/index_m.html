@@ -513,7 +513,9 @@
                     _obj.native.offset = newValues[v].offset;
                     changed = true;
                 }
-                if (changed) tasks.push(_obj);
+                if (changed) {
+                    tasks.push(_obj);
+                }
             } else {
                 tasks.push({
                     _id:            adapter + '.' + instance + '.' + newValues[v].name.replace(/[()\[\]\\\/*?\s]/g, '_'),
