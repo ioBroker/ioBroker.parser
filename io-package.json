@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "1.3.2",
+    "version": "2.0.0",
     "news": {
+      "2.0.0": {
+        "en": "added translations\nMigrated GUI to admin v6",
+        "de": "übersetzungen\nMigrated GUI to admin v6",
+        "ru": "добавлены переводы\nMigrated GUI админ v6",
+        "pt": "traduções adicionadas\nGUI migrado para admin v6",
+        "nl": "vertaling:\nVerminderde GUI",
+        "fr": "traductions ajoutées\nMigrated GUI pour admin v6",
+        "it": "traduzioni\nGUI migrata a admin v6",
+        "es": "traducciones adicionales\nGUI migrado a admin v6",
+        "pl": "przekład\nGUI to admin v6",
+        "uk": "додано переклади\nМігрований графічний інтерфейс для адміністратора v6",
+        "zh-cn": "增 译\n密克伊人诉6"
+      },
       "1.3.2": {
         "en": "In error cases return error as string",
         "de": "In Fehlerfällen Rückgabefehler als String",
@@ -80,19 +93,6 @@
         "pl": "Fixowe przypadki katastrofy (ang.)",
         "zh-cn": "Sentry报告的潜在事故",
         "uk": "Виправте потенційні випадки збоїв, про які повідомляє Sentry"
-      },
-      "1.1.6": {
-        "en": "Set method to \"GET\" when requesting URLs",
-        "de": "Setzen Sie die Methode auf \"GET\", wenn Sie URLs anfordern",
-        "ru": "Установите метод «GET» при запросе URL-адресов",
-        "pt": "Defina o método como \"GET\" ao solicitar URLs",
-        "nl": "Stel methode in op \"GET\" bij het opvragen van URL's",
-        "fr": "Définir la méthode sur \"GET\" lors de la demande d'URL",
-        "it": "Imposta il metodo su \"GET\" quando richiedi gli URL",
-        "es": "Establezca el método en \"GET\" al solicitar URL",
-        "pl": "Ustaw metodę na „GET” podczas żądania adresów URL",
-        "zh-cn": "请求 URL 时将方法设置为“GET”",
-        "uk": "Установіть для методу \"GET\" під час запиту URL-адрес"
       }
     },
     "title": "Parser",
