@@ -50,5 +50,6 @@
   "parser_Substitute old value": "Alten Wert ersetzen",
   "parser_Substitute value": "Ersatzwert",
   "parser_Test regex": "Regex testen",
-  "parser_Delete rule": "Regel löschen"
+  "parser_Delete rule": "Regel löschen",
+  "parser_Update timestamp of non changed values": "Zeitstempel nicht geänderter Werte aktualisieren"
 }

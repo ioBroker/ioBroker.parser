@@ -132,7 +132,7 @@ Values can have quality codes:
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.1 (2023-03-31)
 * (bluefox) Updated timestamp of non changed values
 
 ### 2.0.0 (2023-03-29)
