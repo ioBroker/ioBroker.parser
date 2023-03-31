@@ -12,8 +12,6 @@
     "parser_Offset": "Offset",
     "parser_Old": "Oud",
     "parser_Old value": "Oude waarde",
-    "parser_Parser adapter settings": "Parser-adapter instellingen",
-    "parser_Proxy adapter settings": "Proxy-adapterinstellingen",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Verzoek vertraging",
     "parser_Request Timeout": "Verzoek time-out",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Vervangende waarde",
     "parser_Test regex": "Regex testen",
     "parser_Delete rule": "Regel verwijderen",
-    "parser_Update timestamp of non changed values": "Update tijdstempel van niet-gewijzigde waarden"
+    "parser_Update timestamp of non changed values": "Update tijdstempel van niet-gewijzigde waarden",
+    "parser_Active": "Actief"
 }

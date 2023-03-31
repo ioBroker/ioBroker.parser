@@ -12,8 +12,6 @@
     "parser_Offset": "Décalage",
     "parser_Old": "Vieux",
     "parser_Old value": "L'ancienne valeur",
-    "parser_Parser adapter settings": "Analyseur de paramètres de la carte",
-    "parser_Proxy adapter settings": "Paramètres de l'adaptateur proxy",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Délai de demande",
     "parser_Request Timeout": "Délai d'expiration de la demande",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Valeur de remplacement",
     "parser_Test regex": "Tester l'expression régulière",
     "parser_Delete rule": "Supprimer la règle",
-    "parser_Update timestamp of non changed values": "Mettre à jour l'horodatage des valeurs non modifiées"
+    "parser_Update timestamp of non changed values": "Mettre à jour l'horodatage des valeurs non modifiées",
+    "parser_Active": "Actif"
 }

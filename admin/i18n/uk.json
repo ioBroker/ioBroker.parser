@@ -12,8 +12,6 @@
     "parser_Offset": "Зсув",
     "parser_Old": "Старий",
     "parser_Old value": "Стара вартість",
-    "parser_Parser adapter settings": "Параметри адаптера аналізатора",
-    "parser_Proxy adapter settings": "Налаштування адаптера проксі",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Відстрочка запиту",
     "parser_Request Timeout": "Час очікування запиту минув",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Замісна вартість",
     "parser_Test regex": "Перевірте регулярний вираз",
     "parser_Delete rule": "Видалити правило",
-    "parser_Update timestamp of non changed values": "Оновити позначку часу незмінених значень"
+    "parser_Update timestamp of non changed values": "Оновити позначку часу незмінених значень",
+    "parser_Active": "Активний"
 }

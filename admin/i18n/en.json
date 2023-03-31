@@ -12,8 +12,6 @@
     "parser_Offset": "Offset",
     "parser_Old": "Old",
     "parser_Old value": "Old value",
-    "parser_Parser adapter settings": "Parser adapter settings",
-    "parser_Proxy adapter settings": "Proxy adapter settings",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Request Delay",
     "parser_Request Timeout": "Request Timeout",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Substitute value",
     "parser_Test regex": "Test regex",
     "parser_Delete rule": "Delete rule",
-    "parser_Update timestamp of non changed values": "Update timestamp of non changed values"
+    "parser_Update timestamp of non changed values": "Update timestamp of non changed values",
+    "parser_Active": "Active"
 }

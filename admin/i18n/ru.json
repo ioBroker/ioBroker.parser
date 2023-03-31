@@ -12,8 +12,6 @@
     "parser_Offset": "Сдвиг",
     "parser_Old": "Посл.",
     "parser_Old value": "Последнее значение",
-    "parser_Parser adapter settings": "Настройки драйвера Parser",
-    "parser_Proxy adapter settings": "Настройки Proxy драйвера",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Задержка запроса",
     "parser_Request Timeout": "Время ожидания запроса",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Подстановочное значение",
     "parser_Test regex": "Тестовое регулярное выражение",
     "parser_Delete rule": "Удалить правило",
-    "parser_Update timestamp of non changed values": "Обновить временную метку неизмененных значений"
+    "parser_Update timestamp of non changed values": "Обновить временную метку неизмененных значений",
+    "parser_Active": "Активно"
 }

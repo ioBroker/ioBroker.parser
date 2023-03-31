@@ -12,8 +12,6 @@
     "parser_Offset": "Desplazamiento",
     "parser_Old": "Viejo",
     "parser_Old value": "Valor antiguo",
-    "parser_Parser adapter settings": "Analizador de configuración de adaptador de",
-    "parser_Proxy adapter settings": "Ajustes del adaptador proxy",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Solicitud de retraso",
     "parser_Request Timeout": "Pide tiempo fuera",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Valor de sustitución",
     "parser_Test regex": "expresión regular de prueba",
     "parser_Delete rule": "Eliminar regla",
-    "parser_Update timestamp of non changed values": "Actualizar marca de tiempo de valores no modificados"
+    "parser_Update timestamp of non changed values": "Actualizar marca de tiempo de valores no modificados",
+    "parser_Active": "Activo"
 }

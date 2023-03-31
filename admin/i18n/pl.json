@@ -12,8 +12,6 @@
     "parser_Offset": "Przesunięcie",
     "parser_Old": "Stary",
     "parser_Old value": "Stare wartość",
-    "parser_Parser adapter settings": "Ustawienia karty sieciowej parser ",
-    "parser_Proxy adapter settings": "Ustawienia adaptera proxy",
     "parser_RegEx": "Wyrażenie regularne",
     "parser_Request Delay": "Opóźnienie żądania",
     "parser_Request Timeout": "Limit czasu żądania",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "Wartość zastępcza",
     "parser_Test regex": "Wyrażenie regularne testowe",
     "parser_Delete rule": "Usuń regułę",
-    "parser_Update timestamp of non changed values": "Zaktualizuj sygnaturę czasową niezmienionych wartości"
+    "parser_Update timestamp of non changed values": "Zaktualizuj sygnaturę czasową niezmienionych wartości",
+    "parser_Active": "Aktywny"
 }

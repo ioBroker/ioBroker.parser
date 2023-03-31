@@ -68,6 +68,9 @@ const styles = theme => ({
     colIndex: {
         width: 20,
     },
+    colActive: {
+        width: 50,
+    },
     colName: {
         width: 100,
     },
@@ -186,6 +189,7 @@ class ParserComponent extends ConfigGeneric {
                         id,
                         name: id.substring(this.namespace.length),
                         common: {
+                            enabled: rows[id].common.enabled !== false,
                             role: rows[id].common.role,
                             type: rows[id].common.type,
                             unit: rows[id].common.unit,
@@ -199,6 +203,7 @@ class ParserComponent extends ConfigGeneric {
                             substituteOld: rows[id].native.substituteOld,
                             offset: rows[id].native.offset,
                             factor: rows[id].native.factor,
+                            parseHtml: rows[id].native.parseHtml,
                         },
                     }));
                     rules.sort((a, b) => a.name.localeCompare(b.name));
@@ -235,6 +240,7 @@ class ParserComponent extends ConfigGeneric {
                     id,
                     name: id.substring(this.namespace.length),
                     common:        {
+                        enabled: obj.common.enabled !== false,
                         role: obj.common.role,
                         type: obj.common.type,
                         unit: obj.common.unit,
@@ -248,6 +254,7 @@ class ParserComponent extends ConfigGeneric {
                         substituteOld: obj.native.substituteOld,
                         offset: obj.native.offset,
                         factor: obj.native.factor,
+                        parseHtml: obj.native.parseHtml,
                     },
                 };
                 if (JSON.stringify(this.state.rules[ruleIndex]) === JSON.stringify(rules[ruleIndex])) {
@@ -259,6 +266,7 @@ class ParserComponent extends ConfigGeneric {
                     id,
                     name: id.substring(this.namespace.length),
                     common:        {
+                        enabled: obj.common.enabled !== false,
                         role: obj.common.role,
                         type: obj.common.type,
                         unit: obj.common.unit,
@@ -272,6 +280,7 @@ class ParserComponent extends ConfigGeneric {
                         substituteOld: obj.native.substituteOld,
                         offset: obj.native.offset,
                         factor: obj.native.factor,
+                        parseHtml: obj.native.parseHtml,
                     },
                 });
             }
@@ -409,6 +418,22 @@ class ParserComponent extends ConfigGeneric {
                                 }}
                                 label={I18n.t('parser_Offset')}
                                 variant="standard"
+                            /> : null}
+                        {rule.common.type === 'string' ?
+                            <FormControlLabel
+                                title={I18n.t('parser_Convert &#48; => 0 and so on')}
+                                className={this.props.classes.marginRight}
+                                control={
+                                    <Checkbox
+                                        checked={rule.native.parseHtml}
+                                        onChange={() => {
+                                            const newRule = JSON.parse(JSON.stringify(rule));
+                                            newRule.native.parseHtml = !newRule.native.parseHtml;
+                                            this.setState({ showEditDialog: newRule }, () => this.onTest());
+                                        }}
+                                    />
+                                }
+                                label={I18n.t('parser_Parse HTML text')}
                             /> : null}
                     </Grid>
                     <Grid item sm={12}>
@@ -564,11 +589,17 @@ class ParserComponent extends ConfigGeneric {
 
         return <TableRow key={`${index}_${rule.id}`} className={this.state.changed.includes(index) ? this.props.classes.changedRow : ''}>
             <TableCell className={cell}>{index + 1}</TableCell>
+            <TableCell className={cell}><Checkbox
+                disabled={error}
+                checked={rule.common.enabled}
+                onChange={e => this._onChange(index, false, 'enabled', e.target.checked)}
+            /></TableCell>
             <TableCell className={cell}>
                 <TextField
                     fullWidth
                     value={rule.name}
                     error={!!error}
+                    disabled={!rule.common.enabled}
                     onChange={e => {
                         const rules = JSON.parse(JSON.stringify(this.state.rules));
                         rules[index].name = e.target.value;
@@ -581,7 +612,7 @@ class ParserComponent extends ConfigGeneric {
             <TableCell className={cell}>
                 <TextField
                     fullWidth
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     value={rule.native.link}
                     onChange={e => this._onChange(index, true, 'link', e.target.value)}
                     variant="standard"
@@ -589,7 +620,7 @@ class ParserComponent extends ConfigGeneric {
             </TableCell>
             <TableCell className={cell}>
                 <TextField
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     fullWidth
                     value={rule.native.regex}
                     onChange={e => this._onChange(index, true, 'regex', e.target.value)}
@@ -599,7 +630,7 @@ class ParserComponent extends ConfigGeneric {
             <TableCell className={cell}>
                 <TextField
                     fullWidth
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     value={rule.native.item}
                     type="number"
                     onChange={e => this._onChange(index, true, 'item', e.target.value)}
@@ -609,7 +640,7 @@ class ParserComponent extends ConfigGeneric {
             <TableCell className={cell}>
                 <Select
                     fullWidth
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     value={rule.common.role || ''}
                     onChange={e => this._onChange(index, false, 'role', e.target.value)}
                     variant="standard"
@@ -626,7 +657,7 @@ class ParserComponent extends ConfigGeneric {
             <TableCell className={cell}>
                 <Select
                     fullWidth
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     value={rule.common.type || 'string'}
                     onChange={e => this._onChange(index, false, 'type', e.target.value)}
                     variant="standard"
@@ -640,7 +671,7 @@ class ParserComponent extends ConfigGeneric {
             {anyNumber ? <TableCell className={cell}>
                 {rule.common.type === 'number' ?
                     <Checkbox
-                        disabled={error}
+                        disabled={error || !rule.common.enabled}
                         checked={!!rule.native.comma}
                         onChange={e => this._onChange(index, true, 'comma', e.target.checked)}
                     /> : null}
@@ -648,7 +679,7 @@ class ParserComponent extends ConfigGeneric {
             {anyNumber ? <TableCell className={cell}>
                 <TextField
                     fullWidth
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     value={rule.common.unit}
                     onChange={e => this._onChange(index, false, 'unit', e.target.value)}
                     variant="standard"
@@ -659,7 +690,7 @@ class ParserComponent extends ConfigGeneric {
                 title={I18n.t('parser_If new value is not available, let old value unchanged')}
             >
                 <Checkbox
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     checked={rule.native.substituteOld}
                     onChange={e => this._onChange(index, true, 'substituteOld', e.target.checked)}
                 />
@@ -671,7 +702,7 @@ class ParserComponent extends ConfigGeneric {
             >
                 {!rule.native.substituteOld ?
                     <TextField
-                        disabled={error}
+                        disabled={error || !rule.common.enabled}
                         fullWidth
                         value={rule.native.substituteOld ? '' : rule.native.substitute}
                         onChange={e => this._onChange(index, true, 'substitute', e.target.value)}
@@ -681,7 +712,7 @@ class ParserComponent extends ConfigGeneric {
             {anyNumber ? <TableCell className={cell}>
                 {rule.common.type === 'number' ?
                     <TextField
-                        disabled={error}
+                        disabled={error || !rule.common.enabled}
                         fullWidth
                         value={rule.native.factor}
                         onChange={e => this._onChange(index, true, 'factor', e.target.value)}
@@ -691,7 +722,7 @@ class ParserComponent extends ConfigGeneric {
             {anyNumber ? <TableCell className={cell}>
                 {rule.common.type === 'number' ?
                     <TextField
-                        disabled={error}
+                        disabled={error || !rule.common.enabled}
                         fullWidth
                         value={rule.native.offset}
                         onChange={e => this._onChange(index, true, 'offset', e.target.value)}
@@ -703,7 +734,7 @@ class ParserComponent extends ConfigGeneric {
                 className={cell}
             >
                 <TextField
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     fullWidth
                     value={rule.native.interval}
                     type="number"
@@ -714,7 +745,7 @@ class ParserComponent extends ConfigGeneric {
             <TableCell className={cell}>
                 <IconButton
                     size="small"
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     onClick={() =>
                         this.setState({
                             showEditDialog: JSON.parse(JSON.stringify(this.state.rules[index])), originalRule: JSON.stringify(this.state.rules[index]),
@@ -730,7 +761,7 @@ class ParserComponent extends ConfigGeneric {
                 </IconButton>
                 <IconButton
                     size="small"
-                    disabled={error}
+                    disabled={error || !rule.common.enabled}
                     onClick={async () => {
                         const cloned = JSON.parse(JSON.stringify(this.state.rules[index]));
                         let i = 1;
@@ -794,6 +825,7 @@ class ParserComponent extends ConfigGeneric {
             let offset     = this.state.showEditDialog.native.offset;
             let item       = this.state.showEditDialog.native.item;
             let factor     = this.state.showEditDialog.native.factor;
+            let parseHtml     = this.state.showEditDialog.native.parseHtml === 'true' || this.state.showEditDialog.native.parseHtml === true;
             let substitute = this.state.showEditDialog.native.substitute;
 
             if (!regex) {
@@ -832,7 +864,7 @@ class ParserComponent extends ConfigGeneric {
             }
             offset = parseFloat(offset) || 0;
             factor = parseFloat(factor) || 1;
-            item   = (parseFloat(item)  || 0) + 1;
+            item   = (parseInt(item, 10) || 0) + 1;
             if (item < 0) {
                 item = 1;
             }
@@ -873,9 +905,44 @@ class ParserComponent extends ConfigGeneric {
                         newVal += offset;
                     }
                 }
+
+                if (parseHtml && type === 'string') {
+                    // replace &#48 with 0 and so on
+                    newVal = newVal === null || newVal === undefined ? '' : newVal.toString();
+                    newVal = newVal.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+                }
+
                 this.setState({
                     testResult: newVal === null || newVal === undefined ? '' : newVal,
                     resultIndex: this.state.resultIndex + 1,
+                }, () => {
+                    // find position of the text
+                    const ll = m[1] ? m[0].indexOf(m[1]) : 0;
+                    // highlight text
+                    const el = this.testTextRef.current;
+                    const start = m.index + ll;
+                    const end = m.index + ll + (m[1] ? m[1].length : m[0].length);
+                    if (el?.setSelectionRange) {
+                        el.focus();
+
+                        const fullText = el.value;
+                        el.value = fullText.substring(0, end);
+                        const height = el.scrollHeight;
+                        el.scrollTop = height;
+                        el.value = fullText;
+                        el.scrollTop = height - 30;
+
+                        el?.setSelectionRange(start, end);
+                    } else if (el?.createTextRange) {
+                        const range = el.createTextRange();
+                        range.collapse(true);
+                        range.moveEnd('character', end);
+                        range.moveStart('character', start);
+                        range.select();
+                    } else if (el?.selectionStart) {
+                        el.selectionStart = start;
+                        el.selectionEnd = end;
+                    }
                 });
             } else {
                 if (type === 'boolean') {
@@ -909,6 +976,7 @@ class ParserComponent extends ConfigGeneric {
                 <TableHead>
                     <TableRow>
                         <TableCell className={Utils.clsx(cls.cell, cls.colIndex)}></TableCell>
+                        <TableCell className={Utils.clsx(cls.cell, cls.colActive)}>{I18n.t('parser_Active')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colName)}>{I18n.t('parser_Name')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colUrl)}>{I18n.t('parser_URL or file name')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colRegEx)}>{I18n.t('parser_RegEx')}</TableCell>
@@ -932,6 +1000,7 @@ class ParserComponent extends ConfigGeneric {
                                         id: '',
                                         name: '',
                                         common: {
+                                            enabled: true,
                                             role: 'state',
                                             type: 'string',
                                             unit: '',

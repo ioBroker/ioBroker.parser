@@ -12,8 +12,6 @@
     "parser_Offset": "抵消",
     "parser_Old": "旧",
     "parser_Old value": "旧价值",
-    "parser_Parser adapter settings": "分析器设置适配器",
-    "parser_Proxy adapter settings": "代理适配器设置",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "请求延迟",
     "parser_Request Timeout": "请求超时",
@@ -53,5 +51,6 @@
     "parser_Substitute value": "替换值",
     "parser_Test regex": "测试正则表达式",
     "parser_Delete rule": "删除规则",
-    "parser_Update timestamp of non changed values": "更新未更改值的时间戳"
+    "parser_Update timestamp of non changed values": "更新未更改值的时间戳",
+    "parser_Active": "积极的"
 }

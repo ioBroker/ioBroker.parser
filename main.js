@@ -47,7 +47,7 @@ function startAdapter(options) {
                     }
                 });
             } else {
-                if (states[id].native.interval !== obj.native.interval) {
+                if (states[id].native.interval !== obj.native.interval || states[id].common.enabled !== obj.common.enabled) {
                     adapter.log.info(`Parser object ${id} interval changed`);
                     deletePoll(states[id]);
                     states[id] = Object.assign(states[id], obj);
@@ -150,6 +150,11 @@ function initPoll(obj, onlyUpdate) {
     obj.native.factor = parseFloat(obj.native.factor) || 1;
     obj.native.item   = parseFloat(obj.native.item)   || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
+
+    if (obj.common.enabled === false) {
+        adapter.log.debug(`Rule ${obj._id} is disabled, ignoring it`);
+        return false;
+    }
 
     if (!obj.native.link) {
         adapter.log.warn(`No link configured for ${obj._id}, ignoring it`);
@@ -256,8 +261,12 @@ function analyseData(obj, data, error, callback) {
         }
     } else if (obj.regex) {
         let item = obj.native.item + 1;
-        if (item < 0) item = 1;
-        if (item > 1000) item = 1000;
+        if (item < 0) {
+            item = 1;
+        }
+        if (item > 1000) {
+            item = 1000;
+        }
         let m;
 
         let regex = cloneRegex(obj.regex);
@@ -272,7 +281,7 @@ function analyseData(obj, data, error, callback) {
         if (m) {
             if (obj.common.type === 'boolean') {
                 newVal = true;
-            } else  {
+            } else {
                 newVal = m.length > 1 ? m[1] : m[0];
 
                 if (newVal === undefined) {
@@ -304,6 +313,9 @@ function analyseData(obj, data, error, callback) {
                     newVal = parseFloat(newVal);
                     newVal *= obj.native.factor;
                     newVal += obj.native.offset;
+                } else if (obj.common.type === 'string' && obj.native.parseHtml) {
+                    newVal = newVal === null ? '' : newVal.toString();
+                    newVal = newVal.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
                 }
             }
 
