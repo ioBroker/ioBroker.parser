@@ -42,7 +42,15 @@
       "md": 4,
       "lg": 2
     },
-    "_divider": {
+    "updateNonChanged": {
+      "newLine": true,
+      "type": "checkbox",
+      "label": "parser_Update timestamp of non changed values",
+      "sm": 6,
+      "md": 4,
+      "lg": 2
+    },
+   "_divider": {
         "newLine": true,
         "type": "divider"
     },

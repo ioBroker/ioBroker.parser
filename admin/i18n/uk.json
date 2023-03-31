@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "Залиште поле порожнім, якщо потрібен інтервал за замовчуванням",
     "parser_Substitute old value": "Замінити старе значення",
     "parser_Substitute value": "Замісна вартість",
-    "parser_Test regex": "Перевірте регулярний вираз"
+    "parser_Test regex": "Перевірте регулярний вираз",
+    "parser_Delete rule": "Видалити правило",
+    "parser_Update timestamp of non changed values": "Оновити позначку часу незмінених значень"
 }

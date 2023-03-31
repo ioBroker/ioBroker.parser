@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "Pozostaw to pole puste, jeśli wymagany jest domyślny interwał",
     "parser_Substitute old value": "Zastąp starą wartość",
     "parser_Substitute value": "Wartość zastępcza",
-    "parser_Test regex": "Wyrażenie regularne testowe"
+    "parser_Test regex": "Wyrażenie regularne testowe",
+    "parser_Delete rule": "Usuń regułę",
+    "parser_Update timestamp of non changed values": "Zaktualizuj sygnaturę czasową niezmienionych wartości"
 }

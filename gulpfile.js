@@ -106,6 +106,27 @@ gulp.task('admin-3-copy', () => Promise.all([
     gulp.src(['src-admin/src/i18n/*.json']).pipe(gulp.dest('admin/custom/i18n')),
 ]));
 
-gulp.task('admin-build', gulp.series(['admin-0-clean', 'admin-1-npm', 'admin-2-compile', 'admin-3-copy']));
+gulp.task('admin-4-merge-i18n', done => {
+    const files = fs.readdirSync(`${__dirname}/src-admin/src/i18n`);
+    for (let f = 0; f < files.length; f++) {
+        const data1 = JSON.parse(fs.readFileSync(`${__dirname}/src-admin/src/i18n/${files[f]}`).toString('utf8'));
+        const time1 = fs.statSync(`${__dirname}/src-admin/src/i18n/${files[f]}`).mtimeMs;
+        const data2 = JSON.parse(fs.readFileSync(`${__dirname}/admin/i18n/${files[f]}`).toString('utf8'));
+        const time2 = fs.statSync(`${__dirname}/admin/i18n/${files[f]}`).mtimeMs;
+        if (JSON.stringify(data1) !== JSON.stringify(data2)) {
+            if (time1 > time2) {
+                console.log(`Merging ${files[f]}, src-admin is newer`);
+                fs.writeFileSync(`${__dirname}/admin/i18n/${files[f]}`, JSON.stringify(data1, null, 4));
+            } else {
+                console.log(`Merging ${files[f]}, admin is newer`);
+                fs.writeFileSync(`${__dirname}/src-admin/src/i18n/${files[f]}`, JSON.stringify(data2, null, 4));
+            }
+        }
+    }
+    done();
+});
+
+
+gulp.task('admin-build', gulp.series(['admin-0-clean', 'admin-1-npm', 'admin-2-compile', 'admin-3-copy', 'admin-4-merge-i18n']));
 
 gulp.task('default', gulp.series(['admin-build']));

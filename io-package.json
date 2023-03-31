@@ -169,6 +169,7 @@
     "requestTimeout": "60000",
     "requestDelay": "0",
     "acceptInvalidCertificates": true,
-    "useInsecureHTTPParser": false
+    "useInsecureHTTPParser": false,
+    "updateNonChanged": false
   }
 }

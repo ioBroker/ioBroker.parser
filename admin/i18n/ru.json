@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "Оставьте поле пустым, если требуется интервал по умолчанию.",
     "parser_Substitute old value": "Подставить старое значение",
     "parser_Substitute value": "Подстановочное значение",
-    "parser_Test regex": "Тестовое регулярное выражение"
+    "parser_Test regex": "Тестовое регулярное выражение",
+    "parser_Delete rule": "Удалить правило",
+    "parser_Update timestamp of non changed values": "Обновить временную метку неизмененных значений"
 }

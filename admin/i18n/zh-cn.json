@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "如果需要默认间隔，请将其留空",
     "parser_Substitute old value": "替换旧值",
     "parser_Substitute value": "替换值",
-    "parser_Test regex": "测试正则表达式"
+    "parser_Test regex": "测试正则表达式",
+    "parser_Delete rule": "删除规则",
+    "parser_Update timestamp of non changed values": "更新未更改值的时间戳"
 }

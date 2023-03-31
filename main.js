@@ -211,7 +211,7 @@ function analyseData(obj, data, error, callback) {
             }
         } else {
             adapter.log.warn(`Cannot read link "${obj.native.link}": ${error}`);
-            if (obj.value.q !== 0x82) {
+            if (obj.value.q !== 0x82 || adapter.config.updateNonChanged) {
                 obj.value.q   = 0x82;
                 obj.value.ack = true;
                 if (obj.native.substitute !== undefined) {
@@ -277,7 +277,7 @@ function analyseData(obj, data, error, callback) {
                 }
             }
 
-            if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
+            if (obj.value.q || newVal !== obj.value.val || !obj.value.ack || adapter.config.updateNonChanged) {
                 adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=${newVal}`);
                 obj.value.ack = true;
                 obj.value.val = newVal;
@@ -290,7 +290,7 @@ function analyseData(obj, data, error, callback) {
             if (obj.common.type === 'boolean') {
                 newVal = false;
                 adapter.log.debug(`Text not found for ${obj._id}`);
-                if (obj.value.q || newVal !== obj.value.val || !obj.value.ack) {
+                if (obj.value.q || newVal !== obj.value.val || !obj.value.ack || adapter.config.updateNonChanged) {
                     adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val},new=${newVal}`);
                     obj.value.ack = true;
                     obj.value.val = newVal;
@@ -304,7 +304,7 @@ function analyseData(obj, data, error, callback) {
                 if (obj.native.substituteOld) {
                     callback && callback();
                 } else {
-                    if (obj.value.q !== 0x44 || !obj.value.ack) {
+                    if (obj.value.q !== 0x44 || !obj.value.ack || adapter.config.updateNonChanged) {
                         obj.value.q   = 0x44;
                         obj.value.ack = true;
                         if (obj.native.substitute !== undefined) {

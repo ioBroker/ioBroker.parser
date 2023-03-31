@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "Lasciarlo vuoto se si desidera l'intervallo predefinito",
     "parser_Substitute old value": "Sostituisci il vecchio valore",
     "parser_Substitute value": "Valore sostitutivo",
-    "parser_Test regex": "Regex di prova"
+    "parser_Test regex": "Regex di prova",
+    "parser_Delete rule": "Elimina regola",
+    "parser_Update timestamp of non changed values": "Aggiorna il timestamp dei valori non modificati"
 }

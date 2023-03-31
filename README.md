@@ -132,6 +132,9 @@ Values can have quality codes:
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Updated timestamp of non changed values
+
 ### 2.0.0 (2023-03-29)
 * (TA2k) added translations
 * (bluefox) Migrated GUI to admin v6

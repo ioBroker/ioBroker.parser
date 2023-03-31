@@ -51,5 +51,7 @@
     "parser_Leave it empty if default interval is desired": "Laat het leeg als het standaardinterval gewenst is",
     "parser_Substitute old value": "Vervang oude waarde",
     "parser_Substitute value": "Vervangende waarde",
-    "parser_Test regex": "Regex testen"
+    "parser_Test regex": "Regex testen",
+    "parser_Delete rule": "Regel verwijderen",
+    "parser_Update timestamp of non changed values": "Update tijdstempel van niet-gewijzigde waarden"
 }
