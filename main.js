@@ -61,14 +61,46 @@ function startAdapter(options) {
         }
     });
 
+    adapter.on('stateChange', (id, state) => {
+        if (!state || state.ack) {
+            return;
+        }
+
+        if (states[id] && !state.val) {
+            const oldVal = states[id].value.val;
+            setTimeout(() => {
+                readLink(states[id].native.link, (error, text) =>
+                    analyseData(states[id], text, error, updated => {
+                        if (!updated) {
+                            adapter.setState(id, {val: oldVal, ack: true});
+                        }
+                    }));
+            }, 0);
+        }
+    });
+
     adapter.on('message', obj => {
         if (obj) {
             switch (obj.command) {
                 case 'link':
                     if (obj.callback) {
-                        // read all found serial ports
+                        // read link
                         readLink(obj.message, (err, text) =>
                             adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback));
+                    }
+                    break;
+
+                case 'trigger':
+                    if (obj.callback) {
+                        if (!states[obj.message] && !states[`${adapter.namespace}.${obj.message}`]) {
+                            obj.callback && adapter.sendTo(obj.from, obj.command, {error, value: states[id].value.val}, obj.callback)
+                        } else {
+                            const id = states[obj.message] ? obj.message : `${adapter.namespace}.${obj.message}`;
+
+                            readLink(states[id].native.link, (error, text) =>
+                                analyseData(states[id], text, error, () =>
+                                    obj.callback && adapter.sendTo(obj.from, obj.command, {error, value: states[id].value.val}, obj.callback)));
+                        }
                     }
                     break;
             }
@@ -206,9 +238,7 @@ function analyseData(obj, data, error, callback) {
     if (error) {
         if (obj.native.substituteOld) {
             adapter.log.info(`Cannot read link "${obj.native.link}": ${error}`);
-            if (callback) {
-                callback();
-            }
+            callback && callback();
         } else {
             adapter.log.warn(`Cannot read link "${obj.native.link}": ${error}`);
             if (obj.value.q !== 0x82 || adapter.config.updateNonChanged) {
@@ -219,7 +249,7 @@ function analyseData(obj, data, error, callback) {
                 }
 
                 adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=Error`);
-                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
             } else if (callback) {
                 callback();
             }
@@ -248,7 +278,7 @@ function analyseData(obj, data, error, callback) {
                 if (newVal === undefined) {
                     adapter.log.info(`Regex didn't matched for ${obj._id}, old=${obj.value.val}`)
                     if (obj.native.substituteOld) {
-                        return callback && callback ();
+                        return callback && callback();
                     }
                     if (obj.value.q !== 0x82) {
                         obj.value.q = 0x82;
@@ -282,7 +312,7 @@ function analyseData(obj, data, error, callback) {
                 obj.value.ack = true;
                 obj.value.val = newVal;
                 obj.value.q   = 0;
-                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
             } else if (callback) {
                 callback();
             }
@@ -295,7 +325,7 @@ function analyseData(obj, data, error, callback) {
                     obj.value.ack = true;
                     obj.value.val = newVal;
                     obj.value.q   = 0;
-                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
                 } else if (callback) {
                     callback();
                 }
@@ -312,7 +342,7 @@ function analyseData(obj, data, error, callback) {
                         }
                         console.log(`Use substitution: "${obj.native.substitute}"`);
 
-                        adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, callback);
+                        adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
                     } else if (callback) {
                         callback();
                     }
@@ -321,9 +351,7 @@ function analyseData(obj, data, error, callback) {
         }
     } else {
         adapter.log.warn(`No regex object found for "${obj._id}"`);
-        if (callback) {
-            callback();
-        }
+        callback && callback();
     }
 }
 
@@ -477,7 +505,7 @@ async function main() {
 
     // read current existing objects (прочитать текущие существующие объекты)
     try {
-        states = adapter.getForeignObjectsAsync(`${adapter.namespace}.*`, 'state');
+        states = await adapter.getForeignObjectsAsync(`${adapter.namespace}.*`, 'state');
     } catch (err) {
         adapter.log.error(`Cannot get objects: ${err.message}`);
         adapter.stop();
