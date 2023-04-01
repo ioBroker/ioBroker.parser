@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "news": {
+      "2.0.2": {
+        "en": "Added possibility to trigger the parsing by writing of empty value to the state",
+        "de": "Zusätzliche Möglichkeit, die Parsierung durch Schreiben von Leerwert in den Zustand auszulösen",
+        "ru": "Добавлена возможность запуска парсинга, написав пустое значение государству",
+        "pt": "Adicionado possibilidade para desencadear a análise por escrito de valor vazio para o estado",
+        "nl": "Toegevoegd de mogelijkheid om de papieren te activeren door te schrijven van lege waarde voor de staat",
+        "fr": "Possibilité supplémentaire de déclencher le parsage en écrivant la valeur vide à l'état",
+        "it": "Aggiunta possibilità di attivare la parsing scrivendo di valore vuoto allo stato",
+        "es": "Se agregó la posibilidad de desencadenar la persiana escribiendo el valor vacío al estado",
+        "pl": "Wstępna możliwość wyzwalania parsingu poprzez pisanie pustej wartości dla państwa",
+        "uk": "Додана можливість запускати парсінг, написавши порожній значення в державі",
+        "zh-cn": "增加可能以书面方式为国家带来空洞价值"
+      },
       "2.0.1": {
         "en": "Updated timestamp of non changed values",
         "de": "Aktualisierter Zeitstempel nicht geänderter Werte",
@@ -80,19 +93,6 @@
         "pl": "Określenie, jeśli podpisywane certyfikaty SSL są ignorowane lub nie (obrona jest ignorowana jak do dziś)\nAllow do specyfikowania, jeśli używa się \"niebezpiecznego HTTP parser\", co umożliwia również implementacje HTTP, które nie są zgodne z specyfikacją\nAllow, aby zdefiniować HTTP żądanie czasu dostępu",
         "zh-cn": "请允许我具体说明,如果自我设计/自评的SSL证书遭到忽视或不(现在的意外情况是忽视)\n允许具体说明是否使用了“无保障的HTTP parser”,这也使不符合规格的技术转让中心得以实施。\n允许具体说明海贸总协定要求的时间",
         "uk": "Дозволити вказати, чи ігнорувати самопідписані/недійсні сертифікати SSL (за замовчуванням ігнорувати як досі)\nДозволити вказувати, чи використовується «незахищений аналізатор HTTP», який також дозволяє реалізацію HTTP, яка не відповідає специфікаціям\nДозволяє вказати тайм-аут запиту HTTP"
-      },
-      "1.1.8": {
-        "en": "Check that a link is configured",
-        "de": "Überprüfen Sie, ob ein Link konfiguriert ist",
-        "ru": "Проверьте, что ссылка настроена",
-        "pt": "Verifique se um link está configurado",
-        "nl": "Controleer dat een link in beslag genomen is",
-        "fr": "Vérifiez qu'un lien est configuré",
-        "it": "Controllare che un link sia configurato",
-        "es": "Compruebe que un enlace está configurado",
-        "pl": "Check, że połączenie jest skonfigurowane",
-        "zh-cn": "核对股",
-        "uk": "Перевірте, чи налаштовано посилання"
       }
     },
     "title": "Parser",
