@@ -52,5 +52,7 @@
     "parser_Test regex": "测试正则表达式",
     "parser_Delete rule": "删除规则",
     "parser_Update timestamp of non changed values": "更新未更改值的时间戳",
-    "parser_Active": "积极的"
+    "parser_Active": "积极的",
+    "parser_Convert &#48; => 0 and so on": "转换 &#48; => 0 等等",
+    "parser_Parse HTML text": "解析 HTML 文本"
 }

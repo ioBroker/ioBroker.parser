@@ -72,7 +72,7 @@ const styles = theme => ({
         width: 50,
     },
     colName: {
-        width: 100,
+        width: 150,
     },
     colUrl: {
 
@@ -85,9 +85,11 @@ const styles = theme => ({
     },
     colRole: {
         width: 70,
+        textAlign: 'center',
     },
     colType: {
         width: 70,
+        textAlign: 'center',
     },
     colComma: {
         width: 50,
@@ -97,6 +99,7 @@ const styles = theme => ({
     },
     colSubstituteOld: {
         width: 45,
+        textAlign: 'center',
     },
     colSubstitute: {
         width: 70,
@@ -451,6 +454,7 @@ class ParserComponent extends ConfigGeneric {
                         <TextField
                             value={rule.native.item || 0}
                             type="number"
+                            min={0}
                             onChange={e => {
                                 const newRule = JSON.parse(JSON.stringify(rule));
                                 newRule.native.item = e.target.value;

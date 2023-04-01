@@ -52,5 +52,7 @@
   "parser_Test regex": "Тестовое регулярное выражение",
   "parser_Delete rule": "Удалить правило",
   "parser_Update timestamp of non changed values": "Обновить временную метку неизмененных значений",
-  "parser_Active": "Активно"
+  "parser_Active": "Активно",
+  "parser_Convert &#48; => 0 and so on": "Преобразовать &#48; => 0 и так далее",
+  "parser_Parse HTML text": "Разобрать HTML-текст"
 }

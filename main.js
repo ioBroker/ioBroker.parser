@@ -29,7 +29,7 @@ function startAdapter(options) {
                 deletePoll(states[id]);
                 delete states[id];
             }
-        } else {
+        } else if (id.startsWith(`${adapter.namespace}.`)) {
             if (!obj.native) {
                 adapter.log.warn(`No configuration for ${obj._id}, ignoring it`);
                 return;

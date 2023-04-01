@@ -52,5 +52,7 @@
   "parser_Test regex": "Test regex",
   "parser_Delete rule": "Delete rule",
   "parser_Update timestamp of non changed values": "Update timestamp of non changed values",
-  "parser_Active": "Active"
+  "parser_Active": "Active",
+  "parser_Convert &#48; => 0 and so on": "Convert &#48; => 0 and so on",
+  "parser_Parse HTML text": "Parse HTML text"
 }

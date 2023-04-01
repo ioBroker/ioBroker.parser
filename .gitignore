@@ -7,6 +7,7 @@ admin/i18n/*/flat.txt
 package-lock.json
 src-admin/build
 src-admin/node_modules
+tmp
 
 # ioBroker dev-server
 .dev-server/

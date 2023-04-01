@@ -52,5 +52,7 @@
   "parser_Test regex": "Перевірте регулярний вираз",
   "parser_Delete rule": "Видалити правило",
   "parser_Update timestamp of non changed values": "Оновити позначку часу незмінених значень",
-  "parser_Active": "Активний"
+  "parser_Active": "Активний",
+  "parser_Convert &#48; => 0 and so on": "Перетворити &#48; => 0 і так далі",
+  "parser_Parse HTML text": "Аналіз тексту HTML"
 }
