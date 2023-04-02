@@ -533,7 +533,7 @@ async function main() {
     }
     // subscribe on changes
     await adapter.subscribeStatesAsync('*');
-    await adapter.subscribeForeignObjectsAsync('*');
+    await adapter.subscribeObjectsAsync('*');
 
     // Mark all sensors as if they received something
     for (const id in states) {
