@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "news": {
+      "2.0.3": {
+        "en": "Corrected subscription on too many objects",
+        "de": "Korrigiertes Abonnement auf zu vielen Objekten",
+        "ru": "Исправлена подписка на слишком много объектов",
+        "pt": "Assinatura correta em muitos objetos",
+        "nl": "Beschrijving over te veel objecten",
+        "fr": "Abonnement correct sur trop d'objets",
+        "it": "Abbonamento corretto su troppi oggetti",
+        "es": "Suscripción corregida en demasiados objetos",
+        "pl": "Poprawka na temat zbyt wielu obiektów",
+        "uk": "Виправлена підписка на занадто багато об'єктів",
+        "zh-cn": "对许多物体的更正说明"
+      },
       "2.0.2": {
         "en": "Added possibility to trigger the parsing by writing of empty value to the state",
         "de": "Zusätzliche Möglichkeit, die Parsierung durch Schreiben von Leerwert in den Zustand auszulösen",
@@ -80,19 +93,6 @@
         "pl": "Zawsze wykorzystuje surową reakcję i nie starają się ją złożyć",
         "zh-cn": "使用原始反应,不试图将其稀释。",
         "uk": "Завжди використовуйте необроблену відповідь і не намагайтеся її розібрати"
-      },
-      "1.2.0": {
-        "en": "Allow to specify if self-signed/invalid SSL certificates are ignored or not (default is to ignore as till now)\nAllow to specify if an \"insecure HTTP parser\" is used which also enables HTTP implementations that are not compliant to specifications\nAllow to specify the HTTP request timeout",
-        "de": "Geben Sie an, ob selbstsignierte/ungültige SSL-Zertifikate ignoriert oder nicht (Standard ist, wie bisher ignoriert)\nGeben Sie an, ob ein \"unsicherer HTTP-Parser\" verwendet wird, der auch HTTP-Implementierungen ermöglicht, die nicht den Spezifikationen entsprechen\nErlauben Sie, den HTTP-Anforderungszeitpunkt anzugeben",
-        "ru": "Разрешить указать, если самоподписанные / недействительные SSL сертификаты игнорируются или нет (по умолчанию не следует игнорировать, как до сих пор)\nРазрешить указать, используется ли «небезопасный HTTP-парсер», что также позволяет HTTP-реализациям, которые не соответствуют спецификациям\nРазрешить указать timeout запроса HTTP",
-        "pt": "Permitir especificar se certificados SSL auto-assinados/inválidos são ignorados ou não (o padrão é ignorar como até agora)\nPermitir especificar se um \"parser HTTP inseguro\" é usado que também permite implementações HTTP que não estão em conformidade com as especificações\nPermitir especificar o prazo de solicitação HTTP",
-        "nl": "Sta toe te specificeren of zelf toegewezen/invalide SSL certificaten worden genegeerd of niet (default is om te negeren als tot nu toe\nOm te specificeren of een \"onduidelijke HTP-papieren\" gebruikt wordt, die ook HTP implementaties in staat stelt die niet compliceren voor specifieke details\nMag ik de HTP verzoeken verlenen",
-        "fr": "Permettre de spécifier si les certificats SSL autosignés/invalides sont ignorés ou non (par défaut, il faut ignorer comme maintenant)\nPermet de spécifier si un \"Parser HTTP insecure\" est utilisé qui permet également des implémentations HTTP qui ne sont pas conformes aux spécifications\nPermet de spécifier le délai de requête HTTP",
-        "it": "Consentire di specificare se i certificati SSL auto-firmati/non validi vengono ignorati o meno (default deve ignorare fino ad ora)\nConsentire di specificare se viene utilizzato un \"insecure HTTP parser\" che consente anche implementazioni HTTP che non sono conformi alle specifiche\nConsentire di specificare il timeout della richiesta HTTP",
-        "es": "Permitir especificar si los certificados SSL auto-firmados o inválidos son ignorados o no (por defecto es ignorar como hasta ahora)\nPermitir especificar si se utiliza un \"paraser HTTP seguro\" que también permite implementaciones HTTP que no cumplen con las especificaciones\nPermitir especificar el tiempo de solicitud HTTP",
-        "pl": "Określenie, jeśli podpisywane certyfikaty SSL są ignorowane lub nie (obrona jest ignorowana jak do dziś)\nAllow do specyfikowania, jeśli używa się \"niebezpiecznego HTTP parser\", co umożliwia również implementacje HTTP, które nie są zgodne z specyfikacją\nAllow, aby zdefiniować HTTP żądanie czasu dostępu",
-        "zh-cn": "请允许我具体说明,如果自我设计/自评的SSL证书遭到忽视或不(现在的意外情况是忽视)\n允许具体说明是否使用了“无保障的HTTP parser”,这也使不符合规格的技术转让中心得以实施。\n允许具体说明海贸总协定要求的时间",
-        "uk": "Дозволити вказати, чи ігнорувати самопідписані/недійсні сертифікати SSL (за замовчуванням ігнорувати як досі)\nДозволити вказувати, чи використовується «незахищений аналізатор HTTP», який також дозволяє реалізацію HTTP, яка не відповідає специфікаціям\nДозволяє вказати тайм-аут запиту HTTP"
       }
     },
     "title": "Parser",

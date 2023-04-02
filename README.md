@@ -142,7 +142,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.3 (2023-04-02)
 * (bluefox) Corrected subscription on too many objects
 
 ### 2.0.2 (2023-04-01)
