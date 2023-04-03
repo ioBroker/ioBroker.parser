@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "news": {
+      "2.0.4": {
+        "en": "The result could be an array of values",
+        "de": "Das Ergebnis könnte eine Reihe von Werten sein",
+        "ru": "Результат может быть массивом ценностей",
+        "pt": "O resultado pode ser uma matriz de valores",
+        "nl": "Het resultaat kan een reeks waarden zijn",
+        "fr": "Le résultat pourrait être un tableau de valeurs",
+        "it": "Il risultato potrebbe essere una serie di valori",
+        "es": "El resultado podría ser un conjunto de valores",
+        "pl": "Wynikiem może być szereg wartości",
+        "uk": "Результат може бути масивом значень",
+        "zh-cn": "结果可能是一系列价值观。"
+      },
       "2.0.3": {
         "en": "Corrected subscription on too many objects",
         "de": "Korrigiertes Abonnement auf zu vielen Objekten",
@@ -80,19 +93,6 @@
         "pl": "dodanie opóźnienia\ntryb dodania",
         "uk": "доданий варіант затримки для повільних підключень\nдодано компактний режим",
         "zh-cn": "延迟联系的选择\n增加合同模式"
-      },
-      "1.2.1": {
-        "en": "Always use raw response and not try to parse it",
-        "de": "Verwenden Sie immer rohe Reaktion und nicht versuchen, es zu parse",
-        "ru": "Всегда используйте реагирование сырья и не пытайтесь его парсить",
-        "pt": "Sempre use a resposta crua e não tente analisá-la",
-        "nl": "Gebruik altijd rauwe reactie en probeer het niet te verdubbelen",
-        "fr": "Toujours utiliser la réponse brute et ne pas essayer de la parser",
-        "it": "Utilizzare sempre la risposta cruda e non cercare di analizzarlo",
-        "es": "Utilice siempre la respuesta cruda y no trate de analizarla",
-        "pl": "Zawsze wykorzystuje surową reakcję i nie starają się ją złożyć",
-        "zh-cn": "使用原始反应,不试图将其稀释。",
-        "uk": "Завжди використовуйте необроблену відповідь і не намагайтеся її розібрати"
       }
     },
     "title": "Parser",
