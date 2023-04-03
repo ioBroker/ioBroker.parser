@@ -149,7 +149,7 @@ function initPoll(obj, onlyUpdate) {
     obj.native.offset = parseFloat(obj.native.offset) || 0;
     obj.native.factor = parseFloat(obj.native.factor) || 1;
     obj.native.item   = parseFloat(obj.native.item)   || 0;
-    obj.regex = new RegExp(obj.native.regex, obj.native.item ? 'g' : '');
+    obj.regex = new RegExp(obj.native.regex, obj.native.item || obj.common.type === 'array' ? 'g' : '');
 
     if (obj.common.enabled === false) {
         adapter.log.debug(`Rule ${obj._id} is disabled, ignoring it`);
@@ -231,9 +231,9 @@ const flags = {
     unicode: 'u',
 };
 
-function cloneRegex(regex) {
+function cloneRegex(regex, noFlags) {
     const lFlags = Object.keys(flags).map(flag => regex[flag] ? flags[flag] : '').join('');
-    return new RegExp(regex.source, lFlags);
+    return new RegExp(regex.source, noFlags ? undefined : lFlags);
 }
 
 function analyseData(obj, data, error, callback) {
@@ -273,15 +273,19 @@ function analyseData(obj, data, error, callback) {
 
         data = (data || '').toString().replace(/\r\n|[\r\n]/g, ' ');
 
-        do {
-            m = regex.exec(data);
-            item--;
-        } while(item && m);
+        if (obj.common.type === 'array') {
+            m = data.match(regex);
+        } else {
+            do {
+                m = regex.exec(data);
+                item--;
+            } while (item && m);
+        }
 
         if (m) {
             if (obj.common.type === 'boolean') {
                 newVal = true;
-            } else {
+            } else if (obj.common.type !== 'array'){
                 newVal = m.length > 1 ? m[1] : m[0];
 
                 if (newVal === undefined) {
@@ -316,6 +320,23 @@ function analyseData(obj, data, error, callback) {
                 } else if (obj.common.type === 'string' && obj.native.parseHtml) {
                     newVal = newVal === null ? '' : newVal.toString();
                     newVal = newVal.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+                }
+            } else {
+                if (obj.native.regex.includes('(')) {
+                    let _regex = cloneRegex(obj.regex, true);
+                    m = m.map(it => {
+                        const _m = it.match(_regex);
+                        if (_m && _m[1]) {
+                            return _m[1];
+                        } else {
+                            return it;
+                        }
+                    });
+                }
+                if (obj.native.parseHtml) {
+                    newVal = JSON.stringify(m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
+                } else {
+                    newVal = JSON.stringify(m);
                 }
             }
 
@@ -381,14 +402,14 @@ async function readLink(link, callback) {
                 method: 'GET',
                 url: link,
                 httpsAgent: new https.Agent({
-                    rejectUnauthorized: adapter.config.acceptInvalidCertificates === false
+                    rejectUnauthorized: adapter.config.acceptInvalidCertificates === false,
                 }),
                 insecureHTTPParser: !!adapter.config.useInsecureHTTPParser,
                 timeout: adapter.config.requestTimeout,
                 transformResponse: [], // do not have any JSON parsing or such
                 responseType: 'text',
             });
-            callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link)
+            callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link);
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
         } catch (err) {
             callback(err.data ? err.data : err.toString(), null, link);
@@ -499,7 +520,7 @@ function poll(interval, callback) {
             addToRemoteQueue(thisLink, (error, text, link) => {
                 // Remove from queue before performing actual analyse callback
                 removeFromRemoteQueue(link);
-                analyseDataForStates(curStates, link, text, error, callback)
+                analyseDataForStates(curStates, link, text, error, callback);
             });
         } else {
             // Just read it instantly

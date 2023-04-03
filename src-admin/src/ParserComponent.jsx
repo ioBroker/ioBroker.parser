@@ -354,6 +354,7 @@ class ParserComponent extends ConfigGeneric {
                                 <MenuItem value="number">number</MenuItem>
                                 <MenuItem value="string">string</MenuItem>
                                 <MenuItem value="json">json</MenuItem>
+                                <MenuItem value="array">array</MenuItem>
                             </Select>
                         </FormControl>
                         {rule.common.type === 'number' ?
@@ -451,7 +452,7 @@ class ParserComponent extends ConfigGeneric {
                             className={this.props.classes.regex}
                             label={I18n.t('parser_RegEx')}
                         />
-                        <TextField
+                        {rule.common.type !== 'array' ? <TextField
                             value={rule.native.item || 0}
                             type="number"
                             min={0}
@@ -463,7 +464,7 @@ class ParserComponent extends ConfigGeneric {
                             variant="standard"
                             className={this.props.classes.item}
                             label={I18n.t('parser_Item')}
-                        />
+                        /> : null}
                         <Fab
                             color="primary"
                             size="small"
@@ -587,7 +588,7 @@ class ParserComponent extends ConfigGeneric {
         this.setState({ rules }, () => this.onAutoSave(index));
     }
 
-    renderRule(rule, index, anyNumber, anySubstituteOld) {
+    renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray) {
         const error = !rule.name || this.state.rules.find((r, i) => r.name === rule.name && i !== index)
         const cell = this.props.classes.cell;
 
@@ -631,16 +632,16 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 />
             </TableCell>
-            <TableCell className={cell}>
-                <TextField
+            {anyNotArray ? <TableCell className={cell}>
+                {rule.common.type !== 'array' ? <TextField
                     fullWidth
                     disabled={error || !rule.common.enabled}
                     value={rule.native.item}
                     type="number"
                     onChange={e => this._onChange(index, true, 'item', e.target.value)}
                     variant="standard"
-                />
-            </TableCell>
+                /> : null}
+            </TableCell> : null}
             <TableCell className={cell}>
                 <Select
                     fullWidth
@@ -859,9 +860,9 @@ class ParserComponent extends ConfigGeneric {
             } else {
                 substitute = undefined;
             }
-
+            let regExpression;
             try {
-                regex = new RegExp(regex, item ? 'g' : '');
+                regExpression = new RegExp(regex, item || type === 'array' ? 'g' : '');
             } catch (e) {
                 this.setState({ testError: e.toString() });
                 return;
@@ -877,20 +878,21 @@ class ParserComponent extends ConfigGeneric {
             }
             test = (test || '').toString().replace(/\r\n|[\r\n]/g, ' ');
             let m;
-            do {
-                m = regex.exec(test);
-                item--;
-            } while(item && m);
+            if (type === 'array') {
+                m = test.match(regExpression);
+            } else {
+                do {
+                    m = regExpression.exec(test);
+                    item--;
+                } while(item && m);
+            }
 
             if (m) {
                 let newVal;
-                const ll = m[1] ? m[0].indexOf(m[1]) : 0;
-                // Select found text
-                // $('#dialog-edit-test-text').data('select', { pos: m.index + ll, length: m[1] ? m[1].length : len });
 
                 if (type === 'boolean') {
                     newVal = 'true';
-                } else  {
+                } else if (type !== 'array') {
                     newVal = m.length > 1 ? m[1] : m[0];
                     if (type === 'number') {
                         // 1,000,000 => 1000000
@@ -907,6 +909,24 @@ class ParserComponent extends ConfigGeneric {
                         newVal = parseFloat(newVal);
                         newVal *= factor;
                         newVal += offset;
+                    }
+                } else {
+                    // extract from string the value
+                    if (regex.includes('(')) {
+                        const _regExpression = new RegExp(regex);
+                        m = m.map(it => {
+                            const _m = it.match(_regExpression);
+                            if (_m && _m[1]) {
+                                return _m[1];
+                            } else {
+                                return it;
+                            }
+                        });
+                    }
+                    if (parseHtml) {
+                        newVal = JSON.stringify(m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
+                    } else {
+                        newVal = JSON.stringify(m);
                     }
                 }
 
@@ -971,6 +991,7 @@ class ParserComponent extends ConfigGeneric {
 
         const anyNumber = this.state.rules.find(it => it.common.type === 'number');
         const anySubstituteOld = this.state.rules.find(it => !it.native.substituteOld);
+        const anyNotArray = this.state.rules.find(it => it.common.type !== 'array');
         const cls = this.props.classes;
 
         return <TableContainer component={Paper}>
@@ -984,7 +1005,7 @@ class ParserComponent extends ConfigGeneric {
                         <TableCell className={Utils.clsx(cls.cell, cls.colName)}>{I18n.t('parser_Name')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colUrl)}>{I18n.t('parser_URL or file name')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colRegEx)}>{I18n.t('parser_RegEx')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colItem)}>{I18n.t('parser_Item')}</TableCell>
+                        {anyNotArray ? <TableCell className={Utils.clsx(cls.cell, cls.colItem)}>{I18n.t('parser_Item')}</TableCell> : null}
                         <TableCell className={Utils.clsx(cls.cell, cls.colRole)}>{I18n.t('parser_Role')}</TableCell>
                         <TableCell className={Utils.clsx(cls.cell, cls.colType)}>{I18n.t('parser_Type')}</TableCell>
                         {anyNumber ? <TableCell className={Utils.clsx(cls.cell, cls.colComma)}>{I18n.t('parser_Comma')}</TableCell> : null}
@@ -1031,7 +1052,7 @@ class ParserComponent extends ConfigGeneric {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.rules.map((rule, index) => this.renderRule(rule, index, anyNumber, anySubstituteOld))}
+                    {this.state.rules.map((rule, index) => this.renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray))}
                 </TableBody>
             </Table>
         </TableContainer>;
