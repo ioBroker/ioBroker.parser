@@ -142,7 +142,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.5 (2023-06-19)
 * (bluefox) The result could be an array of values
 
 ### 2.0.3 (2023-04-02)

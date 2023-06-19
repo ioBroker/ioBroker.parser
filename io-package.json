@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "news": {
+      "2.0.5": {
+        "en": "The result could be an array of values",
+        "de": "Das Ergebnis könnte eine Reihe von Werten sein",
+        "ru": "Результат может быть массивом ценностей",
+        "pt": "O resultado pode ser uma matriz de valores",
+        "nl": "Het resultaat kan een reeks waarden zijn",
+        "fr": "Le résultat pourrait être un tableau de valeurs",
+        "it": "Il risultato potrebbe essere una serie di valori",
+        "es": "El resultado podría ser un conjunto de valores",
+        "pl": "Wynikiem może być szereg wartości",
+        "uk": "Результат може бути масивом значень",
+        "zh-cn": "结果可能是一系列价值观。"
+      },
       "2.0.3": {
         "en": "Corrected subscription on too many objects",
         "de": "Korrigiertes Abonnement auf zu vielen Objekten",
