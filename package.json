@@ -29,7 +29,7 @@
     "@iobroker/dev-server": "^0.6.0",
     "@iobroker/adapter-dev": "^1.2.0",
     "mocha": "^10.2.0",
-    "chai": "^4.3.7",
+    "chai": "^4.3.10",
     "gulp": "^4.0.2"
   },
   "bugs": {
