@@ -16,7 +16,7 @@ let adapter;
 
 function startAdapter(options) {
     options = options || {};
-    Object.assign(options, {name: adapterName});
+    Object.assign(options, { name: adapterName });
     adapter = new utils.Adapter(options);
 
     adapter.on('objectChange', (id, obj) => {
@@ -41,7 +41,7 @@ function startAdapter(options) {
                 adapter.log.info(`Parser object ${id} added`);
                 adapter.getState(id, (err, state) => {
                     states[id] = obj;
-                    states[id].value = state || {val: null};
+                    states[id].value = state || { val: null };
                     if (initPoll(states[id], false)) {
                         poll(timers[obj.native.interval].interval); // new timer, so start initially once
                     }
@@ -70,36 +70,45 @@ function startAdapter(options) {
             const oldVal = states[id].value.val;
             setTimeout(() => {
                 readLink(states[id].native.link, (error, text) =>
-                    analyseData(states[id], text, error, updated => {
+                    analyseData(states[id], text, error, (updated) => {
                         if (!updated) {
-                            adapter.setState(id, {val: oldVal, ack: true});
+                            adapter.setState(id, { val: oldVal, ack: true });
                         }
-                    }));
+                    }),
+                );
             }, 0);
         }
     });
 
-    adapter.on('message', obj => {
+    adapter.on('message', (obj) => {
         if (obj) {
             switch (obj.command) {
                 case 'link':
                     if (obj.callback) {
                         // read link
                         readLink(obj.message, (err, text) =>
-                            adapter.sendTo(obj.from, obj.command, {error: err, text: text}, obj.callback));
+                            adapter.sendTo(obj.from, obj.command, { error: err, text: text }, obj.callback),
+                        );
                     }
                     break;
 
                 case 'trigger':
                     if (obj.callback) {
                         if (!states[obj.message] && !states[`${adapter.namespace}.${obj.message}`]) {
-                            obj.callback && adapter.sendTo(obj.from, obj.command, {error, value: states[id].value.val}, obj.callback)
+                            obj.callback && adapter.sendTo(obj.from, obj.command, { error, value: states[id].value.val }, obj.callback);
                         } else {
                             const id = states[obj.message] ? obj.message : `${adapter.namespace}.${obj.message}`;
 
                             readLink(states[id].native.link, (error, text) =>
-                                analyseData(states[id], text, error, () =>
-                                    obj.callback && adapter.sendTo(obj.from, obj.command, {error, value: states[id].value.val}, obj.callback)));
+                                analyseData(
+                                    states[id],
+                                    text,
+                                    error,
+                                    () =>
+                                        obj.callback &&
+                                        adapter.sendTo(obj.from, obj.command, { error, value: states[id].value.val }, obj.callback),
+                                ),
+                            );
                         }
                     }
                     break;
@@ -126,15 +135,19 @@ function initPoll(obj, onlyUpdate) {
     }
     obj.native.substituteOld = obj.native.substituteOld === 'true' || obj.native.substituteOld === true;
 
-    if ((obj.native.substitute !== '' || obj.common.type === 'string') && obj.native.substitute !== undefined && obj.native.substitute !== null) {
-        if (obj.native.substitute === 'null')  {
+    if (
+        (obj.native.substitute !== '' || obj.common.type === 'string') &&
+        obj.native.substitute !== undefined &&
+        obj.native.substitute !== null
+    ) {
+        if (obj.native.substitute === 'null') {
             obj.native.substitute = null;
         }
 
         if (obj.common.type === 'number') {
             obj.native.substitute = parseFloat(obj.native.substitute) || 0;
         } else if (obj.common.type === 'boolean') {
-            if (obj.native.substitute === 'true')  {
+            if (obj.native.substitute === 'true') {
                 obj.native.substitute = true;
             }
             if (obj.native.substitute === 'false') {
@@ -148,7 +161,7 @@ function initPoll(obj, onlyUpdate) {
 
     obj.native.offset = parseFloat(obj.native.offset) || 0;
     obj.native.factor = parseFloat(obj.native.factor) || 1;
-    obj.native.item   = parseFloat(obj.native.item)   || 0;
+    obj.native.item = parseFloat(obj.native.item) || 0;
     obj.regex = new RegExp(obj.native.regex, obj.native.item || obj.common.type === 'array' ? 'g' : '');
 
     if (obj.common.enabled === false) {
@@ -168,7 +181,7 @@ function initPoll(obj, onlyUpdate) {
             timers[obj.native.interval] = {
                 interval: obj.native.interval,
                 count: 1,
-                timer: setInterval(poll, obj.native.interval, obj.native.interval)
+                timer: setInterval(poll, obj.native.interval, obj.native.interval),
             };
             return true;
         } else {
@@ -201,8 +214,7 @@ function _analyseDataForStates(linkStates, data, error, callback) {
             return;
         }
 
-        analyseData(states[id], data, error, () =>
-            setImmediate(_analyseDataForStates, linkStates, data, error, callback));
+        analyseData(states[id], data, error, () => setImmediate(_analyseDataForStates, linkStates, data, error, callback));
     }
 }
 
@@ -232,7 +244,9 @@ const flags = {
 };
 
 function cloneRegex(regex, noFlags) {
-    const lFlags = Object.keys(flags).map(flag => regex[flag] ? flags[flag] : '').join('');
+    const lFlags = Object.keys(flags)
+        .map((flag) => (regex[flag] ? flags[flag] : ''))
+        .join('');
     return new RegExp(regex.source, noFlags ? undefined : lFlags);
 }
 
@@ -247,14 +261,18 @@ function analyseData(obj, data, error, callback) {
         } else {
             adapter.log.warn(`Cannot read link "${obj.native.link}": ${error}`);
             if (obj.value.q !== 0x82 || adapter.config.updateNonChanged) {
-                obj.value.q   = 0x82;
+                obj.value.q = 0x82;
                 obj.value.ack = true;
                 if (obj.native.substitute !== undefined) {
                     obj.value.val = obj.native.substitute;
                 }
 
                 adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=Error`);
-                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
+                adapter.setForeignState(
+                    obj._id,
+                    { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
+                    () => callback && callback(true),
+                );
             } else if (callback) {
                 callback();
             }
@@ -285,11 +303,11 @@ function analyseData(obj, data, error, callback) {
         if (m) {
             if (obj.common.type === 'boolean') {
                 newVal = true;
-            } else if (obj.common.type !== 'array'){
+            } else if (obj.common.type !== 'array') {
                 newVal = m.length > 1 ? m[1] : m[0];
 
                 if (newVal === undefined) {
-                    adapter.log.info(`Regex didn't matched for ${obj._id}, old=${obj.value.val}`)
+                    adapter.log.info(`Regex didn't matched for ${obj._id}, old=${obj.value.val}`);
                     if (obj.native.substituteOld) {
                         return callback && callback();
                     }
@@ -324,7 +342,7 @@ function analyseData(obj, data, error, callback) {
             } else {
                 if (obj.native.regex.includes('(')) {
                     let _regex = cloneRegex(obj.regex, true);
-                    m = m.map(it => {
+                    m = m.map((it) => {
                         const _m = it.match(_regex);
                         if (_m && _m[1]) {
                             return _m[1];
@@ -334,7 +352,7 @@ function analyseData(obj, data, error, callback) {
                     });
                 }
                 if (obj.native.parseHtml) {
-                    newVal = JSON.stringify(m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
+                    newVal = JSON.stringify(m.map((it) => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
                 } else {
                     newVal = JSON.stringify(m);
                 }
@@ -344,8 +362,12 @@ function analyseData(obj, data, error, callback) {
                 adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val}, new=${newVal}`);
                 obj.value.ack = true;
                 obj.value.val = newVal;
-                obj.value.q   = 0;
-                adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
+                obj.value.q = 0;
+                adapter.setForeignState(
+                    obj._id,
+                    { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
+                    () => callback && callback(true),
+                );
             } else if (callback) {
                 callback();
             }
@@ -357,25 +379,33 @@ function analyseData(obj, data, error, callback) {
                     adapter.log.debug(`analyseData for ${obj._id}, old=${obj.value.val},new=${newVal}`);
                     obj.value.ack = true;
                     obj.value.val = newVal;
-                    obj.value.q   = 0;
-                    adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
+                    obj.value.q = 0;
+                    adapter.setForeignState(
+                        obj._id,
+                        { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
+                        () => callback && callback(true),
+                    );
                 } else if (callback) {
                     callback();
                 }
-            } else  {
+            } else {
                 adapter.log.debug(`Cannot find number in answer for ${obj._id}`);
                 if (obj.native.substituteOld) {
                     callback && callback();
                 } else {
                     if (obj.value.q !== 0x44 || !obj.value.ack || adapter.config.updateNonChanged) {
-                        obj.value.q   = 0x44;
+                        obj.value.q = 0x44;
                         obj.value.ack = true;
                         if (obj.native.substitute !== undefined) {
                             obj.value.val = obj.native.substitute;
                         }
                         console.log(`Use substitution: "${obj.native.substitute}"`);
 
-                        adapter.setForeignState(obj._id, {val: obj.value.val, q: obj.value.q, ack: obj.value.ack}, () => callback && callback(true));
+                        adapter.setForeignState(
+                            obj._id,
+                            { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
+                            () => callback && callback(true),
+                        );
                     } else if (callback) {
                         callback();
                     }
@@ -408,6 +438,11 @@ async function readLink(link, callback) {
                 timeout: adapter.config.requestTimeout,
                 transformResponse: [], // do not have any JSON parsing or such
                 responseType: 'text',
+                headers: {
+                    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'user-agent':
+                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+                },
             });
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link);
             // (error, response, body) => callback(!body ? error || JSON.stringify(response) : null, body, link)
@@ -416,7 +451,7 @@ async function readLink(link, callback) {
         }
     } else {
         path = path || require('path');
-        fs   = fs   || require('fs');
+        fs = fs || require('fs');
         link = (link || '').replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
             link = path.normalize(`${__dirname}/../../${link}`);
@@ -458,7 +493,7 @@ function addToRemoteQueue(link, callback) {
         hostnamesQueue[url.hostname] = [];
     }
     const requestQueue = hostnamesQueue[url.hostname];
-    requestQueue.push({link, callback});
+    requestQueue.push({ link, callback });
 
     if (requestQueue.length === 1) {
         // First item in queue, process it. Otherwise, will get done when current request is removed.
@@ -532,9 +567,9 @@ function poll(interval, callback) {
 const timers = {};
 
 async function main() {
-    adapter.config.pollInterval   = parseInt(adapter.config.pollInterval, 10)   || 5000;
+    adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
     adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
-    adapter.config.requestDelay   = parseInt(adapter.config.requestDelay, 10)   || 0;
+    adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
 
     // read current existing objects (прочитать текущие существующие объекты)
     try {
@@ -562,7 +597,7 @@ async function main() {
             continue;
         }
 
-        states[id].value = values[id] || {val: null};
+        states[id].value = values[id] || { val: null };
         initPoll(states[id], false);
     }
 
