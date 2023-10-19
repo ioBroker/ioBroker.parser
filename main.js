@@ -440,6 +440,7 @@ async function readLink(link, callback) {
                 responseType: 'text',
                 headers: {
                     accept: '*/*',
+                    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
                 },
             });
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link);
