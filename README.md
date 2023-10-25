@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.7 (2023-10-25)
 * (TA2k) added the user agent to prevent timeout blocking
 * (bluefox) Added a configurable userAgent option
 

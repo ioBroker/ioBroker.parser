@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "news": {
+      "2.0.7": {
+        "en": "added the user agent to prevent timeout blocking\nAdded a configurable userAgent option",
+        "de": "den benutzer agenten hinzugefügt, um die timeout-blockung zu verhindern\nHinzufügen einer konfigurierbaren userAgent Option",
+        "ru": "добавил агент пользователя для предотвращения блокировки timeout\nДобавлен конфигурируемый пользовательAgent option",
+        "pt": "adicionou o agente de usuário para evitar bloqueio de tempo limite\nAdicionado uma opção configurável userAgent",
+        "nl": "voegde de gebruiker toe om tijdversperring te voorkomen\nVoegde een aangepaste gebruikeraanval toe",
+        "fr": "a ajouté l'agent utilisateur pour empêcher le blocage du timeout\nAjout d'une option utilisateur configurable",
+        "it": "aggiunto l'agente utente per evitare il blocco timeout\nAggiunto un utente configurabileAgent opzione",
+        "es": "agregó el agente del usuario para evitar el bloqueo de tiempo\nAñadido una opción configurable userAgent",
+        "pl": "dodano użytkownikowi agentowi, aby zapobiec blokowaniu czasu\nAdded konfigurowalny opcja użytkownikaAgent",
+        "uk": "додано агента користувача для запобігання блокування часу\nДодано параметр configurable userAgent",
+        "zh-cn": "增加用户代理人以防止时间停滞\n添加一个易燃用户选择"
+      },
       "2.0.5": {
         "en": "The result could be an array of values",
         "de": "Das Ergebnis könnte eine Reihe von Werten sein",
