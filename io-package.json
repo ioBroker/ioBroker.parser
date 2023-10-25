@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "news": {
+      "2.0.6": {
+        "en": "add user agent to prevent timeout blocking",
+        "de": "benutzermittel hinzufügen, um timeout zu verhindern",
+        "ru": "добавить агента пользователя для предотвращения блокировки timeout",
+        "pt": "adicionar agente de usuário para evitar bloqueio de tempo limite",
+        "nl": "voeg gebruiker toe om tijdversperring te voorkomen",
+        "fr": "ajouter l'agent utilisateur pour empêcher le blocage du timeout",
+        "it": "aggiungere agente utente per evitare il blocco timeout",
+        "es": "añadir agente de usuario para evitar bloqueo de tiempo",
+        "pl": "dostarczanie agenta użytkownika do zapobiegania blokowaniu czasu",
+        "uk": "додати агента користувача для запобігання блокування часу",
+        "zh-cn": "增加用户代理人以防止时间停滞"
+      },
       "2.0.5": {
         "en": "The result could be an array of values",
         "de": "Das Ergebnis könnte eine Reihe von Werten sein",
@@ -80,19 +93,6 @@
         "pl": "Ustępowanie błędów powracają jako błąd strunowy",
         "uk": "У випадках повернення помилок як рядок",
         "zh-cn": "错失情况"
-      },
-      "1.3.1": {
-        "en": "added delay option for slow connections\nadded compact mode",
-        "de": "zusätzliche verzögerungsoption für langsame verbindungen\nkompakter modus",
-        "ru": "добавлена опция задержки для медленных подключений\nдобавлен компактный режим",
-        "pt": "opção de atraso adicionado para conexões lentas\nmodo compacto adicionado",
-        "nl": "vertraagde optie voor langzame connecties\nvoegde compact mode toe",
-        "fr": "option de retard supplémentaire pour les connexions lente\nen mode compact",
-        "it": "opzione di ritardo aggiunto per connessioni lente\nmodalità compatta aggiunta",
-        "es": "opción de retardo añadido para conexiones lentas\nmodo compacto añadido",
-        "pl": "dodanie opóźnienia\ntryb dodania",
-        "uk": "доданий варіант затримки для повільних підключень\nдодано компактний режим",
-        "zh-cn": "延迟联系的选择\n增加合同模式"
       }
     },
     "title": "Parser",
