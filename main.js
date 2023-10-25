@@ -70,25 +70,23 @@ function startAdapter(options) {
             const oldVal = states[id].value.val;
             setTimeout(() => {
                 readLink(states[id].native.link, (error, text) =>
-                    analyseData(states[id], text, error, (updated) => {
+                    analyseData(states[id], text, error, updated => {
                         if (!updated) {
                             adapter.setState(id, { val: oldVal, ack: true });
                         }
-                    }),
-                );
+                    }));
             }, 0);
         }
     });
 
-    adapter.on('message', (obj) => {
+    adapter.on('message', obj => {
         if (obj) {
             switch (obj.command) {
                 case 'link':
                     if (obj.callback) {
                         // read link
                         readLink(obj.message, (err, text) =>
-                            adapter.sendTo(obj.from, obj.command, { error: err, text: text }, obj.callback),
-                        );
+                            adapter.sendTo(obj.from, obj.command, { error: err, text: text }, obj.callback));
                     }
                     break;
 
@@ -107,8 +105,7 @@ function startAdapter(options) {
                                     () =>
                                         obj.callback &&
                                         adapter.sendTo(obj.from, obj.command, { error, value: states[id].value.val }, obj.callback),
-                                ),
-                            );
+                                ));
                         }
                     }
                     break;
@@ -214,7 +211,8 @@ function _analyseDataForStates(linkStates, data, error, callback) {
             return;
         }
 
-        analyseData(states[id], data, error, () => setImmediate(_analyseDataForStates, linkStates, data, error, callback));
+        analyseData(states[id], data, error, () =>
+            setImmediate(_analyseDataForStates, linkStates, data, error, callback));
     }
 }
 
@@ -245,7 +243,7 @@ const flags = {
 
 function cloneRegex(regex, noFlags) {
     const lFlags = Object.keys(flags)
-        .map((flag) => (regex[flag] ? flags[flag] : ''))
+        .map(flag => (regex[flag] ? flags[flag] : ''))
         .join('');
     return new RegExp(regex.source, noFlags ? undefined : lFlags);
 }
@@ -342,7 +340,7 @@ function analyseData(obj, data, error, callback) {
             } else {
                 if (obj.native.regex.includes('(')) {
                     let _regex = cloneRegex(obj.regex, true);
-                    m = m.map((it) => {
+                    m = m.map(it => {
                         const _m = it.match(_regex);
                         if (_m && _m[1]) {
                             return _m[1];
@@ -352,7 +350,7 @@ function analyseData(obj, data, error, callback) {
                     });
                 }
                 if (obj.native.parseHtml) {
-                    newVal = JSON.stringify(m.map((it) => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
+                    newVal = JSON.stringify(m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
                 } else {
                     newVal = JSON.stringify(m);
                 }
@@ -440,7 +438,7 @@ async function readLink(link, callback) {
                 responseType: 'text',
                 headers: {
                     accept: '*/*',
-                    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+                    'user-agent': adapter.config.userAgent,
                 },
             });
             callback(res.status !== 200 ? res.statusText || JSON.stringify(res.status) : null, res.data, link);
@@ -569,6 +567,7 @@ async function main() {
     adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
     adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
     adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
+    adapter.config.userAgent = adapter.config.userAgent || 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
 
     // read current existing objects (прочитать текущие существующие объекты)
     try {

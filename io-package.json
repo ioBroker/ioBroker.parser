@@ -3,19 +3,6 @@
     "name": "parser",
     "version": "2.0.6",
     "news": {
-      "2.0.6": {
-        "en": "add user agent to prevent timeout blocking",
-        "de": "benutzermittel hinzufügen, um timeout zu verhindern",
-        "ru": "добавить агента пользователя для предотвращения блокировки timeout",
-        "pt": "adicionar agente de usuário para evitar bloqueio de tempo limite",
-        "nl": "voeg gebruiker toe om tijdversperring te voorkomen",
-        "fr": "ajouter l'agent utilisateur pour empêcher le blocage du timeout",
-        "it": "aggiungere agente utente per evitare il blocco timeout",
-        "es": "añadir agente de usuario para evitar bloqueo de tiempo",
-        "pl": "dostarczanie agenta użytkownika do zapobiegania blokowaniu czasu",
-        "uk": "додати агента користувача для запобігання блокування часу",
-        "zh-cn": "增加用户代理人以防止时间停滞"
-      },
       "2.0.5": {
         "en": "The result could be an array of values",
         "de": "Das Ergebnis könnte eine Reihe von Werten sein",
@@ -170,6 +157,7 @@
     "requestDelay": "0",
     "acceptInvalidCertificates": true,
     "useInsecureHTTPParser": false,
-    "updateNonChanged": false
+    "updateNonChanged": false,
+    "userAgent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
   }
 }

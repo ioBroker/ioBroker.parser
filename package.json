@@ -53,7 +53,8 @@
     "release-major": "release-script major --yes",
     "translate": "translate-adapter",
     "i18n2words": "node words.js",
-    "update-packages": "ncu --upgrade && cd src-admin && ncu --upgrade && cd .."
+    "update-packages": "ncu --upgrade && cd src-admin && ncu --upgrade && cd ..",
+    "npm": "npm i && cd src-admin && npm i -f && cd .."
   },
   "license": "MIT"
 }

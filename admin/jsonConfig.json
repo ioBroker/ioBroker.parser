@@ -46,9 +46,17 @@
       "newLine": true,
       "type": "checkbox",
       "label": "parser_Update timestamp of non changed values",
-      "sm": 6,
-      "md": 4,
-      "lg": 2
+      "sm": 12,
+      "md": 6,
+      "lg": 4
+    },
+    "userAgent": {
+      "newLine": true,
+      "type": "text",
+      "label": "parser_User agent",
+      "sm": 12,
+      "md": 6,
+      "lg": 4
     },
    "_divider": {
         "newLine": true,
