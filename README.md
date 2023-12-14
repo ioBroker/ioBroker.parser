@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.1.0 (2023-12-14)
 * (mcm1957) Only node 16 and higher is supported
 
 ### 2.0.7 (2023-10-25)

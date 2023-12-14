@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.0.7",
+    "version": "2.1.0",
     "news": {
+      "2.1.0": {
+        "en": "Only node 16 and higher is supported",
+        "de": "Nur Knoten 16 und höher unterstützt",
+        "ru": "Поддерживается только нод 16 и выше",
+        "pt": "Apenas o nó 16 e maior é suportado",
+        "nl": "Alleen node 16 en hoger is ondersteund",
+        "fr": "Seulement node 16 et plus est supporté",
+        "it": "Solo nodo 16 e superiore è supportato",
+        "es": "Sólo el nodo 16 y mayor es apoyado",
+        "pl": "Tylko węzeł 16 i więcej jest wspierany",
+        "uk": "Тільки вузол 16 і вище підтримується",
+        "zh-cn": "只支助了16个和较高职等"
+      },
       "2.0.7": {
         "en": "added the user agent to prevent timeout blocking\nAdded a configurable userAgent option",
         "de": "den benutzer agenten hinzugefügt, um die timeout-blockung zu verhindern\nHinzufügen einer konfigurierbaren userAgent Option",
@@ -80,19 +93,6 @@
         "pl": "przekład\nGUI to admin v6",
         "uk": "додано переклади\nМігрований графічний інтерфейс для адміністратора v6",
         "zh-cn": "增 译\n密克伊人诉6"
-      },
-      "1.3.2": {
-        "en": "In error cases return error as string",
-        "de": "In Fehlerfällen Rückgabefehler als String",
-        "ru": "В случаях ошибки возвращает ошибку как строка",
-        "pt": "Em casos de erro retornam erro como string",
-        "nl": "In foute gevallen terugkeren fouten als string",
-        "fr": "Dans les cas d'erreur retour erreur comme chaîne",
-        "it": "Nei casi di errore ritorna errore come stringa",
-        "es": "En casos de error devuelve el error como cadena",
-        "pl": "Ustępowanie błędów powracają jako błąd strunowy",
-        "uk": "У випадках повернення помилок як рядок",
-        "zh-cn": "错失情况"
       }
     },
     "title": "Parser",
