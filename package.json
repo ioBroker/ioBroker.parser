@@ -33,7 +33,7 @@
     "@iobroker/dev-server": "^0.7.1",
     "chai": "^4.3.10",
     "gulp": "^4.0.2",
-    "mocha": "^10.3.0"
+    "mocha": "^10.4.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
