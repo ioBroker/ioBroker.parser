@@ -28,7 +28,7 @@
         "@types/react": "^18.2.61",
         "@types/react-dom": "^18.2.19",
         "@craco/craco": "^7.1.0",
-        "craco-esbuild": "^0.5.2",
+        "craco-esbuild": "^0.6.1",
         "craco-module-federation": "^1.1.0"
     },
     "browserslist": {
