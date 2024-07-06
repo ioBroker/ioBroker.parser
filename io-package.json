@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "news": {
+      "2.2.0": {
+        "en": "GUI was migrated for admin v7",
+        "de": "GUI wurde für admin v7 migriert",
+        "ru": "GUI был перенесен на admin v7",
+        "pt": "GUI foi migrado para admin v7",
+        "nl": "GUI is gemigreerd voor admin v7",
+        "fr": "GUI a été migré pour admin v7",
+        "it": "GUI è stato migrato per admin v7",
+        "es": "GUI fue migrado por admin v7",
+        "pl": "Interfejs GUI został wysłany do admin v7",
+        "uk": "GUI був мігрований для адміністратора v7",
+        "zh-cn": "管理员 v7 的图形用户界面已迁移"
+      },
       "2.1.0": {
         "en": "Only node 16 and higher is supported",
         "de": "Nur Knoten 16 und höher unterstützt",
@@ -80,19 +93,6 @@
         "pl": "Data dostępu nie zmieniona",
         "uk": "Оновлено мітку не змінених значень",
         "zh-cn": "A. 非改变价值的最新时间"
-      },
-      "2.0.0": {
-        "en": "added translations\nMigrated GUI to admin v6",
-        "de": "übersetzungen\nMigrated GUI to admin v6",
-        "ru": "добавлены переводы\nMigrated GUI админ v6",
-        "pt": "traduções adicionadas\nGUI migrado para admin v6",
-        "nl": "vertaling:\nVerminderde GUI",
-        "fr": "traductions ajoutées\nMigrated GUI pour admin v6",
-        "it": "traduzioni\nGUI migrata a admin v6",
-        "es": "traducciones adicionales\nGUI migrado a admin v6",
-        "pl": "przekład\nGUI to admin v6",
-        "uk": "додано переклади\nМігрований графічний інтерфейс для адміністратора v6",
-        "zh-cn": "增 译\n密克伊人诉6"
       }
     },
     "title": "Parser",
