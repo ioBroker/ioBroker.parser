@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "news": {
+      "2.2.1": {
+        "en": "GUI was migrated for admin v7",
+        "de": "GUI wurde für admin v7 migriert",
+        "ru": "GUI был перенесен на admin v7",
+        "pt": "GUI foi migrado para admin v7",
+        "nl": "GUI is gemigreerd voor admin v7",
+        "fr": "GUI a été migré pour admin v7",
+        "it": "GUI è stato migrato per admin v7",
+        "es": "GUI fue migrado por admin v7",
+        "pl": "Interfejs GUI został wysłany do admin v7",
+        "uk": "GUI був мігрований для адміністратора v7",
+        "zh-cn": "管理员 v7 的图形用户界面已迁移"
+      },
       "2.1.0": {
         "en": "Only node 16 and higher is supported",
         "de": "Nur Knoten 16 und höher unterstützt",
