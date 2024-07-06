@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
 
 import {
     TableContainer,
@@ -45,7 +44,7 @@ import {
 // valid
 import { ConfigGeneric, I18n, Confirm, Utils } from '@iobroker/adapter-react-v5';
 
-const styles = theme => ({
+const styles = {
     table: {
         minWidth: 400,
     },
@@ -133,35 +132,29 @@ const styles = theme => ({
     dialog: {
         // height: 'calc(100% - 50px)',
     },
-    testText: {
-        width: '100%',
-        height: 150,
-        resize: 'none',
-        backgroundColor: theme.palette.mode === 'dark' ? '#333' : '#fff',
-        color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-    },
+    testText: theme => ({
+        '& textarea': {
+            width: '100%',
+            height: 150,
+            resize: 'none',
+            backgroundColor: theme.palette.mode === 'dark' ? '#333' : '#fff',
+            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+        },
+    }),
     input: {
         width: 100,
     },
-    resultUpdated: {
+    resultUpdated: theme => ({
         '& label': {
             color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-            animation: `$blink 1000ms ease-in-out`,
+            animation: `admin-parser-blink 1000ms ease-in-out`,
         },
         '& input': {
             color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-            animation: `$blink 1000ms ease-in-out`,
+            animation: `admin-parser-blink 1000ms ease-in-out`,
         },
-    },
-    '@keyframes blink': {
-        "0%": {
-            color: '#00FF00',
-        },
-        "100%": {
-            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-        }
-    },
-});
+    }),
+};
 
 class ParserComponent extends ConfigGeneric {
     constructor(props) {
@@ -326,7 +319,7 @@ class ParserComponent extends ConfigGeneric {
             fullWidth
             open={!0}
             onClose={() => {}}
-            classes={{ paper: this.props.classes.dialog }}
+            sx={{ '& .MuiDialog-paper': styles.dialog }}
         >
             <DialogTitle>
                 {I18n.t('parser_Test regex')}:
@@ -339,7 +332,7 @@ class ParserComponent extends ConfigGeneric {
             <DialogContent>
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
-                        <FormControl variant="standard" className={this.props.classes.marginRight}>
+                        <FormControl variant="standard" style={styles.marginRight}>
                             <InputLabel>{I18n.t('parser_Type')}</InputLabel>
                             <Select
                                 value={rule.common.type || 'string'}
@@ -372,7 +365,7 @@ class ParserComponent extends ConfigGeneric {
                     <Grid item sm={12}>
                         <FormControlLabel
                             title={I18n.t('parser_If new value is not available, let old value unchanged')}
-                            className={this.props.classes.marginRight}
+                            style={styles.marginRight}
                             control={
                                 <Checkbox
                                     checked={rule.native.substituteOld}
@@ -388,7 +381,7 @@ class ParserComponent extends ConfigGeneric {
                         {!rule.native.substituteOld ?
                             <TextField
                                 title={I18n.t('parser_If new value is not available, use this value')}
-                                className={Utils.clsx(this.props.classes.marginRight, this.props.classes.input)}
+                                style={{ ...styles.marginRight, ...styles.input }}
                                 value={rule.native.substitute || ''}
                                 onChange={e => {
                                     const newRule = JSON.parse(JSON.stringify(rule));
@@ -401,7 +394,7 @@ class ParserComponent extends ConfigGeneric {
 
                         {rule.common.type === 'number' ?
                             <TextField
-                                className={Utils.clsx(this.props.classes.marginRight, this.props.classes.input)}
+                                style={{ ...styles.marginRight, ...styles.input }}
                                 value={rule.native.factor || 1}
                                 onChange={e => {
                                     const newRule = JSON.parse(JSON.stringify(rule));
@@ -413,7 +406,7 @@ class ParserComponent extends ConfigGeneric {
                             /> : null}
                         {rule.common.type === 'number' ?
                             <TextField
-                                className={Utils.clsx(this.props.classes.marginRight, this.props.classes.input)}
+                                style={{ ...styles.marginRight, ...styles.input }}
                                 value={rule.native.offset || 0}
                                 onChange={e => {
                                     const newRule = JSON.parse(JSON.stringify(rule));
@@ -426,7 +419,7 @@ class ParserComponent extends ConfigGeneric {
                         {rule.common.type === 'string' ?
                             <FormControlLabel
                                 title={I18n.t('parser_Convert &#48; => 0 and so on')}
-                                className={this.props.classes.marginRight}
+                                style={styles.marginRight}
                                 control={
                                     <Checkbox
                                         checked={rule.native.parseHtml}
@@ -449,7 +442,7 @@ class ParserComponent extends ConfigGeneric {
                                 this.setState({ showEditDialog: newRule }, () => this.onTest());
                             }}
                             variant="standard"
-                            className={this.props.classes.regex}
+                            style={styles.regex}
                             label={I18n.t('parser_RegEx')}
                         />
                         {rule.common.type !== 'array' ? <TextField
@@ -462,7 +455,7 @@ class ParserComponent extends ConfigGeneric {
                                 this.setState({ showEditDialog: newRule }, () => this.onTest());
                             }}
                             variant="standard"
-                            className={this.props.classes.item}
+                            style={styles.item}
                             label={I18n.t('parser_Item')}
                         /> : null}
                         <Fab
@@ -473,17 +466,16 @@ class ParserComponent extends ConfigGeneric {
                             <PlayArrow />
                         </Fab>
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item sm={12} sx={styles.testText}>
                         <textarea
                             ref={this.testTextRef}
-                            className={this.props.classes.testText}
                             value={this.state.testText}
                             onChange={e => this.setState({ testText: e.target.value }, () => this.onTest())}
                         />
                     </Grid>
                     <Grid item sm={12}>
                         <TextField
-                            className={this.props.classes.resultUpdated}
+                            sx={styles.resultUpdated}
                             key={this.state.resultIndex}
                             variant="standard"
                             label={I18n.t('parser_Result')}
@@ -590,16 +582,15 @@ class ParserComponent extends ConfigGeneric {
 
     renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray) {
         const error = !rule.name || this.state.rules.find((r, i) => r.name === rule.name && i !== index)
-        const cell = this.props.classes.cell;
 
-        return <TableRow key={`${index}_${rule.id}`} className={this.state.changed.includes(index) ? this.props.classes.changedRow : ''}>
-            <TableCell className={cell}>{index + 1}</TableCell>
-            <TableCell className={cell}><Checkbox
+        return <TableRow key={`${index}_${rule.id}`} style={this.state.changed.includes(index) ? styles.changedRow : ''}>
+            <TableCell style={styles.cell}>{index + 1}</TableCell>
+            <TableCell style={styles.cell}><Checkbox
                 disabled={error}
                 checked={rule.common.enabled}
                 onChange={e => this._onChange(index, false, 'enabled', e.target.checked)}
             /></TableCell>
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <TextField
                     fullWidth
                     value={rule.name}
@@ -614,7 +605,7 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 />
             </TableCell>
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <TextField
                     fullWidth
                     disabled={error || !rule.common.enabled}
@@ -623,7 +614,7 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 />
             </TableCell>
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <TextField
                     disabled={error || !rule.common.enabled}
                     fullWidth
@@ -632,7 +623,7 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 />
             </TableCell>
-            {anyNotArray ? <TableCell className={cell}>
+            {anyNotArray ? <TableCell style={styles.cell}>
                 {rule.common.type !== 'array' ? <TextField
                     fullWidth
                     disabled={error || !rule.common.enabled}
@@ -642,7 +633,7 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 /> : null}
             </TableCell> : null}
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <Select
                     fullWidth
                     disabled={error || !rule.common.enabled}
@@ -659,7 +650,7 @@ class ParserComponent extends ConfigGeneric {
                     <MenuItem value="indicator">indicator</MenuItem>
                 </Select>
             </TableCell>
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <Select
                     fullWidth
                     disabled={error || !rule.common.enabled}
@@ -673,7 +664,7 @@ class ParserComponent extends ConfigGeneric {
                     <MenuItem value="json">json</MenuItem>
                 </Select>
             </TableCell>
-            {anyNumber ? <TableCell className={cell}>
+            {anyNumber ? <TableCell style={styles.cell}>
                 {rule.common.type === 'number' ?
                     <Checkbox
                         disabled={error || !rule.common.enabled}
@@ -681,7 +672,7 @@ class ParserComponent extends ConfigGeneric {
                         onChange={e => this._onChange(index, true, 'comma', e.target.checked)}
                     /> : null}
             </TableCell> : null}
-            {anyNumber ? <TableCell className={cell}>
+            {anyNumber ? <TableCell style={styles.cell}>
                 <TextField
                     fullWidth
                     disabled={error || !rule.common.enabled}
@@ -691,7 +682,7 @@ class ParserComponent extends ConfigGeneric {
                 />
             </TableCell> : null}
             <TableCell
-                className={cell}
+                style={styles.cell}
                 title={I18n.t('parser_If new value is not available, let old value unchanged')}
             >
                 <Checkbox
@@ -703,7 +694,7 @@ class ParserComponent extends ConfigGeneric {
             >
             {anySubstituteOld ? <TableCell
                 title={I18n.t('parser_If new value is not available, use this value')}
-                className={cell}
+                style={styles.cell}
             >
                 {!rule.native.substituteOld ?
                     <TextField
@@ -714,7 +705,7 @@ class ParserComponent extends ConfigGeneric {
                         variant="standard"
                     /> : null}
             </TableCell> : null}
-            {anyNumber ? <TableCell className={cell}>
+            {anyNumber ? <TableCell style={styles.cell}>
                 {rule.common.type === 'number' ?
                     <TextField
                         disabled={error || !rule.common.enabled}
@@ -724,7 +715,7 @@ class ParserComponent extends ConfigGeneric {
                         variant="standard"
                     /> : null}
             </TableCell> : null}
-            {anyNumber ? <TableCell className={cell}>
+            {anyNumber ? <TableCell style={styles.cell}>
                 {rule.common.type === 'number' ?
                     <TextField
                         disabled={error || !rule.common.enabled}
@@ -736,7 +727,7 @@ class ParserComponent extends ConfigGeneric {
             </TableCell> : null}
             <TableCell
                 title={I18n.t('parser_Leave it empty if default interval is desired')}
-                className={cell}
+                style={styles.cell}
             >
                 <TextField
                     disabled={error || !rule.common.enabled}
@@ -747,7 +738,7 @@ class ParserComponent extends ConfigGeneric {
                     variant="standard"
                 />
             </TableCell>
-            <TableCell className={cell}>
+            <TableCell style={styles.cell}>
                 <IconButton
                     size="small"
                     disabled={error || !rule.common.enabled}
@@ -992,30 +983,42 @@ class ParserComponent extends ConfigGeneric {
         const anyNumber = this.state.rules.find(it => it.common.type === 'number');
         const anySubstituteOld = this.state.rules.find(it => !it.native.substituteOld);
         const anyNotArray = this.state.rules.find(it => it.common.type !== 'array');
-        const cls = this.props.classes;
 
         return <TableContainer component={Paper}>
+            <style>
+                {`
+@keyframes admin-parser-blink {
+    0% {
+        color: #00FF00;
+    }
+    100% {
+        color: ${this.props.themeType === 'dark' ? '#fff' : '#000'};
+    }
+}
+`}
+
+            </style>
             {this.renderEditDialog()}
             {this.renderDeleteDialog()}
             <Table size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colIndex)}></TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colActive)}>{I18n.t('parser_Active')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colName)}>{I18n.t('parser_Name')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colUrl)}>{I18n.t('parser_URL or file name')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colRegEx)}>{I18n.t('parser_RegEx')}</TableCell>
-                        {anyNotArray ? <TableCell className={Utils.clsx(cls.cell, cls.colItem)}>{I18n.t('parser_Item')}</TableCell> : null}
-                        <TableCell className={Utils.clsx(cls.cell, cls.colRole)}>{I18n.t('parser_Role')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colType)}>{I18n.t('parser_Type')}</TableCell>
-                        {anyNumber ? <TableCell className={Utils.clsx(cls.cell, cls.colComma)}>{I18n.t('parser_Comma')}</TableCell> : null}
-                        {anyNumber ? <TableCell className={Utils.clsx(cls.cell, cls.colUnit)}>{I18n.t('parser_Unit')}</TableCell> : null}
-                        <TableCell className={Utils.clsx(cls.cell, cls.colSubstituteOld)} title={I18n.t('parser_If new value is not available, let old value unchanged')}>{I18n.t('parser_Old')}</TableCell>
-                        {anySubstituteOld ? <TableCell className={Utils.clsx(cls.cell, cls.colSubstitute)} title={I18n.t('parser_If new value is not available, use this value')}>{I18n.t('parser_Subs')}</TableCell> : null}
-                        {anyNumber ? <TableCell className={Utils.clsx(cls.cell, cls.colFactor)}>{I18n.t('parser_Factor')}</TableCell> : null}
-                        {anyNumber ? <TableCell className={Utils.clsx(cls.cell, cls.colOffset)}>{I18n.t('parser_Offset')}</TableCell> : null}
-                        <TableCell className={Utils.clsx(cls.cell, cls.colInterval)} title={I18n.t('parser_Leave it empty if default interval is desired')}>{I18n.t('parser_Interval')}</TableCell>
-                        <TableCell className={Utils.clsx(cls.cell, cls.colButtons)}>
+                        <TableCell style={{ ...styles.cell, ...styles.colIndex }}></TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colActive }}>{I18n.t('parser_Active')}</TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colName }}>{I18n.t('parser_Name')}</TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colUrl }}>{I18n.t('parser_URL or file name')}</TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colRegEx }}>{I18n.t('parser_RegEx')}</TableCell>
+                        {anyNotArray ? <TableCell style={{ ...styles.cell, ...styles.colItem }}>{I18n.t('parser_Item')}</TableCell> : null}
+                        <TableCell style={{ ...styles.cell, ...styles.colRole }}>{I18n.t('parser_Role')}</TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colType }}>{I18n.t('parser_Type')}</TableCell>
+                        {anyNumber ? <TableCell style={{ ...styles.cell, ...styles.colComma }}>{I18n.t('parser_Comma')}</TableCell> : null}
+                        {anyNumber ? <TableCell style={{ ...styles.cell, ...styles.colUnit }}>{I18n.t('parser_Unit')}</TableCell> : null}
+                        <TableCell style={{ ...styles.cell, ...styles.colSubstituteOld }} title={I18n.t('parser_If new value is not available, let old value unchanged')}>{I18n.t('parser_Old')}</TableCell>
+                        {anySubstituteOld ? <TableCell style={{ ...styles.cell, ...styles.colSubstitute }} title={I18n.t('parser_If new value is not available, use this value')}>{I18n.t('parser_Subs')}</TableCell> : null}
+                        {anyNumber ? <TableCell style={{ ...styles.cell, ...styles.colFactor }}>{I18n.t('parser_Factor')}</TableCell> : null}
+                        {anyNumber ? <TableCell style={{ ...styles.cell, ...styles.colOffset }}>{I18n.t('parser_Offset')}</TableCell> : null}
+                        <TableCell style={{ ...styles.cell, ...styles.colInterval }} title={I18n.t('parser_Leave it empty if default interval is desired')}>{I18n.t('parser_Interval')}</TableCell>
+                        <TableCell style={{ ...styles.cell, ...styles.colButtons }}>
                             <Fab
                                 size="small"
                                 color="primary"
@@ -1072,4 +1075,4 @@ ParserComponent.propTypes = {
     onChange: PropTypes.func,
 };
 
-export default withStyles(styles)(ParserComponent);
+export default ParserComponent;

@@ -143,6 +143,9 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) GUI was migrated for admin v7
+
 ### 2.1.0 (2023-12-14)
 * (mcm1957) Only node 16 and higher is supported
 
