@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "news": {
+      "2.2.2": {
+        "en": "GUI was migrated for admin v7",
+        "de": "GUI wurde für admin v7 migriert",
+        "ru": "GUI был перенесен на admin v7",
+        "pt": "GUI foi migrado para admin v7",
+        "nl": "GUI is gemigreerd voor admin v7",
+        "fr": "GUI a été migré pour admin v7",
+        "it": "GUI è stato migrato per admin v7",
+        "es": "GUI fue migrado por admin v7",
+        "pl": "Interfejs GUI został wysłany do admin v7",
+        "uk": "GUI був мігрований для адміністратора v7",
+        "zh-cn": "管理员 v7 的图形用户界面已迁移"
+      },
       "2.2.1": {
         "en": "GUI was migrated for admin v7",
         "de": "GUI wurde für admin v7 migriert",
@@ -80,19 +93,6 @@
         "pl": "Wstępna możliwość wyzwalania parsingu poprzez pisanie pustej wartości dla państwa",
         "uk": "Додана можливість запускати парсінг, написавши порожній значення в державі",
         "zh-cn": "增加可能以书面方式为国家带来空洞价值"
-      },
-      "2.0.1": {
-        "en": "Updated timestamp of non changed values",
-        "de": "Aktualisierter Zeitstempel nicht geänderter Werte",
-        "ru": "Обновление временного образца не измененных значений",
-        "pt": "Timetamp atualizado de valores não alterados",
-        "nl": "Verkleinde tijdtamp van niet veranderde waarden",
-        "fr": "Temps de mise à jour des valeurs non modifiées",
-        "it": "Timestamp aggiornato dei valori non modificati",
-        "es": "Timetamp actualizado de valores no modificados",
-        "pl": "Data dostępu nie zmieniona",
-        "uk": "Оновлено мітку не змінених значень",
-        "zh-cn": "A. 非改变价值的最新时间"
       }
     },
     "title": "Parser",
