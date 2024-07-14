@@ -25,7 +25,6 @@ import {
     FormControl,
     InputLabel,
     Fab,
-    TextareaAutosize,
 } from '@mui/material';
 
 import {
@@ -40,9 +39,10 @@ import {
 
 // important to make from package and not from some children.
 // invalid
-// import ConfigGeneric from '@iobroker/adapter-react-v5/ConfigGeneric';
+// import Confirm from '@iobroker/adapter-react-v5/Confirm';
 // valid
-import { ConfigGeneric, I18n, Confirm, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm } from '@iobroker/adapter-react-v5';
+import { ConfigGeneric } from '@iobroker/json-config';
 
 const styles = {
     table: {
@@ -583,13 +583,18 @@ class ParserComponent extends ConfigGeneric {
     renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray) {
         const error = !rule.name || this.state.rules.find((r, i) => r.name === rule.name && i !== index)
 
-        return <TableRow key={`${index}_${rule.id}`} style={this.state.changed.includes(index) ? styles.changedRow : ''}>
+        return <TableRow
+            key={`${index}_${rule.id}`}
+            style={this.state.changed.includes(index) ? styles.changedRow : undefined}
+        >
             <TableCell style={styles.cell}>{index + 1}</TableCell>
-            <TableCell style={styles.cell}><Checkbox
-                disabled={error}
-                checked={rule.common.enabled}
-                onChange={e => this._onChange(index, false, 'enabled', e.target.checked)}
-            /></TableCell>
+            <TableCell style={styles.cell}>
+                <Checkbox
+                    disabled={error}
+                    checked={rule.common.enabled}
+                    onChange={e => this._onChange(index, false, 'enabled', e.target.checked)}
+                />
+            </TableCell>
             <TableCell style={styles.cell}>
                 <TextField
                     fullWidth

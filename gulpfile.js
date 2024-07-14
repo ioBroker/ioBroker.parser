@@ -1,6 +1,6 @@
 const gulp = require('gulp');
-const fs = require('fs');
-const cp = require('child_process');
+const fs = require('node:fs');
+const cp = require('node:child_process');
 
 function deleteFoldersRecursive(path, exceptions) {
     if (fs.existsSync(path)) {
@@ -33,7 +33,7 @@ function npmInstallAdmin() {
         console.log(`"${cmd} in ${cwd}`);
 
         // System call used for update of js-controller itself,
-        // because during installation npm packet will be deleted too, but some files must be loaded even during the install process.
+        // because during an installation the npm packet will be deleted too, but some files must be loaded even during the install process.
         const exec = cp.exec;
         const child = exec(cmd, {cwd});
 
@@ -41,7 +41,7 @@ function npmInstallAdmin() {
         child.stdout.pipe(process.stdout);
 
         child.on('exit', (code /* , signal */) => {
-            // code 1 is strange error that cannot be explained. Everything is installed but error :(
+            // code 1 is a strange error that cannot be explained. Everything is installed but error :(
             if (code && code !== 1) {
                 reject(`Cannot install: ${code}`);
             } else {
@@ -101,6 +101,10 @@ gulp.task('admin-2-compile', async () => buildAdmin());
 gulp.task('admin-3-copy', () => Promise.all([
     gulp.src(['src-admin/build/static/js/*.js', '!src-admin/build/static/js/vendors*.js']).pipe(gulp.dest('admin/custom/static/js')),
     gulp.src(['src-admin/build/static/js/*.map', '!src-admin/build/static/js/vendors*.map']).pipe(gulp.dest('admin/custom/static/js')),
+    gulp.src(['src-admin/build/static/js/*jss-plugin-camel-case*.js']).pipe(gulp.dest('admin/custom/static/js')),
+    gulp.src(['src-admin/build/static/js/*mui_material_styles_styled*.js']).pipe(gulp.dest('admin/custom/static/js')),
+    gulp.src(['src-admin/build/static/js/*mui_material_Button_Button*.js']).pipe(gulp.dest('admin/custom/static/js')),
+    gulp.src(['src-admin/build/static/js/*mui_material_styles_getOverlayAlpha*.js']).pipe(gulp.dest('admin/custom/static/js')),
     gulp.src(['src-admin/build/customComponents.js']).pipe(gulp.dest('admin/custom')),
     gulp.src(['src-admin/build/customComponents.js.map']).pipe(gulp.dest('admin/custom')),
     gulp.src(['src-admin/src/i18n/*.json']).pipe(gulp.dest('admin/custom/i18n')),
