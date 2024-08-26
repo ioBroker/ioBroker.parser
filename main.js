@@ -506,7 +506,7 @@ function removeFromRemoteQueue(link) {
     // Remove first entry (should be the request that just finished)
     requestQueue.shift();
 
-    // And process next request if there is one
+    // And process the next request if there is one
     if (requestQueue.length > 0) {
         // Make sure correct delay has passed or wait until for that point
         const delay = Date.now() - hostnamesRequestTime[url.hostname];

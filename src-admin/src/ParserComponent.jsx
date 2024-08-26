@@ -287,8 +287,8 @@ class ParserComponent extends ConfigGeneric {
     };
 
     onAliveChange = (id, state) => {
-        if (id === `system.adapter.${this.namespace}alive` && this.state.alive !== (state && state.val || false)) {
-            this.setState({ alive: state ? state.val : false });
+        if (id === `system.adapter.${this.namespace}alive` && this.state.alive !== !!state?.val) {
+            this.setState({ alive: !!state?.val });
         }
     }
 
@@ -605,7 +605,8 @@ class ParserComponent extends ConfigGeneric {
                         const rules = JSON.parse(JSON.stringify(this.state.rules));
                         rules[index].name = e.target.value;
                         const error = this.checkError();
-                        this.setState({ rules, error }, () => this.onAutoSave(index));
+                        this.setState({ rules, error }, () =>
+                            this.onAutoSave(index));
                     }}
                     variant="standard"
                 />
@@ -1001,7 +1002,6 @@ class ParserComponent extends ConfigGeneric {
     }
 }
 `}
-
             </style>
             {this.renderEditDialog()}
             {this.renderDeleteDialog()}
@@ -1060,7 +1060,8 @@ class ParserComponent extends ConfigGeneric {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.rules.map((rule, index) => this.renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray))}
+                    {this.state.rules.map((rule, index) =>
+                        this.renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray))}
                 </TableBody>
             </Table>
         </TableContainer>;

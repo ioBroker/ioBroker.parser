@@ -67,35 +67,8 @@
         "pl": "Wynikiem może być szereg wartości",
         "uk": "Результат може бути масивом значень",
         "zh-cn": "结果可能是一系列价值观。"
-      },
-      "2.0.3": {
-        "en": "Corrected subscription on too many objects",
-        "de": "Korrigiertes Abonnement auf zu vielen Objekten",
-        "ru": "Исправлена подписка на слишком много объектов",
-        "pt": "Assinatura correta em muitos objetos",
-        "nl": "Beschrijving over te veel objecten",
-        "fr": "Abonnement correct sur trop d'objets",
-        "it": "Abbonamento corretto su troppi oggetti",
-        "es": "Suscripción corregida en demasiados objetos",
-        "pl": "Poprawka na temat zbyt wielu obiektów",
-        "uk": "Виправлена підписка на занадто багато об'єктів",
-        "zh-cn": "对许多物体的更正说明"
-      },
-      "2.0.2": {
-        "en": "Added possibility to trigger the parsing by writing of empty value to the state",
-        "de": "Zusätzliche Möglichkeit, die Parsierung durch Schreiben von Leerwert in den Zustand auszulösen",
-        "ru": "Добавлена возможность запуска парсинга, написав пустое значение государству",
-        "pt": "Adicionado possibilidade para desencadear a análise por escrito de valor vazio para o estado",
-        "nl": "Toegevoegd de mogelijkheid om de papieren te activeren door te schrijven van lege waarde voor de staat",
-        "fr": "Possibilité supplémentaire de déclencher le parsage en écrivant la valeur vide à l'état",
-        "it": "Aggiunta possibilità di attivare la parsing scrivendo di valore vuoto allo stato",
-        "es": "Se agregó la posibilidad de desencadenar la persiana escribiendo el valor vacío al estado",
-        "pl": "Wstępna możliwość wyzwalania parsingu poprzez pisanie pustej wartości dla państwa",
-        "uk": "Додана можливість запускати парсінг, написавши порожній значення в державі",
-        "zh-cn": "增加可能以书面方式为国家带来空洞价值"
       }
     },
-    "title": "Parser",
     "titleLang": {
       "en": "Parser",
       "de": "Parser",
@@ -125,12 +98,10 @@
     "authors": [
       "bluefox <dogafox@gmail.com>"
     ],
-    "license": "MIT",
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "loglevel": "info",
     "messagebox": true,
-    "materialize": true,
     "icon": "parser.png",
     "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
     "keywords": [
@@ -144,12 +115,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=2.0.0"
+        "js-controller": ">=5.0.0"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=3.0.0"
+        "admin": ">=7.0.0"
       }
     ],
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
