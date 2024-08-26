@@ -235,11 +235,13 @@ class ParserComponent extends ConfigGeneric {
                 rules[ruleIndex] = {
                     id,
                     name: id.substring(this.namespace.length),
-                    common:        {
+                    common: {
                         enabled: obj.common.enabled !== false,
                         role: obj.common.role,
                         type: obj.common.type,
                         unit: obj.common.unit,
+                        read: true,
+                        write: false,
                     },
                     native: {
                         link: obj.native.link,
@@ -255,6 +257,11 @@ class ParserComponent extends ConfigGeneric {
                 };
                 if (JSON.stringify(this.state.rules[ruleIndex]) === JSON.stringify(rules[ruleIndex])) {
                     return;
+                } else {
+                    console.log('Detected change');
+                    console.log(`old: ${JSON.stringify(this.state.rules[ruleIndex])}`);
+                    console.log(`new: ${JSON.stringify(rules[ruleIndex])}`);
+
                 }
             } else {
                 // add new rule
@@ -543,11 +550,17 @@ class ParserComponent extends ConfigGeneric {
         this.saveTimer && clearTimeout(this.saveTimer);
         this.saveTimer = setTimeout(async () => {
             this.saveTimer = null;
+            let rulesChanged = false;
+            const rules = JSON.parse(JSON.stringify(this.state.rules));
+            const tasks = [];
+
+            // got through all changed lines
             for (let c = 0; c < this.state.changed.length; c++) {
                 const _index = this.state.changed[c];
-                const rule = this.state.rules[_index];
+                const rule = rules[_index];
 
-                if (rule.name && !this.state.rules.find((r, i) => r.name === rule.name && i !== _index)) {
+                // if the name exists and it is unique
+                if (rule.name && !rules.find((r, i) => r.name === rule.name && i !== _index)) {
                     const originalObj = rule.id ? await this.props.socket.getObject(rule.id) : { common: {}, native: {}, type: 'state' };
                     const obj = JSON.parse(JSON.stringify(originalObj));
                     Object.assign(obj.common, rule.common);
@@ -555,18 +568,35 @@ class ParserComponent extends ConfigGeneric {
 
                     // if name changed
                     if (rule.id !== `${this.namespace}${rule.name}`) {
-                        rule.id && (await this.props.socket.delObject(rule.id));
-                        await this.props.socket.setObject(`${this.namespace}${rule.name}`, obj);
-                    } else {
-                        if (JSON.stringify(originalObj.common) !== JSON.stringify(obj.common) ||
-                            JSON.stringify(originalObj.native) !== JSON.stringify(obj.native)
-                        ) {
-                            await this.props.socket.setObject(rule.id, obj);
+                        // delete old object
+                        if (rule.id) {
+                            await this.props.socket.delObject(rule.id)
                         }
+                        // create new ID
+                        rule.id = `${this.namespace}${rule.name}`;
+                        rulesChanged = true;
+                        obj._id = rule.id;
+                        tasks.push(obj);
+                    } else if (JSON.stringify(originalObj.common) !== JSON.stringify(obj.common) ||
+                        JSON.stringify(originalObj.native) !== JSON.stringify(obj.native)
+                    ) {
+                        // some settings changed
+                        obj._id = rule.id;
+                        tasks.push(obj);
                     }
                 }
             }
-            this.setState({ changed: [] });
+            const newState = {
+                changed: [],
+            };
+            if (rulesChanged) {
+                newState.rules = rules;
+            }
+            this.setState(newState, async () => {
+                for (let i = 0; i < tasks.length; i++) {
+                    await this.props.socket.setObject(tasks[i]._id, tasks[i]);
+                }
+            });
         }, 1000);
     }
 

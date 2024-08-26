@@ -55,5 +55,7 @@
     "parser_Active": "Actief",
     "parser_Convert &#48; => 0 and so on": "Converteren &#48; => 0 enzovoort",
     "parser_Parse HTML text": "Parseer HTML-tekst",
-    "parser_User agent": "User-Agent"
+    "parser_User agent": "User-Agent",
+    "parser_Tasks": "Taken",
+    "parser_General settings": "Algemene instellingen"
 }

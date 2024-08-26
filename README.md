@@ -145,6 +145,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) updated packages
+* (bluefox) corrected a problem with the creation of rule
 
 ### 2.2.2 (2024-07-14)
 * (bluefox) GUI was migrated for admin v7

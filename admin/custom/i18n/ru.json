@@ -55,5 +55,7 @@
     "parser_Active": "Активно",
     "parser_Convert &#48; => 0 and so on": "Преобразовать &#48; => 0 и так далее",
     "parser_Parse HTML text": "Разобрать HTML-текст",
-    "parser_User agent": "User-Agent"
+    "parser_User agent": "User-Agent",
+    "parser_Tasks": "Задачи",
+    "parser_General settings": "Общие настройки"
 }

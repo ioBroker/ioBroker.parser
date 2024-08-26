@@ -6,7 +6,7 @@
 // you have to require the utils module and call adapter function
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const adapterName = require('./package.json').name.split('.').pop();
-const https = require('https');
+const https = require('node:https');
 let axios;
 let path;
 let fs;
@@ -202,7 +202,9 @@ function deletePoll(obj) {
 
 function _analyseDataForStates(linkStates, data, error, callback) {
     if (!linkStates || !linkStates.length) {
-        if (callback) callback();
+        if (callback) {
+            callback();
+        }
     } else {
         const id = linkStates.shift();
         if (!states[id]) {
@@ -447,8 +449,8 @@ async function readLink(link, callback) {
             callback(err.data ? err.data : err.toString(), null, link);
         }
     } else {
-        path = path || require('path');
-        fs = fs || require('fs');
+        path = path || require('node:path');
+        fs = fs || require('node:fs');
         link = (link || '').replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
             link = path.normalize(`${__dirname}/../../${link}`);

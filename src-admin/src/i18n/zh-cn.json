@@ -55,5 +55,7 @@
     "parser_Active": "积极的",
     "parser_Convert &#48; => 0 and so on": "转换 &#48; => 0 等等",
     "parser_Parse HTML text": "解析 HTML 文本",
-    "parser_User agent": "User-Agent"
+    "parser_User agent": "User-Agent",
+    "parser_Tasks": "任务",
+    "parser_General settings": "常规设置"
 }

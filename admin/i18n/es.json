@@ -55,5 +55,7 @@
   "parser_Active": "Activo",
   "parser_Convert &#48; => 0 and so on": "Convertir &#48; => 0 y así sucesivamente",
   "parser_Parse HTML text": "Analizar texto HTML",
-  "parser_User agent": "User-Agent"
+  "parser_User agent": "User-Agent",
+  "parser_Tasks": "Tareas",
+  "parser_General settings": "Configuración general"
 }
