@@ -1,34 +1,38 @@
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
-/*jshint expr: true*/
-var expect = require('chai').expect;
-var setup  = require(__dirname + '/lib/setup');
+/* jshint -W097 */
+/* jshint strict: false */
+/* jslint node: true */
+/* jshint expr: true*/
+const expect = require('chai').expect;
+const setup = require('@iobroker/legacy-testing');
 
-var objects = null;
-var states  = null;
-var onStateChanged  = null;
-var onObjectChanged = null;
-var received = 0;
-var receivedAll = 0;
+let objects = null;
+let states  = null;
+let onObjectChanged = null;
+let received = 0;
+let receivedAll = 0;
 
-var adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
+const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
 
 function checkConnectionOfAdapter(cb, counter) {
     counter = counter || 0;
-    console.log('Try check #' + counter);
+    console.log(`Try check #${counter}`);
     if (counter > 30) {
-        if (cb) cb('Cannot check connection');
+        if (cb) {
+            cb('Cannot check connection');
+        }
         return;
     }
 
-    states.getState('system.adapter.' + adapterShortName + '.0.alive', function (err, state) {
-        if (err) console.error(err);
+    states.getState(`system.adapter.${adapterShortName}.0.alive`, (err, state) => {
+        if (err) {
+            console.error(err);
+        }
         if (state && state.val) {
-            if (cb) cb();
+            if (cb) {
+                cb();
+            }
         } else {
-            setTimeout(function () {
-                checkConnectionOfAdapter(cb, counter + 1);
-            }, 1000);
+            setTimeout(() => checkConnectionOfAdapter(cb, counter + 1), 1000);
         }
     });
 }
@@ -36,28 +40,36 @@ function checkConnectionOfAdapter(cb, counter) {
 function checkValueOfState(id, value, cb, counter) {
     counter = counter || 0;
     if (counter > 20) {
-        if (cb) cb('Cannot check value Of State ' + id);
+        if (cb) {
+            cb(`Cannot check value Of State ${id}`);
+        }
         return;
     }
 
-    states.getState(id, function (err, state) {
-        if (err) console.error(err);
+    states.getState(id, (err, state) => {
+        if (err) {
+            console.error(err);
+        }
+
         if (value === null && !state) {
-            if (cb) cb();
+            if (cb) {
+                cb();
+            }
         } else
         if (state && (value === undefined || state.val === value)) {
-            if (cb) cb();
+            if (cb) {
+                cb();
+            }
         } else {
-            setTimeout(function () {
-                checkValueOfState(id, value, cb, counter + 1);
-            }, 500);
+            setTimeout(() =>
+                checkValueOfState(id, value, cb, counter + 1), 500);
         }
     });
 }
 
-var vars = [
+const vars = [
     {
-        "_id": "parser.0.forumRunning",
+        _id: "parser.0.forumRunning",
         "common": {
             "name": "forumRunning",
             "write": false,
@@ -187,13 +199,15 @@ var vars = [
     }
 ];
 
-onStateChanged = function (id, state) {
-    var rec = 0;
-    for (var i = 0; i < vars.length; i++) {
+let onStateChanged = (id, state) => {
+    let rec = 0;
+    for (let i = 0; i < vars.length; i++) {
         if (vars[i]._id === id) {
             vars[i].received = true;
         }
-        if (vars[i].received) rec ++;
+        if (vars[i].received) {
+            rec++;
+        }
     }
     received = rec;
     receivedAll++;
@@ -205,7 +219,7 @@ function createStates(_objects, _vars, index, callback) {
         return;
     }
 
-    console.log('createStates ' + _vars[index]._id);
+    console.log(`createStates ${_vars[index]._id}`);
     _objects.setObject(_vars[index]._id, _vars[index], function (err) {
         expect(err).to.be.not.ok;
         setTimeout(createStates, 0, _objects, _vars, index + 1, callback);
@@ -220,7 +234,7 @@ function checkStates(_states, _vars, index, result, callback) {
         return;
     }
 
-    console.log('getState - ' + _vars[index]._id);
+    console.log(`getState - ${_vars[index]._id}`);
     _states.getState(_vars[index]._id, function (err, state) {
         result[index] = state;
         setTimeout(checkStates, 0, _states, _vars, index + 1, result, callback);
@@ -229,11 +243,12 @@ function checkStates(_states, _vars, index, result, callback) {
 
 function finalCheck(__states, _vars, done) {
     checkStates(__states, _vars, 0, [], function (_states) {
-        for (var i = 0; i < _states.length; i++) {
-            console.log('Check ' + vars[i]._id + ': ' + JSON.stringify(_states[i]));
+        for (let i = 0; i < _states.length; i++) {
+            console.log(`Check ${vars[i]._id}: ${JSON.stringify(_states[i])}`);
             expect(_states[i]).to.be.ok;
-            expect(_states[i].from).to.be.equal("system.adapter.parser.0");
+            expect(_states[i].from).to.be.equal('system.adapter.parser.0');
             expect(_states[i].val).to.be.not.null;
+
             if (vars[i].native.expect !== undefined) {
                 expect(_states[i].val).to.be.equal(vars[i].native.expect);
             }
@@ -245,12 +260,12 @@ function finalCheck(__states, _vars, done) {
     });
 }
 
-describe('Test ' + adapterShortName + ' adapter', function() {
-    before('Test ' + adapterShortName + ' adapter: Start js-controller', function (_done) {
-        this.timeout(600000); // because of first install from npm
+describe(`Test ${adapterShortName} adapter`, function() {
+    before(`Test ${adapterShortName} adapter: Start js-controller`, function (_done) {
+        this.timeout(600000); // because of the first installation from npm
 
-        setup.setupController(async function () {
-            var config = await setup.getAdapterConfig();
+        setup.setupController(async () => {
+            const config = await setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
@@ -259,20 +274,27 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 
             await setup.setAdapterConfig(config.common, config.native);
 
-            setup.startController(false, function (id, obj) {
-                    if (onObjectChanged) onObjectChanged(id, obj);
-                }, function (id, state) {
-                    if (onStateChanged) onStateChanged(id, state);
+            setup.startController(
+                false,
+                (id, obj) => {
+                    if (onObjectChanged) {
+                        onObjectChanged(id, obj);
+                    }
                 },
-                function (_objects, _states) {
+                (id, state) => {
+                    if (onStateChanged) {
+                        onStateChanged(id, state);
+                    }
+                },
+                (_objects, _states) => {
                     objects = _objects;
                     states  = _states;
                     states.subscribe('*');
 
                     console.log('Create states');
-                    createStates(objects, vars, 0, function () {
+                    createStates(objects, vars, 0, () => {
                         console.log('Start adapter');
-                        setup.startAdapter(objects, states, function () {
+                        setup.startAdapter(objects, states, () => {
                             console.log('Start tests');
                             _done();
                         });
@@ -281,7 +303,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         });
     });
 
-    it('Test ' + adapterShortName + ' adapter: Check if adapter started', function (done) {
+    it(`Test ${adapterShortName} adapter: Check if adapter started`, function (done) {
         this.timeout(60000);
         checkConnectionOfAdapter(function (res) {
             if (res) console.log(res);
@@ -299,10 +321,10 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         });
     });
 
-    it('Test ' + adapterShortName + ' adapter: values must be there', function (done) {
+    it(`Test ${adapterShortName} adapter: values must be there`, function (done) {
         this.timeout(5000);
         setTimeout(function () {
-            console.log('received 1 - ' + received);
+            console.log(`received 1 - ${received}`);
             //[{
             //    "val": true,
             //    "ack": true,
@@ -335,7 +357,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 
             if (received < vars.length) {
                 setTimeout(function () {
-                    console.log('received 2 - ' + received);
+                    console.log(`received 2 - ${received}`);
                     expect(receivedAll).to.be.at.least(vars.length);
                     finalCheck(states, vars, done);
                 }, 2000);
@@ -346,12 +368,12 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         }, 2000);
     });
 
-    it('Test ' + adapterShortName + ' adapter: values must be there after interval ', function (done) {
+    it(`Test ${adapterShortName} adapter: values must be there after interval `, function (done) {
         this.timeout(35000);
         receivedAll = 0;
         setTimeout(function () {
             expect(receivedAll).to.be.at.least(vars.length + 2);
-            console.log('received 1 - ' + received);
+            console.log(`received 1 - ${received}`);
             //[{
             //    "val": true,
             //    "ack": true,
@@ -393,11 +415,11 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         }, 32000);
     });
 
-    after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
+    after(`Test ${adapterShortName} adapter: Stop js-controller`, function (done) {
         this.timeout(10000);
 
-        setup.stopController(function (normalTerminated) {
-            console.log('Adapter normal terminated: ' + normalTerminated);
+        setup.stopController(normalTerminated => {
+            console.log(`Adapter normal terminated: ${normalTerminated}`);
             done();
         });
     });

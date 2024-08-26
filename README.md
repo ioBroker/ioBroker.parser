@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.2.3 (2024-08-26)
+### **WORK IN PROGRESS**
 * (bluefox) updated packages
 * (bluefox) corrected a problem with the creation of rule
 
