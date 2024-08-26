@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "2.2.2",
+    "version": "2.2.3",
     "news": {
+      "2.2.3": {
+        "en": "updated packages\ncorrected a problem with the creation of rule",
+        "de": "aktualisierte pakete\nein problem mit der schaffung von regel korrigiert",
+        "ru": "обновления пакетов\nисправить проблему с созданием правила",
+        "pt": "pacotes atualizados\ncorrigiu um problema com a criação de regra",
+        "nl": "bijgewerkte pakketten\ncorrectie van een probleem met de instelling van een regel",
+        "fr": "paquets mis à jour\ncorrigé un problème avec la création de la règle",
+        "it": "pacchetti aggiornati\ncorretto un problema con la creazione della regola",
+        "es": "paquetes actualizados\ncorregido un problema con la creación de regla",
+        "pl": "zaktualizowane pakiety\npoprawił problem z tworzeniem zasad",
+        "uk": "оновлені пакети\nвиправлено проблему з створенням правила",
+        "zh-cn": "更新软件包\n纠正了创建规则的问题"
+      },
       "2.2.2": {
         "en": "GUI was migrated for admin v7",
         "de": "GUI wurde für admin v7 migriert",
