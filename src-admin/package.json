@@ -10,7 +10,7 @@
     "devDependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@iobroker/json-config": "^7.0.25",
-        "@iobroker/adapter-react-v5": "^6.1.9",
+        "@iobroker/adapter-react-v5": "^7.2.1",
         "@mui/material": "^5.16.7",
         "@mui/icons-material": "^5.16.7",
         "prop-types": "^15.8.1",
