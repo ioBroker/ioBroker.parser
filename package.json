@@ -1,6 +1,6 @@
 {
   "name": "iobroker.parser",
-  "version": "2.2.4",
+  "version": "2.3.0",
   "description": "Parses web pages and files for values.",
   "author": {
     "name": "bluefox",
