@@ -143,6 +143,9 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Migrated the admin GUI to TypeScript
+
 ### 2.2.4 (2024-08-26)
 * (bluefox) updated packages
 * (bluefox) corrected a problem with the creation of rule

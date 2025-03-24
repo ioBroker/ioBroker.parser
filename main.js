@@ -47,7 +47,10 @@ function startAdapter(options) {
                     }
                 });
             } else {
-                if (states[id].native.interval !== obj.native.interval || states[id].common.enabled !== obj.common.enabled) {
+                if (
+                    states[id].native.interval !== obj.native.interval ||
+                    states[id].common.enabled !== obj.common.enabled
+                ) {
                     adapter.log.info(`Parser object ${id} interval changed`);
                     deletePoll(states[id]);
                     states[id] = Object.assign(states[id], obj);
@@ -74,7 +77,8 @@ function startAdapter(options) {
                         if (!updated) {
                             adapter.setState(id, { val: oldVal, ack: true });
                         }
-                    }));
+                    }),
+                );
             }, 0);
         }
     });
@@ -86,14 +90,21 @@ function startAdapter(options) {
                     if (obj.callback) {
                         // read link
                         readLink(obj.message, (err, text) =>
-                            adapter.sendTo(obj.from, obj.command, { error: err, text: text }, obj.callback));
+                            adapter.sendTo(obj.from, obj.command, { error: err, text: text }, obj.callback),
+                        );
                     }
                     break;
 
                 case 'trigger':
                     if (obj.callback) {
                         if (!states[obj.message] && !states[`${adapter.namespace}.${obj.message}`]) {
-                            obj.callback && adapter.sendTo(obj.from, obj.command, { error, value: states[id].value.val }, obj.callback);
+                            obj.callback &&
+                                adapter.sendTo(
+                                    obj.from,
+                                    obj.command,
+                                    { error, value: states[id].value.val },
+                                    obj.callback,
+                                );
                         } else {
                             const id = states[obj.message] ? obj.message : `${adapter.namespace}.${obj.message}`;
 
@@ -104,8 +115,14 @@ function startAdapter(options) {
                                     error,
                                     () =>
                                         obj.callback &&
-                                        adapter.sendTo(obj.from, obj.command, { error, value: states[id].value.val }, obj.callback),
-                                ));
+                                        adapter.sendTo(
+                                            obj.from,
+                                            obj.command,
+                                            { error, value: states[id].value.val },
+                                            obj.callback,
+                                        ),
+                                ),
+                            );
                         }
                     }
                     break;
@@ -214,7 +231,8 @@ function _analyseDataForStates(linkStates, data, error, callback) {
         }
 
         analyseData(states[id], data, error, () =>
-            setImmediate(_analyseDataForStates, linkStates, data, error, callback));
+            setImmediate(_analyseDataForStates, linkStates, data, error, callback),
+        );
     }
 }
 
@@ -322,7 +340,9 @@ function analyseData(obj, data, error, callback) {
                     }
                 } else if (obj.common.type === 'number') {
                     const comma = obj.native.comma;
-                    if (!comma) newVal = newVal.replace(/,/g, '');
+                    if (!comma) {
+                        newVal = newVal.replace(/,/g, '');
+                    }
                     if (comma) {
                         // 1.000.000 => 1000000
                         newVal = newVal.replace(/\./g, '');
@@ -346,13 +366,14 @@ function analyseData(obj, data, error, callback) {
                         const _m = it.match(_regex);
                         if (_m && _m[1]) {
                             return _m[1];
-                        } else {
-                            return it;
                         }
+                        return it;
                     });
                 }
                 if (obj.native.parseHtml) {
-                    newVal = JSON.stringify(m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))));
+                    newVal = JSON.stringify(
+                        m.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))),
+                    );
                 } else {
                     newVal = JSON.stringify(m);
                 }
@@ -532,7 +553,7 @@ function poll(interval, callback) {
     const curStates = [];
     const curLinks = [];
     for (id in states) {
-        if (!states.hasOwnProperty(id)) {
+        if (!Object.prototype.hasOwnProperty.call(states, id)) {
             continue;
         }
         if (states[id].native.interval === interval && (states[id].processed || states[id].processed === undefined)) {
@@ -569,7 +590,8 @@ async function main() {
     adapter.config.pollInterval = parseInt(adapter.config.pollInterval, 10) || 5000;
     adapter.config.requestTimeout = parseInt(adapter.config.requestTimeout, 10) || 60000;
     adapter.config.requestDelay = parseInt(adapter.config.requestDelay, 10) || 0;
-    adapter.config.userAgent = adapter.config.userAgent || 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
+    adapter.config.userAgent =
+        adapter.config.userAgent || 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
 
     // read current existing objects (прочитать текущие существующие объекты)
     try {
@@ -603,7 +625,7 @@ async function main() {
 
     // trigger all parsers first time
     for (const timer in timers) {
-        if (timers.hasOwnProperty(timer)) {
+        if (Object.prototype.hasOwnProperty.call(timers, timer)) {
             poll(timers[timer].interval);
         }
     }

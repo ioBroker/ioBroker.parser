@@ -74,7 +74,8 @@
           "i18n": true,
           "url": "custom/customComponents.js",
           "name": "ConfigCustomParserSet/Components/ParserComponent",
-          "sm": 12
+          "sm": 12,
+          "bundlerType": "module"
        }
       }
     }
