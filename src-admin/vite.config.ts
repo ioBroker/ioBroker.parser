@@ -9,7 +9,7 @@ const config = {
     plugins: [
         federation({
             manifest: true,
-            name: 'ConfigCustomTelegramSet',
+            name: 'ConfigCustomParserSet',
             filename: 'customComponents.js',
             exposes: {
                 './Components': './src/Components.tsx',

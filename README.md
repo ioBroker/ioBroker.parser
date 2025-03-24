@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.3.0 (2025-03-24)
+### **WORK IN PROGRESS**
 * (bluefox) Migrated the admin GUI to TypeScript
 
 ### 2.2.4 (2024-08-26)

@@ -3,19 +3,6 @@
     "name": "parser",
     "version": "2.3.0",
     "news": {
-      "2.3.0": {
-        "en": "Migrated the admin GUI to TypeScript",
-        "de": "Die Admin-GUI zu TypeScript migriert",
-        "ru": "Перенес админ GUI в TypeScript",
-        "pt": "Migrado a GUI de administrador para TypeScript",
-        "nl": "De admin GUI migreren naar TypeScript",
-        "fr": "Migré l'interface graphique d'administration pour TypeScript",
-        "it": "Migrato la GUI di admin a TypeScript",
-        "es": "Migramos el GUI admin a TipoScript",
-        "pl": "Migrated the admin GUI to TypeScript",
-        "uk": "Міграція облікового запису адміністратора на TypeScript",
-        "zh-cn": "将管理员图形界面移到类型脚本"
-      },
       "2.2.4": {
         "en": "updated packages\ncorrected a problem with the creation of rule",
         "de": "aktualisierte pakete\nein problem mit der schaffung von regel korrigiert",
