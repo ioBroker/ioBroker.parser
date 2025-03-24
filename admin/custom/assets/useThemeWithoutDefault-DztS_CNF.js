@@ -1,0 +1,1 @@
+import{C as o}from"./ConfigCustomParserSet__loadShare__react__loadShare__-CoJWoTbj.js";import{X as r}from"./createTheme-VzofEyc3.js";function n(e){return Object.keys(e).length===0}function m(e=null){const t=o.useContext(r);return!t||n(t)?e:t}export{m as u};
