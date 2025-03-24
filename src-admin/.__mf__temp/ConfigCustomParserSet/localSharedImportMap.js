@@ -13,13 +13,13 @@
           return pkg
         }
       ,
-        "@mui/icons-material": async () => {
-          let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_mui_mf_1_icons_mf_2_material__prebuild__.js")
+        "@iobroker/adapter-react-v5": async () => {
+          let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_iobroker_mf_1_adapter_mf_2_react_mf_2_v5__prebuild__.js")
           return pkg
         }
       ,
-        "@iobroker/adapter-react-v5": async () => {
-          let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_iobroker_mf_1_adapter_mf_2_react_mf_2_v5__prebuild__.js")
+        "@mui/icons-material": async () => {
+          let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_mui_mf_1_icons_mf_2_material__prebuild__.js")
           return pkg
         }
       ,
@@ -88,15 +88,15 @@
             }
           }
         ,
-          "@mui/icons-material": {
-            name: "@mui/icons-material",
-            version: "6.4.8",
+          "@iobroker/adapter-react-v5": {
+            name: "@iobroker/adapter-react-v5",
+            version: "7.6.3",
             scope: ["default"],
             loaded: false,
             from: "ConfigCustomParserSet",
             async get () {
-              usedShared["@mui/icons-material"].loaded = true
-              const {"@mui/icons-material": pkgDynamicImport} = importMap 
+              usedShared["@iobroker/adapter-react-v5"].loaded = true
+              const {"@iobroker/adapter-react-v5": pkgDynamicImport} = importMap 
               const res = await pkgDynamicImport()
               const exportModule = {...res}
               // All npm packages pre-built by vite will be converted to esm
@@ -114,15 +114,15 @@
             }
           }
         ,
-          "@iobroker/adapter-react-v5": {
-            name: "@iobroker/adapter-react-v5",
-            version: "7.6.3",
+          "@mui/icons-material": {
+            name: "@mui/icons-material",
+            version: "6.4.8",
             scope: ["default"],
             loaded: false,
             from: "ConfigCustomParserSet",
             async get () {
-              usedShared["@iobroker/adapter-react-v5"].loaded = true
-              const {"@iobroker/adapter-react-v5": pkgDynamicImport} = importMap 
+              usedShared["@mui/icons-material"].loaded = true
+              const {"@mui/icons-material": pkgDynamicImport} = importMap 
               const res = await pkgDynamicImport()
               const exportModule = {...res}
               // All npm packages pre-built by vite will be converted to esm
