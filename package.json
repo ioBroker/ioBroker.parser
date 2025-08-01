@@ -35,7 +35,7 @@
     "@iobroker/eslint-config": "^2.0.2",
     "@iobroker/testing": "^5.0.4",
     "@iobroker/legacy-testing": "^2.0.2",
-    "chai": "^4.5.0",
+    "chai": "^5.2.1",
     "mocha": "^11.7.1"
   },
   "bugs": {
