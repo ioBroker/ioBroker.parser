@@ -1,5 +1,3 @@
-import { Adapter } from '@iobroker/adapter-core';
-
 export interface ParserAdapterConfig {
     pollInterval: number;
     requestTimeout: number;

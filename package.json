@@ -54,6 +54,7 @@
         "test:integration": "mocha test/testParser.js --exit",
         "build:tsc": "tsc -p tsconfig.build.json",
         "build": "npm run build:tsc && node tasks",
+        "lint": "eslint -c eslint.config.mjs",
         "prepublishOnly": "npm run build",
         "release": "release-script",
         "release-patch": "release-script patch --yes",
