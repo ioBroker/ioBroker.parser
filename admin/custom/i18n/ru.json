@@ -57,5 +57,12 @@
     "parser_Parse HTML text": "Разобрать HTML-текст",
     "parser_User agent": "User-Agent",
     "parser_Tasks": "Задачи",
-    "parser_General settings": "Общие настройки"
+    "parser_General settings": "Общие настройки",
+    "parser_Source": "Source",
+    "parser_State": "State",
+    "parser_File": "File",
+    "parser_Log": "Log",
+    "parser_Log level": "Log level",
+    "parser_Log source": "Log source",
+    "parser_Any": "Any"
 }

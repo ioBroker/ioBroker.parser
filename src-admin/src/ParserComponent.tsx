@@ -19,20 +19,20 @@ import {
     Select,
     MenuItem,
     LinearProgress,
-    Grid,
+    Grid2 as Grid,
     FormControlLabel,
     FormControl,
     InputLabel,
     Fab,
 } from '@mui/material';
 
-import { Save, Close, Edit, Delete, ContentCopy, PlayArrow, Add } from '@mui/icons-material';
+import { Save, Close, Edit, Delete, ContentCopy, PlayArrow, Add, FolderOpen, AccountTree } from '@mui/icons-material';
 
 // important to make from package and not from some children.
 // invalid
 // import Confirm from '@iobroker/adapter-react-v5/Confirm';
 // valid
-import { I18n, Confirm, type IobTheme } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm, DialogSelectID, DialogSelectFile, type IobTheme } from '@iobroker/adapter-react-v5';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
 
 const styles: Record<string, any> = {
@@ -99,6 +99,12 @@ const styles: Record<string, any> = {
     colInterval: {
         width: 50,
     },
+    colLogLevel: {
+        width: 70,
+    },
+    colLogSource: {
+        width: 120,
+    },
     colButtons: {
         width: 140,
         textAlign: 'right',
@@ -163,7 +169,10 @@ interface ParserRule {
         write?: boolean;
     };
     native: {
+        type?: 'url' | 'iobstate' | 'iobfile' | 'ioblog';
         link: string;
+        logLevel?: ioBroker.LogLevel | '*';
+        logSource?: string;
         item: number | string;
         regex: string;
         interval: number | string;
@@ -185,12 +194,15 @@ interface ParserComponentState extends ConfigGenericState {
     alive: boolean;
     rules: ParserRule[] | null;
     showDeleteDialog: null | number;
+    showSelectIdDialog: number | null;
+    showSelectFileDialog: number | null;
+    logSources: string[];
     changed: number[];
     testError: string;
     originalRule: string;
 }
 
-class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentState> {
+export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentState> {
     private readonly namespace: string;
     private readonly testTextRef: React.RefObject<HTMLTextAreaElement>;
     private timerTest: ReturnType<typeof setTimeout> | null = null;
@@ -204,6 +216,9 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
             rules: null,
             error: false,
             showDeleteDialog: null,
+            showSelectIdDialog: null,
+            showSelectFileDialog: null,
+            logSources: [],
             testText: 'Test text',
             testResult: '',
             testError: '',
@@ -240,7 +255,10 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                     unit: state.common.unit,
                 },
                 native: {
+                    type: state.native.type,
                     link: state.native.link,
+                    logLevel: state.native.logLevel,
+                    logSource: state.native.logSource,
                     item: state.native.item || 0,
                     regex: state.native.regex,
                     interval: state.native.interval,
@@ -254,7 +272,20 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
         });
         rules.sort((a, b) => a.common.name.localeCompare(b.common.name));
 
-        this.setState({ rules, alive: state ? (state.val as boolean) : false });
+        const [instancesObj, hostsObj] = await Promise.all([
+            this.props.oContext.socket
+                .getObjectViewSystem('instance', 'system.adapter.', `system.adapter.\u9999`)
+                .catch(() => ({})),
+            this.props.oContext.socket
+                .getObjectViewSystem('host', 'system.host.', `system.host.\u9999`)
+                .catch(() => ({})),
+        ]);
+        const logSources: string[] = [
+            ...Object.keys(instancesObj).map(id => id.replace(/^system\.adapter\./, '')),
+            ...Object.keys(hostsObj).map(id => id.replace(/^system\.host\./, '')),
+        ].sort();
+
+        this.setState({ rules, alive: state ? (state.val as boolean) : false, logSources });
         await this.props.oContext.socket.subscribeObject(`${this.namespace}*`, this.onObjectChange);
         await this.props.oContext.socket.subscribeState(`system.adapter.${this.namespace}*`, this.onAliveChange);
     }
@@ -293,7 +324,10 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                         write: false,
                     },
                     native: {
+                        type: obj.native.type,
                         link: obj.native.link,
+                        logLevel: obj.native.logLevel,
+                        logSource: obj.native.logSource,
                         item: obj.native.item || 0,
                         regex: obj.native.regex,
                         interval: obj.native.interval,
@@ -322,7 +356,10 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                         unit: obj.common.unit,
                     },
                     native: {
+                        type: obj.native.type,
                         link: obj.native.link,
+                        logLevel: obj.native.logLevel,
+                        logSource: obj.native.logSource,
                         item: obj.native.item || 0,
                         regex: obj.native.regex,
                         interval: obj.native.interval,
@@ -346,20 +383,29 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
         }
     };
 
-    requestData(link: string): void {
-        if (this.state.alive) {
-            this.props.oContext.socket
-                .sendTo(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, 'link', link)
-                .then(result => {
-                    if (result) {
-                        if (result.error) {
-                            window.alert(result.error);
-                        } else {
-                            this.setState({ testText: result.text || '' });
-                        }
-                    }
-                });
+    requestData(link: string, type?: string): void {
+        if (!this.state.alive) {
+            return;
         }
+        let uri = link;
+        if (type === 'iobstate') {
+            uri = `iobstate://${link}`;
+        } else if (type === 'iobfile') {
+            uri = `iobfile://${link}`;
+        } else if (type === 'ioblog') {
+            return; // no on-demand fetch for log
+        }
+        void this.props.oContext.socket
+            .sendTo(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, 'link', uri)
+            .then(result => {
+                if (result) {
+                    if (result.error) {
+                        window.alert(result.error);
+                    } else {
+                        this.setState({ testText: result.text || '' });
+                    }
+                }
+            });
     }
 
     renderEditDialog(): React.JSX.Element | null {
@@ -388,10 +434,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                         container
                         spacing={2}
                     >
-                        <Grid
-                            item
-                            sm={12}
-                        >
+                        <Grid size={12}>
                             <FormControl
                                 variant="standard"
                                 style={styles.marginRight}
@@ -429,10 +472,60 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                                 />
                             ) : null}
                         </Grid>
-                        <Grid
-                            item
-                            sm={12}
-                        >
+                        {rule.native.type === 'ioblog' ? (
+                            <Grid size={12}>
+                                <FormControl
+                                    variant="standard"
+                                    style={styles.marginRight}
+                                >
+                                    <InputLabel>{I18n.t('parser_Log level')}</InputLabel>
+                                    <Select
+                                        value={rule.native.logLevel || '*'}
+                                        onChange={e => {
+                                            const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
+                                            newRule.native.logLevel = e.target.value as ioBroker.LogLevel | '*';
+                                            this.setState({ showEditDialog: newRule });
+                                        }}
+                                        variant="standard"
+                                    >
+                                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                                        <MenuItem value="silly">silly</MenuItem>
+                                        <MenuItem value="debug">debug</MenuItem>
+                                        <MenuItem value="info">info</MenuItem>
+                                        <MenuItem value="warn">warn</MenuItem>
+                                        <MenuItem value="error">error</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl
+                                    variant="standard"
+                                    style={styles.marginRight}
+                                >
+                                    <InputLabel>{I18n.t('parser_Log source')}</InputLabel>
+                                    <Select
+                                        value={rule.native.logSource || '*'}
+                                        onChange={e => {
+                                            const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
+                                            newRule.native.logSource =
+                                                e.target.value === '*' ? undefined : e.target.value;
+                                            this.setState({ showEditDialog: newRule });
+                                        }}
+                                        variant="standard"
+                                        style={{ minWidth: 150 }}
+                                    >
+                                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                                        {this.state.logSources.map(src => (
+                                            <MenuItem
+                                                key={src}
+                                                value={src}
+                                            >
+                                                {src}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        ) : null}
+                        <Grid size={12}>
                             <FormControlLabel
                                 title={I18n.t('parser_If new value is not available, let old value unchanged')}
                                 style={styles.marginRight}
@@ -507,10 +600,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                                 />
                             ) : null}
                         </Grid>
-                        <Grid
-                            item
-                            sm={12}
-                        >
+                        <Grid size={12}>
                             <TextField
                                 value={rule.native.regex || ''}
                                 onChange={e => {
@@ -550,8 +640,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                             </Fab>
                         </Grid>
                         <Grid
-                            item
-                            sm={12}
+                            size={12}
                             sx={styles.testText}
                         >
                             <textarea
@@ -560,10 +649,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                                 onChange={e => this.setState({ testText: e.target.value }, () => this.onTest())}
                             />
                         </Grid>
-                        <Grid
-                            item
-                            sm={12}
-                        >
+                        <Grid size={12}>
                             <TextField
                                 sx={styles.resultUpdated}
                                 key={this.state.resultIndex}
@@ -752,13 +838,112 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                     />
                 </TableCell>
                 <TableCell style={styles.cell}>
-                    <TextField
-                        fullWidth
-                        disabled={!!error || !rule.common.enabled}
-                        value={rule.native.link}
-                        onChange={e => this._onChange(index, true, 'link', e.target.value)}
-                        variant="standard"
-                    />
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+                        <Select
+                            value={rule.native.type || 'url'}
+                            onChange={e => {
+                                const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+                                rules[index].native.type = e.target.value as ParserRule['native']['type'];
+                                if (e.target.value === 'ioblog') {
+                                    rules[index].native.link = '';
+                                }
+                                this.setState({ rules }, () => this.onAutoSave(index));
+                            }}
+                            variant="standard"
+                            disabled={!!error || !rule.common.enabled}
+                            style={{ minWidth: 60, flexShrink: 0 }}
+                        >
+                            <MenuItem value="url">URL</MenuItem>
+                            <MenuItem value="iobstate">{I18n.t('parser_State')}</MenuItem>
+                            <MenuItem value="iobfile">{I18n.t('parser_File')}</MenuItem>
+                            <MenuItem value="ioblog">{I18n.t('parser_Log')}</MenuItem>
+                        </Select>
+                        {(!rule.native.type || rule.native.type === 'url') && (
+                            <TextField
+                                fullWidth
+                                disabled={!!error || !rule.common.enabled}
+                                value={rule.native.link}
+                                onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                                variant="standard"
+                            />
+                        )}
+                        {rule.native.type === 'iobstate' && (
+                            <>
+                                <TextField
+                                    fullWidth
+                                    disabled={!!error || !rule.common.enabled}
+                                    value={rule.native.link}
+                                    onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                                    variant="standard"
+                                    placeholder="adapter.0.stateName"
+                                />
+                                <IconButton
+                                    size="small"
+                                    disabled={!!error || !rule.common.enabled}
+                                    onClick={() => this.setState({ showSelectIdDialog: index })}
+                                >
+                                    <AccountTree fontSize="small" />
+                                </IconButton>
+                            </>
+                        )}
+                        {rule.native.type === 'iobfile' && (
+                            <>
+                                <TextField
+                                    fullWidth
+                                    disabled={!!error || !rule.common.enabled}
+                                    value={rule.native.link}
+                                    onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                                    variant="standard"
+                                    placeholder="objectId/path/file.txt"
+                                />
+                                <IconButton
+                                    size="small"
+                                    disabled={!!error || !rule.common.enabled}
+                                    onClick={() => this.setState({ showSelectFileDialog: index })}
+                                >
+                                    <FolderOpen fontSize="small" />
+                                </IconButton>
+                            </>
+                        )}
+                        {rule.native.type === 'ioblog' && (
+                            <Select
+                                fullWidth
+                                disabled={!!error || !rule.common.enabled}
+                                value={rule.native.logLevel || '*'}
+                                onChange={e => this._onChange(index, true, 'logLevel', e.target.value)}
+                                variant="standard"
+                            >
+                                <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                                <MenuItem value="silly">silly</MenuItem>
+                                <MenuItem value="debug">debug</MenuItem>
+                                <MenuItem value="info">info</MenuItem>
+                                <MenuItem value="warn">warn</MenuItem>
+                                <MenuItem value="error">error</MenuItem>
+                            </Select>
+                        )}
+                        {rule.native.type === 'ioblog' ? (
+                            <Select
+                                fullWidth
+                                disabled={!!error || !rule.common.enabled}
+                                value={rule.native.logSource || '*'}
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    this._onChange(index, true, 'logSource', val === '*' ? undefined : val);
+                                }}
+                                variant="standard"
+                            >
+                                <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                                {this.state.logSources.map(src => (
+                                    <MenuItem
+                                        key={src}
+                                        value={src}
+                                    >
+                                        {src}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        ) : null}
+                    </div>
                 </TableCell>
                 <TableCell style={styles.cell}>
                     <TextField
@@ -911,7 +1096,11 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                                     showEditDialog: JSON.parse(JSON.stringify(this.state.rules![index])),
                                     originalRule: JSON.stringify(this.state.rules![index]),
                                 },
-                                () => this.requestData(this.state.rules![index].native.link),
+                                () =>
+                                    this.requestData(
+                                        this.state.rules![index].native.link,
+                                        this.state.rules![index].native.type,
+                                    ),
                             )
                         }
                     >
@@ -954,6 +1143,57 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                     </IconButton>
                 </TableCell>
             </TableRow>
+        );
+    }
+
+    renderSelectIdDialog(): React.JSX.Element | null {
+        if (this.state.showSelectIdDialog === null || !this.state.rules) {
+            return null;
+        }
+        const index = this.state.showSelectIdDialog;
+        const rule = this.state.rules[index];
+        return (
+            <DialogSelectID
+                key="selectId"
+                imagePrefix="../.."
+                dialogName="parser"
+                themeType={this.props.oContext.themeType}
+                theme={this.props.oContext.theme}
+                socket={this.props.oContext.socket as any}
+                selected={rule.native.link}
+                onClose={() => this.setState({ showSelectIdDialog: null })}
+                onOk={(selected: string | string[] | undefined) => {
+                    if (typeof selected === 'string') {
+                        this._onChange(index, true, 'link', selected);
+                    }
+                    this.setState({ showSelectIdDialog: null });
+                }}
+            />
+        );
+    }
+
+    renderSelectFileDialog(): React.JSX.Element | null {
+        if (this.state.showSelectFileDialog === null || !this.state.rules) {
+            return null;
+        }
+        const index = this.state.showSelectFileDialog;
+        const rule = this.state.rules[index];
+        return (
+            <DialogSelectFile
+                key="selectFile"
+                dialogName="parser"
+                themeType={this.props.oContext.themeType}
+                theme={this.props.oContext.theme}
+                socket={this.props.oContext.socket as any}
+                selected={rule.native.link}
+                onClose={() => this.setState({ showSelectFileDialog: null })}
+                onOk={(selected: string | string[] | undefined) => {
+                    if (typeof selected === 'string') {
+                        this._onChange(index, true, 'link', selected);
+                    }
+                    this.setState({ showSelectFileDialog: null });
+                }}
+            />
         );
     }
 
@@ -1092,7 +1332,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                             }
                             if (parseHtml) {
                                 newVal = JSON.stringify(
-                                    m?.map(it => it.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))),
+                                    m?.map(it => it.replace(/&#(\d+);/g, (_match, dec) => String.fromCharCode(dec))),
                                 );
                             } else {
                                 newVal = JSON.stringify(m);
@@ -1102,7 +1342,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                         if (parseHtml && type === 'string') {
                             // replace &#48 with 0 and so on
                             newVal = newVal === null || newVal === undefined ? '' : newVal.toString();
-                            newVal = newVal.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+                            newVal = newVal.replace(/&#(\d+);/g, (_match, dec) => String.fromCharCode(dec));
                         }
 
                         this.setState(
@@ -1188,6 +1428,8 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                 </style>
                 {this.renderEditDialog()}
                 {this.renderDeleteDialog()}
+                {this.renderSelectIdDialog()}
+                {this.renderSelectFileDialog()}
                 <Table size="small">
                     <TableHead>
                         <TableRow>
@@ -1197,7 +1439,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                             </TableCell>
                             <TableCell style={{ ...styles.cell, ...styles.colName }}>{I18n.t('parser_Name')}</TableCell>
                             <TableCell style={{ ...styles.cell, ...styles.colUrl }}>
-                                {I18n.t('parser_URL or file name')}
+                                {I18n.t('parser_Source')}
                             </TableCell>
                             <TableCell style={{ ...styles.cell, ...styles.colRegEx }}>
                                 {I18n.t('parser_RegEx')}
@@ -1267,6 +1509,7 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
                                                 write: false,
                                             },
                                             native: {
+                                                type: 'url',
                                                 link: '',
                                                 item: 0,
                                                 regex: '',
@@ -1296,5 +1539,3 @@ class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentS
         );
     }
 }
-
-export default ParserComponent;

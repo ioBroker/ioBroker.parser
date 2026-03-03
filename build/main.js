@@ -137,7 +137,7 @@ class ParserAdapter extends adapter_core_1.Adapter {
         }
     };
     async onFileChange(id, fileName) {
-        const key = `iobfile://${id}/${fileName}`;
+        const key = `${id}/${fileName}`;
         if (this.fileSubscriptions[key] && fileName) {
             try {
                 const file = await this.readFileAsync(id, fileName);
@@ -188,10 +188,16 @@ class ParserAdapter extends adapter_core_1.Adapter {
                 }
             }
             else {
-                if (this.states[id].native.interval !== newObj.native.interval ||
+                const oldNative = this.states[id].native;
+                const isSubscriptionType = (t) => t === 'iobstate' || t === 'iobfile' || t === 'ioblog';
+                const needsReset = oldNative.interval !== newObj.native.interval ||
                     this.states[id].common.enabled !==
-                        newObj.common.enabled) {
-                    this.log.info(`Parser object ${id} interval changed`);
+                        newObj.common.enabled ||
+                    oldNative.type !== newObj.native.type ||
+                    (oldNative.link !== newObj.native.link &&
+                        (isSubscriptionType(oldNative.type) || isSubscriptionType(newObj.native.type)));
+                if (needsReset) {
+                    this.log.info(`Parser object ${id} source changed`);
                     await this.deletePoll(this.states[id]);
                     this.states[id] = Object.assign(this.states[id], newObj);
                     await this.initPoll(this.states[id], false);
@@ -303,20 +309,20 @@ class ParserAdapter extends adapter_core_1.Adapter {
         if (!obj.native.link.match(/^https?:\/\//)) {
             obj.native.link = obj.native.link.replace(/\\/g, '/');
         }
-        if (this.isStateLink(obj.native.link)) {
+        if (obj.native.type === 'iobstate') {
             if (!onlyUpdate) {
-                const stateId = iobUriParse(obj.native.link);
-                if (!this.stateSubscriptions[stateId.address]) {
-                    this.stateSubscriptions[stateId.address] = [];
-                    this.subscribeForeignStates(stateId.address);
+                const stateId = obj.native.link;
+                if (!this.stateSubscriptions[stateId]) {
+                    this.stateSubscriptions[stateId] = [];
+                    this.subscribeForeignStates(stateId);
                 }
-                if (!this.stateSubscriptions[stateId.address].includes(obj._id)) {
-                    this.stateSubscriptions[stateId.address].push(obj._id);
+                if (!this.stateSubscriptions[stateId].includes(obj._id)) {
+                    this.stateSubscriptions[stateId].push(obj._id);
                 }
             }
             return false; // no timer for state-subscribed rules
         }
-        if (this.isIobFileLink(obj.native.link)) {
+        if (obj.native.type === 'iobfile') {
             if (!onlyUpdate) {
                 const fileId = iobUriParse(obj.native.link);
                 if (!this.fileSubscriptions[obj.native.link]) {
@@ -329,7 +335,7 @@ class ParserAdapter extends adapter_core_1.Adapter {
             }
             return false; // no timer for state-subscribed rules
         }
-        if (obj.native.link === 'ioblog') {
+        if (obj.native.type === 'ioblog') {
             if (!onlyUpdate) {
                 if (!this.logSubscriptions.length) {
                     await this.requireLog?.(true);
@@ -354,18 +360,18 @@ class ParserAdapter extends adapter_core_1.Adapter {
         return false;
     }
     async deletePoll(obj) {
-        if (this.isStateLink(obj.native.link)) {
-            const stateId = iobUriParse(obj.native.link);
-            if (this.stateSubscriptions[stateId.address]) {
-                this.stateSubscriptions[stateId.address] = this.stateSubscriptions[stateId.address].filter(id => id !== obj._id);
-                if (!this.stateSubscriptions[stateId.address].length) {
-                    delete this.stateSubscriptions[stateId.address];
-                    this.unsubscribeForeignStates(stateId.address);
+        if (obj.native.type === 'iobstate') {
+            const stateId = obj.native.link;
+            if (this.stateSubscriptions[stateId]) {
+                this.stateSubscriptions[stateId] = this.stateSubscriptions[stateId].filter(id => id !== obj._id);
+                if (!this.stateSubscriptions[stateId].length) {
+                    delete this.stateSubscriptions[stateId];
+                    this.unsubscribeForeignStates(stateId);
                 }
             }
             return;
         }
-        if (this.isIobFileLink(obj.native.link)) {
+        if (obj.native.type === 'iobfile') {
             const fileId = iobUriParse(obj.native.link);
             if (this.fileSubscriptions[obj.native.link]) {
                 this.fileSubscriptions[obj.native.link] = this.fileSubscriptions[obj.native.link].filter(id => id !== obj._id);
@@ -376,7 +382,7 @@ class ParserAdapter extends adapter_core_1.Adapter {
             }
             return;
         }
-        if (obj.native.link === 'ioblog') {
+        if (obj.native.type === 'ioblog') {
             const pos = this.logSubscriptions.indexOf(obj._id);
             if (pos !== -1) {
                 this.logSubscriptions.splice(pos, 1);
@@ -675,9 +681,9 @@ class ParserAdapter extends adapter_core_1.Adapter {
         }
     }
     // Keep a per-host queue for remote requests
-    processRemoteQueue(hostname) {
-        this.hostnamesRequestTime[hostname] = Date.now();
-        const entry = this.hostnamesQueue[hostname][0];
+    processRemoteQueue(hostName) {
+        this.hostnamesRequestTime[hostName] = Date.now();
+        const entry = this.hostnamesQueue[hostName][0];
         void this.readLink(entry.link, entry.callback);
     }
     addToRemoteQueue(link, callback) {
@@ -726,9 +732,9 @@ class ParserAdapter extends adapter_core_1.Adapter {
         const curLinks = [];
         for (const id of Object.keys(this.states)) {
             if (this.states[id].native.interval === interval &&
-                !this.isStateLink(this.states[id].native.link) &&
-                !this.isIobFileLink(this.states[id].native.link) &&
-                this.states[id].native.link !== 'ioblog' &&
+                this.states[id].native.type !== 'iobfile' &&
+                this.states[id].native.type !== 'iobstate' &&
+                this.states[id].native.type !== 'ioblog' &&
                 (this.states[id].processed || this.states[id].processed === undefined)) {
                 this.states[id].processed = false;
                 curStates.push(id);

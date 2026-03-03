@@ -57,5 +57,12 @@
     "parser_Parse HTML text": "Analysieren Sie HTML-Text",
     "parser_User agent": "User-Agent",
     "parser_Tasks": "Aufgaben",
-    "parser_General settings": "Allgemeine Einstellungen"
+    "parser_General settings": "Allgemeine Einstellungen",
+    "parser_Source": "Source",
+    "parser_State": "State",
+    "parser_File": "File",
+    "parser_Log": "Log",
+    "parser_Log level": "Log level",
+    "parser_Log source": "Log source",
+    "parser_Any": "*"
 }

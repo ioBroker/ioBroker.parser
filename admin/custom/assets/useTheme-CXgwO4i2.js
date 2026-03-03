@@ -1,1 +1,0 @@
-import{C as n}from"./ConfigCustomParserSet__loadShare__react__loadShare__-DBcCoINW.js";import{Y as o,e as r}from"./createTheme-Bfkue-In.js";function s(e){return Object.keys(e).length===0}function a(e=null){const t=n.useContext(o);return!t||s(t)?e:t}const m=r();function h(e=m){return a(e)}export{a,h as u};

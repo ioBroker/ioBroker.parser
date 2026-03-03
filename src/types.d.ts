@@ -9,6 +9,7 @@ export interface ParserAdapterConfig {
 }
 
 export interface ParserNative {
+    type: 'iobstate' | 'url' | 'ioblog' | 'iobfile' | undefined;
     link: string; // state, file, URL or log
     interval: number;
     regex: string;
