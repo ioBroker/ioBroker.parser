@@ -65,5 +65,9 @@
     "parser_string": "字符串",
     "parser_switch": "开关",
     "parser_temperature": "温度",
-    "parser_value": "值"
+    "parser_value": "值",
+    "parser_Export rules": "导出规则",
+    "parser_Import rules": "导入规则",
+    "parser_Import invalid CSV": "无效的CSV：缺少\"name\"列",
+    "parser_Import result": "导入完成：已导入%s条规则"
 }

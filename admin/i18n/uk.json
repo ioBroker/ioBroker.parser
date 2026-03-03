@@ -65,5 +65,9 @@
     "parser_string": "рядок",
     "parser_switch": "перемикач",
     "parser_temperature": "температура",
-    "parser_value": "значення"
+    "parser_value": "значення",
+    "parser_Export rules": "Експорт правил",
+    "parser_Import rules": "Імпорт правил",
+    "parser_Import invalid CSV": "Невірний CSV: відсутній стовпець \"name\"",
+    "parser_Import result": "Імпорт завершено: імпортовано %s правил"
 }

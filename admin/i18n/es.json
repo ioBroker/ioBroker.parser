@@ -65,5 +65,9 @@
     "parser_string": "cadena",
     "parser_switch": "interruptor de",
     "parser_temperature": "la temperatura",
-    "parser_value": "valor"
+    "parser_value": "valor",
+    "parser_Export rules": "Exportar reglas",
+    "parser_Import rules": "Importar reglas",
+    "parser_Import invalid CSV": "CSV inválido: falta la columna \"name\"",
+    "parser_Import result": "Importación completada: %s reglas importadas"
 }

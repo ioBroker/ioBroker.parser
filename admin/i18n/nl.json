@@ -65,5 +65,9 @@
     "parser_string": "string",
     "parser_switch": "switch",
     "parser_temperature": "temperatuur",
-    "parser_value": "waarde"
+    "parser_value": "waarde",
+    "parser_Export rules": "Regels exporteren",
+    "parser_Import rules": "Regels importeren",
+    "parser_Import invalid CSV": "Ongeldige CSV: kolom \"name\" ontbreekt",
+    "parser_Import result": "Import voltooid: %s regels geïmporteerd"
 }

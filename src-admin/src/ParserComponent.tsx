@@ -15,9 +15,10 @@ import {
     MenuItem,
     LinearProgress,
     Fab,
+    Tooltip,
 } from '@mui/material';
 
-import { Edit, Delete, ContentCopy, Add, FolderOpen, AccountTree } from '@mui/icons-material';
+import { Edit, Delete, ContentCopy, Add, FolderOpen, AccountTree, FileDownload, FileUpload } from '@mui/icons-material';
 
 // important to make from package and not from some children.
 // invalid
@@ -138,11 +139,76 @@ interface ParserComponentState extends ConfigGenericState {
     width: number;
 }
 
+function csvEscape(value: string): string {
+    if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+        return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+}
+
+function parseCSVLine(line: string): string[] {
+    const result: string[] = [];
+    let field = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQuotes) {
+            if (ch === '"' && line[i + 1] === '"') {
+                field += '"';
+                i++;
+            } else if (ch === '"') {
+                inQuotes = false;
+            } else {
+                field += ch;
+            }
+        } else {
+            if (ch === '"') {
+                inQuotes = true;
+            } else if (ch === ',') {
+                result.push(field);
+                field = '';
+            } else {
+                field += ch;
+            }
+        }
+    }
+    result.push(field);
+    return result;
+}
+
+function parseCSV(text: string): string[][] {
+    const rows: string[][] = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '"') {
+            inQuotes = !inQuotes;
+            current += ch;
+        } else if (!inQuotes && (ch === '\r' || ch === '\n')) {
+            if (ch === '\r' && text[i + 1] === '\n') {
+                i++;
+            }
+            if (current) {
+                rows.push(parseCSVLine(current));
+            }
+            current = '';
+        } else {
+            current += ch;
+        }
+    }
+    if (current) {
+        rows.push(parseCSVLine(current));
+    }
+    return rows;
+}
+
 export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentState> {
     private readonly namespace: string;
     private saveTimer: ReturnType<typeof setTimeout> | null = null;
     private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
     private readonly refDiv: React.RefObject<HTMLDivElement>;
+    private readonly fileInputRef: React.RefObject<HTMLInputElement> = React.createRef();
 
     constructor(props: ConfigGenericProps) {
         super(props);
@@ -370,7 +436,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         }
     };
 
-    fetchText(link: string, type?: string): Promise<string | null> {
+    async fetchText(link: string, type?: string): Promise<string | null> {
         if (!this.state.alive || type === 'ioblog') {
             return Promise.resolve(null);
         }
@@ -380,16 +446,20 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         } else if (type === 'iobfile') {
             uri = `iobfile://${link}`;
         }
-        return this.props.oContext.socket
-            .sendTo(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, 'link', uri)
-            .then(result => {
-                if (result?.error) {
-                    window.alert(result.error);
-                    return null;
-                }
-                return result?.text ?? null;
-            })
-            .catch(() => null);
+        try {
+            const result = await this.props.oContext.socket.sendTo(
+                `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                'link',
+                uri,
+            );
+            if (result?.error) {
+                window.alert(result.error);
+                return null;
+            }
+            return result?.text ?? null;
+        } catch {
+            return null;
+        }
     }
 
     checkError(): number | false {
@@ -521,6 +591,158 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             },
         });
         this.setState({ rules });
+    }
+
+    exportRules(): void {
+        const CSV_HEADERS = [
+            'name',
+            'enabled',
+            'type',
+            'link',
+            'logLevel',
+            'logSource',
+            'regex',
+            'item',
+            'role',
+            'commonType',
+            'unit',
+            'interval',
+            'factor',
+            'offset',
+            'substitute',
+            'substituteOld',
+            'parseHtml',
+            'comma',
+        ];
+        const rows = [CSV_HEADERS.join(',')];
+        for (const rule of this.state.rules!) {
+            const cols = [
+                rule.common.name,
+                String(rule.common.enabled !== false),
+                rule.native.type || 'url',
+                rule.native.link || '',
+                rule.native.logLevel || '',
+                rule.native.logSource || '',
+                rule.native.regex || '',
+                String(rule.native.item ?? 0),
+                rule.common.role || '',
+                rule.common.type || 'string',
+                rule.common.unit || '',
+                String(rule.native.interval || ''),
+                String(rule.native.factor ?? ''),
+                String(rule.native.offset ?? ''),
+                String(rule.native.substitute ?? ''),
+                String(!!rule.native.substituteOld),
+                String(!!rule.native.parseHtml),
+                String(!!rule.native.comma),
+            ];
+            rows.push(cols.map(csvEscape).join(','));
+        }
+        const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'parser-rules.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    importRules(text: string): void {
+        const rows = parseCSV(text);
+        if (rows.length < 2) {
+            return;
+        }
+        const [headers, ...dataRows] = rows;
+        const col = (name: string): number => headers.indexOf(name);
+        const nameIdx = col('name');
+        if (nameIdx === -1) {
+            window.alert(I18n.t('parser_Import invalid CSV'));
+            return;
+        }
+        const imported: ParserRule[] = [];
+        for (const cols of dataRows) {
+            const name = cols[nameIdx]?.trim();
+            if (!name) {
+                continue;
+            }
+            const get = (field: string): string => cols[col(field)] ?? '';
+            imported.push({
+                _id: `${this.namespace}${name}`,
+                common: {
+                    name,
+                    enabled: get('enabled') !== 'false',
+                    role: get('role') || 'state',
+                    type: (get('commonType') || 'string') as ioBroker.CommonType,
+                    unit: get('unit') || undefined,
+                    read: true,
+                    write: true,
+                },
+                native: {
+                    type: (get('type') || 'url') as ParserRule['native']['type'],
+                    link: get('link'),
+                    logLevel: (get('logLevel') || undefined) as ioBroker.LogLevel | undefined,
+                    logSource: get('logSource') || undefined,
+                    regex: get('regex'),
+                    item: Number(get('item')) || 0,
+                    interval: get('interval'),
+                    factor: get('factor') !== '' ? Number(get('factor')) : 1,
+                    offset: get('offset') !== '' ? Number(get('offset')) : 0,
+                    substitute: get('substitute') || undefined,
+                    substituteOld: get('substituteOld') !== 'false',
+                    parseHtml: get('parseHtml') === 'true',
+                    comma: get('comma') === 'true',
+                },
+            });
+        }
+        if (!imported.length) {
+            return;
+        }
+        const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules!));
+        for (const imp of imported) {
+            const idx = rules.findIndex(r => r.common.name === imp.common.name);
+            if (idx !== -1) {
+                rules[idx] = imp;
+            } else {
+                rules.push(imp);
+            }
+        }
+        rules.sort((a, b) => a.common.name.localeCompare(b.common.name));
+        this.setState({ rules }, async () => {
+            for (const imp of imported) {
+                await this.props.oContext.socket.setObject(imp._id, {
+                    type: 'state',
+                    common: imp.common as ioBroker.StateCommon,
+                    native: imp.native,
+                });
+            }
+            window.alert(I18n.t('parser_Import result', imported.length));
+        });
+    }
+
+    renderToolbarButtons(): React.JSX.Element {
+        return (
+            <>
+                <Tooltip title={I18n.t('parser_Export rules')}>
+                    <span>
+                        <IconButton
+                            size="small"
+                            disabled={!this.state.rules?.length}
+                            onClick={() => this.exportRules()}
+                        >
+                            <FileDownload />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                <Tooltip title={I18n.t('parser_Import rules')}>
+                    <IconButton
+                        size="small"
+                        onClick={() => this.fileInputRef.current?.click()}
+                    >
+                        <FileUpload />
+                    </IconButton>
+                </Tooltip>
+            </>
+        );
     }
 
     renderSourceField(rule: ParserRule, index: number, disabled: boolean): React.JSX.Element {
@@ -1192,14 +1414,16 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         return (
             <div style={{ padding: 8 }}>
                 {this.state.rules!.map((rule, index) => this.renderCard(rule, index))}
-                <Fab
-                    size="small"
-                    color="primary"
-                    onClick={() => this.onAddRule()}
-                    style={{ marginTop: 8 }}
-                >
-                    <Add />
-                </Fab>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8 }}>
+                    <Fab
+                        size="small"
+                        color="primary"
+                        onClick={() => this.onAddRule()}
+                    >
+                        <Add />
+                    </Fab>
+                    {this.renderToolbarButtons()}
+                </div>
             </div>
         );
     }
@@ -1280,6 +1504,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                                 >
                                     <Add />
                                 </Fab>
+                                {this.renderToolbarButtons()}
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -1317,6 +1542,22 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
 }
 `}
                 </style>
+                <input
+                    ref={this.fileInputRef}
+                    type="file"
+                    accept=".csv,text/csv"
+                    style={{ display: 'none' }}
+                    onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (!file) {
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = ev => this.importRules(ev.target?.result as string);
+                        reader.readAsText(file);
+                        e.target.value = '';
+                    }}
+                />
                 {this.state.showEditDialog ? (
                     <EditDialog
                         rule={this.state.showEditDialog}

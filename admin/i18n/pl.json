@@ -65,5 +65,9 @@
     "parser_string": "wiersz",
     "parser_switch": "przełącznik",
     "parser_temperature": "temperatura",
-    "parser_value": "wartość"
+    "parser_value": "wartość",
+    "parser_Export rules": "Eksportuj reguły",
+    "parser_Import rules": "Importuj reguły",
+    "parser_Import invalid CSV": "Nieprawidłowy CSV: brak kolumny \"name\"",
+    "parser_Import result": "Import zakończony: zaimportowano %s reguł"
 }

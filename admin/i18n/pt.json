@@ -65,5 +65,9 @@
     "parser_string": "cadeia",
     "parser_switch": "mudar",
     "parser_temperature": "temperatura",
-    "parser_value": "valor"
+    "parser_value": "valor",
+    "parser_Export rules": "Exportar regras",
+    "parser_Import rules": "Importar regras",
+    "parser_Import invalid CSV": "CSV inválido: coluna \"name\" ausente",
+    "parser_Import result": "Importação concluída: %s regras importadas"
 }

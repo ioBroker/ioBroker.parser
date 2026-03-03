@@ -65,5 +65,9 @@
     "parser_string": "string",
     "parser_switch": "interruttore",
     "parser_temperature": "temperatura",
-    "parser_value": "valore"
+    "parser_value": "valore",
+    "parser_Export rules": "Esporta regole",
+    "parser_Import rules": "Importa regole",
+    "parser_Import invalid CSV": "CSV non valido: colonna \"name\" mancante",
+    "parser_Import result": "Importazione completata: %s regole importate"
 }

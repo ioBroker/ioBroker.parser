@@ -65,5 +65,9 @@
     "parser_string": "string",
     "parser_switch": "переключ.",
     "parser_temperature": "температура",
-    "parser_value": "значение"
+    "parser_value": "значение",
+    "parser_Export rules": "Экспорт правил",
+    "parser_Import rules": "Импорт правил",
+    "parser_Import invalid CSV": "Неверный CSV: отсутствует столбец \"name\"",
+    "parser_Import result": "Импорт завершён: импортировано %s правил"
 }
