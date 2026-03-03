@@ -2,24 +2,21 @@
 /* jshint strict: false */
 /* jslint node: true */
 /* jshint expr: true*/
-const expect = require('chai').expect;
+const assert = require('node:assert');
 const setup = require('@iobroker/legacy-testing');
 
 let objects = null;
-let states  = null;
-let onObjectChanged = null;
+let states = null;
 let received = 0;
 let receivedAll = 0;
 
-const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
+const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.') + 1);
 
 function checkConnectionOfAdapter(cb, counter) {
-    counter = counter || 0;
+    counter ||= 0;
     console.log(`Try check #${counter}`);
     if (counter > 30) {
-        if (cb) {
-            cb('Cannot check connection');
-        }
+        cb?.('Cannot check connection');
         return;
     }
 
@@ -27,176 +24,144 @@ function checkConnectionOfAdapter(cb, counter) {
         if (err) {
             console.error(err);
         }
-        if (state && state.val) {
-            if (cb) {
-                cb();
-            }
+        if (state?.val) {
+            cb?.();
         } else {
             setTimeout(() => checkConnectionOfAdapter(cb, counter + 1), 1000);
         }
     });
 }
 
-function checkValueOfState(id, value, cb, counter) {
-    counter = counter || 0;
-    if (counter > 20) {
-        if (cb) {
-            cb(`Cannot check value Of State ${id}`);
-        }
-        return;
-    }
-
-    states.getState(id, (err, state) => {
-        if (err) {
-            console.error(err);
-        }
-
-        if (value === null && !state) {
-            if (cb) {
-                cb();
-            }
-        } else
-        if (state && (value === undefined || state.val === value)) {
-            if (cb) {
-                cb();
-            }
-        } else {
-            setTimeout(() =>
-                checkValueOfState(id, value, cb, counter + 1), 500);
-        }
-    });
-}
-
 const vars = [
     {
-        _id: "parser.0.forumRunning",
-        "common": {
-            "name": "forumRunning",
-            "write": false,
-            "read": true,
-            "type": "boolean",
-            "role": "indicator",
-            "unit": ""
-        },
-        "native": {
-            "link": "http://forum.iobroker.net/",
-            "regex": "Forum",
-            "interval": "20000",
-            "substitute": "false",
-            "expect": true
-        },
-        "type": "state"
-    },
-    {
-        "_id": "parser.0.temperatureMunich",
-        "common": {
-            "name": "temperatureMunich",
-            "write": false,
-            "role": "value.temperature",
-            "read": true,
-            "unit": "°C",
-            "type": "number"
-        },
-        "native": {
-            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "<span class=\"temp\">(-?\\d+)˚<",
-            "interval": "30000",
-            "substitute": "0"
-        },
-        "type": "state"
-    },
-    {
-        "_id": "parser.0.temperatureMunich2",
-        "common": {
-            "name": "temperatureMunich2",
-            "write": false,
-            "role": "value.temperature",
-            "read": true,
-            "unit": "°C",
-            "type": "number"
-        },
-        "native": {
-            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "<span class=\"temp\">(-?\\d+)˚<",
-            "interval": "30000",
-            "substitute": "0"
-        },
-        "type": "state"
-    },
-    {
-        "_id": "parser.0.temperatureMunich3",
-        "common": {
-            "name": "temperatureMunich3",
-            "write": false,
-            "role": "value.temperature",
-            "read": true,
-            "unit": "°C",
-            "type": "number"
-        },
-        "native": {
-            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/de",
-            "regex": "<span class=\"temp\">(-?\\d+)˚<",
-            "interval": "30000",
-            "substitute": "0"
-        },
-        "type": "state"
-    },
-    {
-        "_id": "parser.0.temperatureMunichWrong",
-        "common": {
-            "name": "temperatureMunich",
-            "write": false,
-            "role": "value.temperature",
-            "read": true,
-            "unit": "°C",
-            "type": "number"
-        },
-        "native": {
-            "link": "https://darksky.net/forecast/48.1371,11.5754/si24/deasdasdasdasdas",
-            "regex": "<span clas=\"temp\">(-?\\d+)˚<",
-            "interval": "30000",
-            "substitute": "0",
-            "expect": 0,
-            "expectQ": 0x44
-        },
-        "type": "state"
-    },
-    {
-        "_id": "parser.0.fileTest",
-        "common": {
-            "name": "file test",
-            "write": false,
-            "read": true,
+        _id: 'parser.0.forumRunning',
+        common: {
+            name: 'forumRunning',
+            write: false,
+            read: true,
             type: 'boolean',
-            role: 'indicator'
+            role: 'indicator',
+            unit: '',
         },
-        "native": {
-            "link": __dirname + '/testParser.js',
-            "regex": "testParser",
-            "interval": "15000",
-            "substitute": "false",
-            "expect": true
+        native: {
+            link: 'http://forum.iobroker.net/',
+            regex: 'Forum',
+            interval: '20000',
+            substitute: 'false',
+            expect: true,
         },
-        "type": "state"
+        type: 'state',
     },
     {
-        "_id": "parser.0.fileNegativeTest",
-        "common": {
-            "name": "file test",
-            "write": false,
-            "read": true,
+        _id: 'parser.0.temperatureMunich',
+        common: {
+            name: 'temperatureMunich',
+            write: false,
+            role: 'value.temperature',
+            read: true,
+            unit: '°C',
+            type: 'number',
+        },
+        native: {
+            link: 'https://darksky.net/forecast/48.1371,11.5754/si24/de',
+            regex: '<span class="temp">(-?\\d+)˚<',
+            interval: '30000',
+            substitute: '0',
+        },
+        type: 'state',
+    },
+    {
+        _id: 'parser.0.temperatureMunich2',
+        common: {
+            name: 'temperatureMunich2',
+            write: false,
+            role: 'value.temperature',
+            read: true,
+            unit: '°C',
+            type: 'number',
+        },
+        native: {
+            link: 'https://darksky.net/forecast/48.1371,11.5754/si24/de',
+            regex: '<span class="temp">(-?\\d+)˚<',
+            interval: '30000',
+            substitute: '0',
+        },
+        type: 'state',
+    },
+    {
+        _id: 'parser.0.temperatureMunich3',
+        common: {
+            name: 'temperatureMunich3',
+            write: false,
+            role: 'value.temperature',
+            read: true,
+            unit: '°C',
+            type: 'number',
+        },
+        native: {
+            link: 'https://darksky.net/forecast/48.1371,11.5754/si24/de',
+            regex: '<span class="temp">(-?\\d+)˚<',
+            interval: '30000',
+            substitute: '0',
+        },
+        type: 'state',
+    },
+    {
+        _id: 'parser.0.temperatureMunichWrong',
+        common: {
+            name: 'temperatureMunich',
+            write: false,
+            role: 'value.temperature',
+            read: true,
+            unit: '°C',
+            type: 'number',
+        },
+        native: {
+            link: 'https://darksky.net/forecast/48.1371,11.5754/si24/deasdasdasdasdas',
+            regex: '<span clas="temp">(-?\\d+)˚<',
+            interval: '30000',
+            substitute: '0',
+            expect: 0,
+            expectQ: 0x44,
+        },
+        type: 'state',
+    },
+    {
+        _id: 'parser.0.fileTest',
+        common: {
+            name: 'file test',
+            write: false,
+            read: true,
             type: 'boolean',
-            role: 'indicator'
+            role: 'indicator',
         },
-        "native": {
-            "link": __dirname + '/testParser.js',
-            "regex": "testParser" + "1",
-            "interval": "30000",
-            "substitute": "false",
-            "expect": false
+        native: {
+            link: __dirname + '/testParser.js',
+            regex: 'testParser',
+            interval: '15000',
+            substitute: 'false',
+            expect: true,
         },
-        "type": "state"
-    }
+        type: 'state',
+    },
+    {
+        _id: 'parser.0.fileNegativeTest',
+        common: {
+            name: 'file test',
+            write: false,
+            read: true,
+            type: 'boolean',
+            role: 'indicator',
+        },
+        native: {
+            link: __dirname + '/testParser.js',
+            regex: 'testParser' + '1',
+            interval: '30000',
+            substitute: 'false',
+            expect: false,
+        },
+        type: 'state',
+    },
 ];
 
 let onStateChanged = (id, state) => {
@@ -215,22 +180,22 @@ let onStateChanged = (id, state) => {
 
 function createStates(_objects, _vars, index, callback) {
     if (!_vars || index >= _vars.length) {
-        if (callback) callback();
+        callback?.();
         return;
     }
 
     console.log(`createStates ${_vars[index]._id}`);
-    _objects.setObject(_vars[index]._id, _vars[index], function (err) {
-        expect(err).to.be.not.ok;
+    _objects.setObject(_vars[index]._id, _vars[index], err => {
+        assert.ok(!err, err);
         setTimeout(createStates, 0, _objects, _vars, index + 1, callback);
     });
 }
 
 function checkStates(_states, _vars, index, result, callback) {
-    result = result || [];
+    result ||= [];
 
     if (!_vars || index >= _vars.length) {
-        if (callback) callback(result);
+        callback?.(result);
         return;
     }
 
@@ -242,32 +207,32 @@ function checkStates(_states, _vars, index, result, callback) {
 }
 
 function finalCheck(__states, _vars, done) {
-    checkStates(__states, _vars, 0, [], function (_states) {
+    checkStates(__states, _vars, 0, [], _states => {
         for (let i = 0; i < _states.length; i++) {
             console.log(`Check ${vars[i]._id}: ${JSON.stringify(_states[i])}`);
-            expect(_states[i]).to.be.ok;
-            expect(_states[i].from).to.be.equal('system.adapter.parser.0');
-            expect(_states[i].val).to.be.not.null;
+            assert.ok(_states[i]);
+            assert.strictEqual(_states[i].from, 'system.adapter.parser.0');
+            assert.notStrictEqual(_states[i].val, null);
 
             if (vars[i].native.expect !== undefined) {
-                expect(_states[i].val).to.be.equal(vars[i].native.expect);
+                assert.strictEqual(_states[i].val, vars[i].native.expect);
             }
             if (vars[i].native.expectQ !== undefined) {
-                expect(_states[i].q).to.be.equal(vars[i].native.expectQ);
+                assert.strictEqual(_states[i].q, vars[i].native.expectQ);
             }
         }
         done();
     });
 }
 
-describe(`Test ${adapterShortName} adapter`, function() {
+describe(`Test ${adapterShortName} adapter`, function () {
     before(`Test ${adapterShortName} adapter: Start js-controller`, function (_done) {
         this.timeout(600000); // because of the first installation from npm
 
         setup.setupController(async () => {
             const config = await setup.getAdapterConfig();
             // enable adapter
-            config.common.enabled  = true;
+            config.common.enabled = true;
             config.common.loglevel = 'debug';
 
             config.native.pollInterval = '15000';
@@ -276,19 +241,11 @@ describe(`Test ${adapterShortName} adapter`, function() {
 
             setup.startController(
                 false,
-                (id, obj) => {
-                    if (onObjectChanged) {
-                        onObjectChanged(id, obj);
-                    }
-                },
-                (id, state) => {
-                    if (onStateChanged) {
-                        onStateChanged(id, state);
-                    }
-                },
+                (_id, _obj) => {},
+                (id, state) => onStateChanged?.(id, state),
                 (_objects, _states) => {
                     objects = _objects;
-                    states  = _states;
+                    states = _states;
                     states.subscribe('*');
 
                     console.log('Create states');
@@ -299,31 +256,33 @@ describe(`Test ${adapterShortName} adapter`, function() {
                             _done();
                         });
                     });
-                });
+                },
+            );
         });
     });
 
     it(`Test ${adapterShortName} adapter: Check if adapter started`, function (done) {
         this.timeout(60000);
-        checkConnectionOfAdapter(function (res) {
+        checkConnectionOfAdapter(res => {
             if (res) console.log(res);
-            expect(res).not.to.be.equal('Cannot check connection');
-            objects.setObject('system.adapter.test.0', {
-                    common: {
-
-                    },
-                    type: 'instance'
+            assert.notStrictEqual(res, 'Cannot check connection');
+            objects.setObject(
+                'system.adapter.test.0',
+                {
+                    common: {},
+                    type: 'instance',
                 },
                 function () {
                     states.subscribeMessage('system.adapter.test.0');
                     done();
-                });
+                },
+            );
         });
     });
 
     it(`Test ${adapterShortName} adapter: values must be there`, function (done) {
         this.timeout(5000);
-        setTimeout(function () {
+        setTimeout(() => {
             console.log(`received 1 - ${received}`);
             //[{
             //    "val": true,
@@ -356,13 +315,13 @@ describe(`Test ${adapterShortName} adapter`, function() {
             //}]
 
             if (received < vars.length) {
-                setTimeout(function () {
+                setTimeout(() => {
                     console.log(`received 2 - ${received}`);
-                    expect(receivedAll).to.be.at.least(vars.length);
+                    assert.ok(receivedAll >= vars.length);
                     finalCheck(states, vars, done);
                 }, 2000);
             } else {
-                expect(receivedAll).to.be.at.least(vars.length);
+                assert.ok(receivedAll >= vars.length);
                 finalCheck(states, vars, done);
             }
         }, 2000);
@@ -371,8 +330,8 @@ describe(`Test ${adapterShortName} adapter`, function() {
     it(`Test ${adapterShortName} adapter: values must be there after interval `, function (done) {
         this.timeout(35000);
         receivedAll = 0;
-        setTimeout(function () {
-            expect(receivedAll).to.be.at.least(vars.length + 2);
+        setTimeout(() => {
+            assert.ok(receivedAll >= vars.length + 2);
             console.log(`received 1 - ${received}`);
             //[{
             //    "val": true,
@@ -405,8 +364,8 @@ describe(`Test ${adapterShortName} adapter`, function() {
             //}]
 
             if (received < vars.length) {
-                setTimeout(function () {
-                    console.log('received 2 - ' + received);
+                setTimeout(() => {
+                    console.log(`received 2 - ${received}`);
                     finalCheck(states, vars, done);
                 }, 2000);
             } else {

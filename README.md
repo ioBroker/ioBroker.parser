@@ -143,6 +143,9 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Migrated the new NPM token
+
 ### 2.3.1 (2025-03-24)
 * (bluefox) Migrated the admin GUI to TypeScript
 
@@ -250,11 +253,11 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 
 ### 0.0.1 (2017-01-16)
 * (bluefox) initial commit
-
+ 
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2017-2025 bluefox <dogafox@gmail.com>
+Copyright (c) 2017-2026 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

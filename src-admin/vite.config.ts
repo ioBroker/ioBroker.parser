@@ -16,6 +16,7 @@ const config = {
             },
             remotes: {},
             shared: moduleFederationShared(pack),
+            dts: false,
         }),
         react(),
         vitetsConfigPaths(),

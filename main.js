@@ -5,7 +5,6 @@
 
 // you have to require the utils module and call adapter function
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const adapterName = require('./package.json').name.split('.').pop();
 const https = require('node:https');
 let axios;
 let path;
@@ -15,8 +14,8 @@ let states;
 let adapter;
 
 function startAdapter(options) {
-    options = options || {};
-    Object.assign(options, { name: adapterName });
+    options ||= {};
+    Object.assign(options, { name: 'parser' });
     adapter = new utils.Adapter(options);
 
     adapter.on('objectChange', (id, obj) => {
@@ -218,10 +217,8 @@ function deletePoll(obj) {
 }
 
 function _analyseDataForStates(linkStates, data, error, callback) {
-    if (!linkStates || !linkStates.length) {
-        if (callback) {
-            callback();
-        }
+    if (!linkStates?.length) {
+        callback?.();
     } else {
         const id = linkStates.shift();
         if (!states[id]) {
@@ -275,7 +272,7 @@ function analyseData(obj, data, error, callback) {
     if (error) {
         if (obj.native.substituteOld) {
             adapter.log.info(`Cannot read link "${obj.native.link}": ${error}`);
-            callback && callback();
+            callback?.();
         } else {
             adapter.log.warn(`Cannot read link "${obj.native.link}": ${error}`);
             if (obj.value.q !== 0x82 || adapter.config.updateNonChanged) {
@@ -289,7 +286,7 @@ function analyseData(obj, data, error, callback) {
                 adapter.setForeignState(
                     obj._id,
                     { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
-                    () => callback && callback(true),
+                    () => callback?.(true),
                 );
             } else if (callback) {
                 callback();
@@ -327,7 +324,7 @@ function analyseData(obj, data, error, callback) {
                 if (newVal === undefined) {
                     adapter.log.info(`Regex didn't matched for ${obj._id}, old=${obj.value.val}`);
                     if (obj.native.substituteOld) {
-                        return callback && callback();
+                        return callback?.();
                     }
                     if (obj.value.q !== 0x82) {
                         obj.value.q = 0x82;
@@ -387,7 +384,7 @@ function analyseData(obj, data, error, callback) {
                 adapter.setForeignState(
                     obj._id,
                     { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
-                    () => callback && callback(true),
+                    () => callback?.(true),
                 );
             } else if (callback) {
                 callback();
@@ -404,7 +401,7 @@ function analyseData(obj, data, error, callback) {
                     adapter.setForeignState(
                         obj._id,
                         { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
-                        () => callback && callback(true),
+                        () => callback?.(true),
                     );
                 } else if (callback) {
                     callback();
@@ -412,7 +409,7 @@ function analyseData(obj, data, error, callback) {
             } else {
                 adapter.log.debug(`Cannot find number in answer for ${obj._id}`);
                 if (obj.native.substituteOld) {
-                    callback && callback();
+                    callback?.();
                 } else {
                     if (obj.value.q !== 0x44 || !obj.value.ack || adapter.config.updateNonChanged) {
                         obj.value.q = 0x44;
@@ -425,7 +422,7 @@ function analyseData(obj, data, error, callback) {
                         adapter.setForeignState(
                             obj._id,
                             { val: obj.value.val, q: obj.value.q, ack: obj.value.ack },
-                            () => callback && callback(true),
+                            () => callback?.(true),
                         );
                     } else if (callback) {
                         callback();
@@ -435,7 +432,7 @@ function analyseData(obj, data, error, callback) {
         }
     } else {
         adapter.log.warn(`No regex object found for "${obj._id}"`);
-        callback && callback();
+        callback?.();
     }
 }
 
@@ -445,7 +442,7 @@ function isRemoteLink(link) {
 
 async function readLink(link, callback) {
     if (isRemoteLink(link)) {
-        axios = axios || require('axios');
+        axios ||= require('axios');
 
         adapter.log.debug(`Request URL: ${link}`);
         try {
@@ -470,8 +467,8 @@ async function readLink(link, callback) {
             callback(err.data ? err.data : err.toString(), null, link);
         }
     } else {
-        path = path || require('node:path');
-        fs = fs || require('node:fs');
+        path ||= require('node:path');
+        fs ||= require('node:fs');
         link = (link || '').replace(/\\/g, '/');
         if (link[0] !== '/' && !link.match(/^[A-Za-z]:/)) {
             link = path.normalize(`${__dirname}/../../${link}`);
