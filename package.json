@@ -40,11 +40,11 @@
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.parser/issues"
     },
-    "main": "main.js",
+    "main": "build/main.js",
     "files": [
         "admin/",
+        "build/",
         "docs/",
-        "main.js",
         "LICENSE",
         "io-package.json"
     ],
@@ -52,8 +52,9 @@
         "test:package": "mocha test/testPackageFiles.js --exit",
         "test": "npm run test:package && npm run test:integration",
         "test:integration": "mocha test/testParser.js --exit",
-        "build": "node tasks",
-        "prepublishOnly": "node tasks",
+        "build:tsc": "tsc -p tsconfig.build.json",
+        "build": "npm run build:tsc && node tasks",
+        "prepublishOnly": "npm run build",
         "release": "release-script",
         "release-patch": "release-script patch --yes",
         "release-minor": "release-script minor --yes",

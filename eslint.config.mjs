@@ -22,7 +22,6 @@ export default [
             'lib/words.js',
             'admin/custom',
             'admin/rules',
-            'src/', // TODO
             'src-admin/', // TODO
         ] 
     },

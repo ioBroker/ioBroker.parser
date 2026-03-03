@@ -145,6 +145,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Migrated the new NPM token
+* (bluefox) Migrated to TypeScript
 
 ### 2.3.1 (2025-03-24)
 * (bluefox) Migrated the admin GUI to TypeScript
