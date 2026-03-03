@@ -1,163 +1,170 @@
 {
   "common": {
-      "name": "parser",
-      "version": "2.3.1",
-      "news": {
-          "2.3.1": {
-              "en": "Migrated the admin GUI to TypeScript",
-              "de": "Die Admin-GUI zu TypeScript migriert",
-              "ru": "Перенес админ GUI в TypeScript",
-              "pt": "Migrado a GUI de administrador para TypeScript",
-              "nl": "De admin GUI migreren naar TypeScript",
-              "fr": "Migré l'interface graphique d'administration pour TypeScript",
-              "it": "Migrato la GUI di admin a TypeScript",
-              "es": "Migramos el GUI admin a TipoScript",
-              "pl": "Migrated the admin GUI to TypeScript",
-              "uk": "Міграція облікового запису адміністратора на TypeScript",
-              "zh-cn": "将管理员图形界面移到类型脚本"
-          },
-          "2.2.4": {
-              "en": "updated packages\ncorrected a problem with the creation of rule",
-              "de": "aktualisierte pakete\nein problem mit der schaffung von regel korrigiert",
-              "ru": "обновления пакетов\nисправить проблему с созданием правила",
-              "pt": "pacotes atualizados\ncorrigiu um problema com a criação de regra",
-              "nl": "bijgewerkte pakketten\ncorrectie van een probleem met de instelling van een regel",
-              "fr": "paquets mis à jour\ncorrigé un problème avec la création de la règle",
-              "it": "pacchetti aggiornati\ncorretto un problema con la creazione della regola",
-              "es": "paquetes actualizados\ncorregido un problema con la creación de regla",
-              "pl": "zaktualizowane pakiety\npoprawił problem z tworzeniem zasad",
-              "uk": "оновлені пакети\nвиправлено проблему з створенням правила",
-              "zh-cn": "更新软件包\n纠正了创建规则的问题"
-          },
-          "2.2.2": {
-              "en": "GUI was migrated for admin v7",
-              "de": "GUI wurde für admin v7 migriert",
-              "ru": "GUI был перенесен на admin v7",
-              "pt": "GUI foi migrado para admin v7",
-              "nl": "GUI is gemigreerd voor admin v7",
-              "fr": "GUI a été migré pour admin v7",
-              "it": "GUI è stato migrato per admin v7",
-              "es": "GUI fue migrado por admin v7",
-              "pl": "Interfejs GUI został wysłany do admin v7",
-              "uk": "GUI був мігрований для адміністратора v7",
-              "zh-cn": "管理员 v7 的图形用户界面已迁移"
-          },
-          "2.2.1": {
-              "en": "GUI was migrated for admin v7",
-              "de": "GUI wurde für admin v7 migriert",
-              "ru": "GUI был перенесен на admin v7",
-              "pt": "GUI foi migrado para admin v7",
-              "nl": "GUI is gemigreerd voor admin v7",
-              "fr": "GUI a été migré pour admin v7",
-              "it": "GUI è stato migrato per admin v7",
-              "es": "GUI fue migrado por admin v7",
-              "pl": "Interfejs GUI został wysłany do admin v7",
-              "uk": "GUI був мігрований для адміністратора v7",
-              "zh-cn": "管理员 v7 的图形用户界面已迁移"
-          },
-          "2.1.0": {
-              "en": "Only node 16 and higher is supported",
-              "de": "Nur Knoten 16 und höher unterstützt",
-              "ru": "Поддерживается только нод 16 и выше",
-              "pt": "Apenas o nó 16 e maior é suportado",
-              "nl": "Alleen node 16 en hoger is ondersteund",
-              "fr": "Seulement node 16 et plus est supporté",
-              "it": "Solo nodo 16 e superiore è supportato",
-              "es": "Sólo el nodo 16 y mayor es apoyado",
-              "pl": "Tylko węzeł 16 i więcej jest wspierany",
-              "uk": "Тільки вузол 16 і вище підтримується",
-              "zh-cn": "只支助了16个和较高职等"
-          },
-          "2.0.7": {
-              "en": "added the user agent to prevent timeout blocking\nAdded a configurable userAgent option",
-              "de": "den benutzer agenten hinzugefügt, um die timeout-blockung zu verhindern\nHinzufügen einer konfigurierbaren userAgent Option",
-              "ru": "добавил агент пользователя для предотвращения блокировки timeout\nДобавлен конфигурируемый пользовательAgent option",
-              "pt": "adicionou o agente de usuário para evitar bloqueio de tempo limite\nAdicionado uma opção configurável userAgent",
-              "nl": "voegde de gebruiker toe om tijdversperring te voorkomen\nVoegde een aangepaste gebruikeraanval toe",
-              "fr": "a ajouté l'agent utilisateur pour empêcher le blocage du timeout\nAjout d'une option utilisateur configurable",
-              "it": "aggiunto l'agente utente per evitare il blocco timeout\nAggiunto un utente configurabileAgent opzione",
-              "es": "agregó el agente del usuario para evitar el bloqueo de tiempo\nAñadido una opción configurable userAgent",
-              "pl": "dodano użytkownikowi agentowi, aby zapobiec blokowaniu czasu\nAdded konfigurowalny opcja użytkownikaAgent",
-              "uk": "додано агента користувача для запобігання блокування часу\nДодано параметр configurable userAgent",
-              "zh-cn": "增加用户代理人以防止时间停滞\n添加一个易燃用户选择"
-          },
-          "2.0.5": {
-              "en": "The result could be an array of values",
-              "de": "Das Ergebnis könnte eine Reihe von Werten sein",
-              "ru": "Результат может быть массивом ценностей",
-              "pt": "O resultado pode ser uma matriz de valores",
-              "nl": "Het resultaat kan een reeks waarden zijn",
-              "fr": "Le résultat pourrait être un tableau de valeurs",
-              "it": "Il risultato potrebbe essere una serie di valori",
-              "es": "El resultado podría ser un conjunto de valores",
-              "pl": "Wynikiem może być szereg wartości",
-              "uk": "Результат може бути масивом значень",
-              "zh-cn": "结果可能是一系列价值观。"
-          }
+    "name": "parser",
+    "version": "3.0.0",
+    "news": {
+      "3.0.0": {
+        "en": "Migrated the new NPM token\nMigrated to TypeScript\nAdded parsing of states, ioBroker files and logs\nFixing position marking in test dialog\nAdded mobile view\nMinimal Node.js version is now 20\nAdded export import via CSV file",
+        "de": "Migrierte den neuen NPM-Token\nZu TypeScript migriert\nErgänzung von Zuständen, ioBroker Dateien und Protokolle\nPositionsmarkierung im Prüfdialog fixieren\nMobile Ansicht\nMinimal Node.js Version ist jetzt 20\nExport import via CSV-Datei hinzugefügt",
+        "ru": "Миграция нового токена NPM\nИммиграция в TypeScript\nДобавлен анализ состояний, файлов и журналов ioBroker\nМаркировка положения в тестовом диалоге\nДобавлен мобильный вид\nМинимальная версия Node.js теперь 20\nДобавлен экспортный импорт через файл CSV",
+        "pt": "Migrado o novo símbolo NPM\nMigrado para TipoScript\nAdicionado análise de estados, arquivos ioBroker e logs\nCorrigindo a marcação de posição na janela de teste\nVista móvel adicionada\nVersão mínima Node.js é agora 20\nImportação de exportação adicionada via arquivo CSV",
+        "nl": "De nieuwe NPM token migreren\nNaar typeScript migreren\nToegevoegd ontleden van staten, ioBroker bestanden en logs\nPositiemarkering in het dialoogvenster\nMobiele weergave toegevoegd\nMinimale Node.js versie is nu 20\nImporteren via CSV-bestand toegevoegd",
+        "fr": "Migré le nouveau jeton NPM\nMigré vers TypeScript\nAjout de l'analyse des états, des fichiers ioBroker et des journaux\nCorrection du marquage de position dans la boîte de dialogue d'essai\nAjout de la vue mobile\nLa version Minimal Node.js est maintenant 20\nAjout de l'importation d'exportation via le fichier CSV",
+        "it": "Migrato il nuovo token NPM\nMigrato a TypeScript\nAggiunta parsing di stati, ioBroker file e registri\nRisolvere la marcatura della posizione nella finestra di dialogo di prova\nAggiunto mobile view\nLa versione Minimal Node.js è ora 20\nImportazione di esportazione aggiunta tramite file CSV",
+        "es": "Migramos el nuevo token del NPM\nMigrado a TipoScript\nAñadido el persing de estados, archivos y registros de yoBroker\nFijación de posición en el diálogo de prueba\nVista móvil\nMinimal Node.js versión es ahora 20\nImportación de exportación agregada mediante archivo CSV",
+        "pl": "Migrował nowy żeton NPM\nMigrated to TypeScript\nDodano parsowanie stanów, plików iBroker i dzienników\nOznaczenie pozycji mocowania w oknie badawczym\nDodano widok mobilny\nMinimal Node.js wersja jest teraz 20\nDodano import eksportu poprzez plik CSV",
+        "uk": "Вітаю новий NPM токен\nMigrated до TypeScript\nДодано парсинг станів, ioBroker файлів і журналів\nВиправлення позначки позиції в діалоговому вікні тестування\nДодано мобільний вигляд\nВерсія Minimal Node.js тепер 20\nДодано імпорт експорту через файл CSV",
+        "zh-cn": "转移了新的国家预防机制标志\n移动到类型脚本\n添加状态解析、 ioBroker 文件及日志\n在测试对话框中固定位置标记\n添加移动视图\n最小节点.js版本现在是20\n通过 CSV 文件添加导出导入"
       },
-      "titleLang": {
-          "en": "Parser",
-          "de": "Parser",
-          "ru": "Синтаксический анализатор",
-          "pt": "Analisador",
-          "nl": "Parser",
-          "fr": "Analyseur",
-          "it": "Parser",
-          "es": "Analizador",
-          "pl": "Analizator składni",
-          "zh-cn": "分析器",
-          "uk": "Парсер"
+      "2.3.1": {
+        "en": "Migrated the admin GUI to TypeScript",
+        "de": "Die Admin-GUI zu TypeScript migriert",
+        "ru": "Перенес админ GUI в TypeScript",
+        "pt": "Migrado a GUI de administrador para TypeScript",
+        "nl": "De admin GUI migreren naar TypeScript",
+        "fr": "Migré l'interface graphique d'administration pour TypeScript",
+        "it": "Migrato la GUI di admin a TypeScript",
+        "es": "Migramos el GUI admin a TipoScript",
+        "pl": "Migrated the admin GUI to TypeScript",
+        "uk": "Міграція облікового запису адміністратора на TypeScript",
+        "zh-cn": "将管理员图形界面移到类型脚本"
       },
-      "desc": {
-          "en": "This adapter allows to extract values from HTTP URLs or from files",
-          "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
-          "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов",
-          "pt": "Este adaptador permite extrair valores de URLs HTTP ou de arquivos",
-          "nl": "Met deze adapter kunnen waarden uit HTTP-URL's of uit bestanden worden geëxtraheerd",
-          "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
-          "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
-          "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
-          "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików",
-          "zh-cn": "这器允许提取价值从HTTP URLs或从文件",
-          "uk": "Цей адаптер дозволяє отримувати значення з URL-адрес HTTP або з файлів"
+      "2.2.4": {
+        "en": "updated packages\ncorrected a problem with the creation of rule",
+        "de": "aktualisierte pakete\nein problem mit der schaffung von regel korrigiert",
+        "ru": "обновления пакетов\nисправить проблему с созданием правила",
+        "pt": "pacotes atualizados\ncorrigiu um problema com a criação de regra",
+        "nl": "bijgewerkte pakketten\ncorrectie van een probleem met de instelling van een regel",
+        "fr": "paquets mis à jour\ncorrigé un problème avec la création de la règle",
+        "it": "pacchetti aggiornati\ncorretto un problema con la creazione della regola",
+        "es": "paquetes actualizados\ncorregido un problema con la creación de regla",
+        "pl": "zaktualizowane pakiety\npoprawił problem z tworzeniem zasad",
+        "uk": "оновлені пакети\nвиправлено проблему з створенням правила",
+        "zh-cn": "更新软件包\n纠正了创建规则的问题"
       },
-      "authors": ["bluefox <dogafox@gmail.com>"],
-      "platform": "Javascript/Node.js",
-      "mode": "daemon",
-      "loglevel": "info",
-      "messagebox": true,
-      "icon": "parser.png",
-      "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
-      "keywords": ["url", "html", "file", "parser"],
-      "adminUI": {
-          "config": "json"
+      "2.2.2": {
+        "en": "GUI was migrated for admin v7",
+        "de": "GUI wurde für admin v7 migriert",
+        "ru": "GUI был перенесен на admin v7",
+        "pt": "GUI foi migrado para admin v7",
+        "nl": "GUI is gemigreerd voor admin v7",
+        "fr": "GUI a été migré pour admin v7",
+        "it": "GUI è stato migrato per admin v7",
+        "es": "GUI fue migrado por admin v7",
+        "pl": "Interfejs GUI został wysłany do admin v7",
+        "uk": "GUI був мігрований для адміністратора v7",
+        "zh-cn": "管理员 v7 的图形用户界面已迁移"
       },
-      "dependencies": [
-          {
-              "js-controller": ">=6.0.11"
-          }
-      ],
-      "globalDependencies": [
-          {
-              "admin": ">=7.6.17"
-          }
-      ],
-      "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
-      "type": "logic",
-      "plugins": {
-          "sentry": {
-              "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
-          }
+      "2.2.1": {
+        "en": "GUI was migrated for admin v7",
+        "de": "GUI wurde für admin v7 migriert",
+        "ru": "GUI был перенесен на admin v7",
+        "pt": "GUI foi migrado para admin v7",
+        "nl": "GUI is gemigreerd voor admin v7",
+        "fr": "GUI a été migré pour admin v7",
+        "it": "GUI è stato migrato per admin v7",
+        "es": "GUI fue migrado por admin v7",
+        "pl": "Interfejs GUI został wysłany do admin v7",
+        "uk": "GUI був мігрований для адміністратора v7",
+        "zh-cn": "管理员 v7 的图形用户界面已迁移"
       },
-      "logTransporter": true,
-      "licenseInformation": {
-          "type": "free",
-          "license": "MIT"
+      "2.1.0": {
+        "en": "Only node 16 and higher is supported",
+        "de": "Nur Knoten 16 und höher unterstützt",
+        "ru": "Поддерживается только нод 16 и выше",
+        "pt": "Apenas o nó 16 e maior é suportado",
+        "nl": "Alleen node 16 en hoger is ondersteund",
+        "fr": "Seulement node 16 et plus est supporté",
+        "it": "Solo nodo 16 e superiore è supportato",
+        "es": "Sólo el nodo 16 y mayor es apoyado",
+        "pl": "Tylko węzeł 16 i więcej jest wspierany",
+        "uk": "Тільки вузол 16 і вище підтримується",
+        "zh-cn": "只支助了16个和较高职等"
       },
-      "compact": true,
-      "connectionType": "none",
-      "dataSource": "poll",
-      "tier": 3
+      "2.0.7": {
+        "en": "added the user agent to prevent timeout blocking\nAdded a configurable userAgent option",
+        "de": "den benutzer agenten hinzugefügt, um die timeout-blockung zu verhindern\nHinzufügen einer konfigurierbaren userAgent Option",
+        "ru": "добавил агент пользователя для предотвращения блокировки timeout\nДобавлен конфигурируемый пользовательAgent option",
+        "pt": "adicionou o agente de usuário para evitar bloqueio de tempo limite\nAdicionado uma opção configurável userAgent",
+        "nl": "voegde de gebruiker toe om tijdversperring te voorkomen\nVoegde een aangepaste gebruikeraanval toe",
+        "fr": "a ajouté l'agent utilisateur pour empêcher le blocage du timeout\nAjout d'une option utilisateur configurable",
+        "it": "aggiunto l'agente utente per evitare il blocco timeout\nAggiunto un utente configurabileAgent opzione",
+        "es": "agregó el agente del usuario para evitar el bloqueo de tiempo\nAñadido una opción configurable userAgent",
+        "pl": "dodano użytkownikowi agentowi, aby zapobiec blokowaniu czasu\nAdded konfigurowalny opcja użytkownikaAgent",
+        "uk": "додано агента користувача для запобігання блокування часу\nДодано параметр configurable userAgent",
+        "zh-cn": "增加用户代理人以防止时间停滞\n添加一个易燃用户选择"
+      }
+    },
+    "titleLang": {
+      "en": "Parser",
+      "de": "Parser",
+      "ru": "Синтаксический анализатор",
+      "pt": "Analisador",
+      "nl": "Parser",
+      "fr": "Analyseur",
+      "it": "Parser",
+      "es": "Analizador",
+      "pl": "Analizator składni",
+      "zh-cn": "分析器",
+      "uk": "Парсер"
+    },
+    "desc": {
+      "en": "This adapter allows to extract values from HTTP URLs or from files",
+      "de": "Dieser Adapter ermöglicht das Extrahieren von Werten aus HTTP-Seiten oder aus Dateien",
+      "ru": "Этот адаптер позволяет извлекать значения из HTTP страниц или файлов",
+      "pt": "Este adaptador permite extrair valores de URLs HTTP ou de arquivos",
+      "nl": "Met deze adapter kunnen waarden uit HTTP-URL's of uit bestanden worden geëxtraheerd",
+      "fr": "Cet adaptateur permet d'extraire des valeurs à partir d'URL HTTP ou de fichiers",
+      "it": "Questo adattatore consente di estrarre valori da URL HTTP o da file",
+      "es": "Este adaptador permite extraer valores de URL HTTP o de archivos",
+      "pl": "Ten adapter umożliwia wyodrębnianie wartości z adresów URL HTTP lub z plików",
+      "zh-cn": "这器允许提取价值从HTTP URLs或从文件",
+      "uk": "Цей адаптер дозволяє отримувати значення з URL-адрес HTTP або з файлів"
+    },
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "loglevel": "info",
+    "messagebox": true,
+    "icon": "parser.png",
+    "readme": "https://github.com/ioBroker/ioBroker.parser/blob/master/README.md",
+    "keywords": [
+      "url",
+      "html",
+      "file",
+      "parser"
+    ],
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.17"
+      }
+    ],
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
+    "type": "logic",
+    "plugins": {
+      "sentry": {
+        "dsn": "https://24bf60e0e158444599caf102391b2f2f@sentry.iobroker.net/172"
+      }
+    },
+    "logTransporter": true,
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "compact": true,
+    "connectionType": "none",
+    "dataSource": "poll",
+    "tier": 3
   },
   "native": {
     "pollInterval": "5000",

@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.0.0 (2026-03-03)
 * (bluefox) Migrated the new NPM token
 * (bluefox) Migrated to TypeScript
 * (bluefox) Added parsing of states, ioBroker files and logs
@@ -259,7 +259,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 
 ### 0.0.1 (2017-01-16)
 * (bluefox) initial commit
- 
+
 ## License
 The MIT License (MIT)
 
