@@ -15,12 +15,98 @@ const regexFlags: Record<string, string> = {
     unicode: 'u',
 };
 
+type IobUri = string;
+type IobUriType = 'object' | 'state' | 'file' | 'http' | 'base64';
+
+type IobUriParsed = { type: IobUriType; address: string; path?: string };
+
+function iobUriParse(uri: IobUri): IobUriParsed {
+    const result: IobUriParsed = {
+        type: 'object',
+        address: '',
+    };
+    if (uri.startsWith('iobobject://')) {
+        result.type = 'object';
+        uri = uri.replace('iobobject://', '');
+        const parts = uri.split('/');
+        result.address = parts[0];
+        result.path = parts[1]; // native.schemas.myObject
+    } else if (uri.startsWith('iobstate://')) {
+        result.type = 'state';
+        uri = uri.replace('iobstate://', '');
+        const parts = uri.split('/');
+        result.address = parts[0];
+        result.path = parts[1]; // val, ts, lc, from, q, ...
+    } else if (uri.startsWith('iobfile://')) {
+        result.type = 'file';
+        uri = uri.replace('iobfile://', '');
+        const parts = uri.split('/');
+        result.address = parts.shift() || '';
+        result.path = parts.join('/'); // main/img/hello.png
+    } else if (uri.startsWith('http://') || uri.startsWith('https://')) {
+        result.type = 'http';
+        result.address = uri; // https://googlw.com/path/uri?lakds=7889
+    } else if (uri.startsWith('data:')) {
+        // data:image/jpeg;base64,
+        result.type = 'base64';
+        result.address = uri; // data:image/jpeg;base64,...
+    } else {
+        // no protocol provided
+        const parts = uri.split('/');
+        if (parts.length === 2) {
+            result.address = parts[0];
+            result.path = parts[1];
+            if (result.path.includes('.')) {
+                result.type = 'object';
+            } else if (result.path) {
+                if (
+                    result.path === 'val' ||
+                    result.path === 'q' ||
+                    result.path === 'ack' ||
+                    result.path === 'ts' ||
+                    result.path === 'lc' ||
+                    result.path === 'from' ||
+                    result.path === 'user' ||
+                    result.path === 'expire' ||
+                    result.path === 'c'
+                ) {
+                    result.type = 'state';
+                } else if (
+                    result.path === 'common' ||
+                    result.path === 'native' ||
+                    result.path === 'from' ||
+                    result.path === 'acl' ||
+                    result.path === 'type'
+                ) {
+                    result.type = 'object';
+                } else {
+                    throw new Error(`Unknown path: ${result.path}`);
+                }
+            } else {
+                result.type = 'state';
+            }
+        } else if (parts.length === 1) {
+            result.address = parts[0];
+            result.type = 'state';
+        } else {
+            // it is a file
+            result.address = parts.shift() || '';
+            result.type = 'file';
+            result.path = parts.join('/');
+        }
+    }
+    return result;
+}
+
 class ParserAdapter extends Adapter {
     declare config: ParserAdapterConfig;
     private states: Record<string, ParserStateObject> = {};
     private timers: Record<number, TimerEntry> = {};
     private hostnamesQueue: Record<string, QueueEntry[]> = {};
     private hostnamesRequestTime: Record<string, number> = {};
+    private stateSubscriptions: Record<string, string[]> = {};
+    private fileSubscriptions: Record<string, string[]> = {};
+    private logSubscriptions: string[] = [];
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -28,19 +114,60 @@ class ParserAdapter extends Adapter {
             name: 'parser',
             objectChange: (id, obj) => this.onObjectChange(id, obj),
             stateChange: (id, state) => this.onStateChange(id, state),
+            fileChange: (id: string, fileName: string) => this.onFileChange(id, fileName),
             message: obj => this.onMessage(obj),
             ready: () => this.main(),
+            logTransporter: true,
         });
+        this.on('log', this.onLog);
     }
 
-    private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
+    onLog = (message: ioBroker.LogMessage): void => {
+        for (const parserId of this.logSubscriptions) {
+            if (this.states[parserId]) {
+                if (
+                    !this.states[parserId].native.logLevel ||
+                    this.states[parserId].native.logLevel === '*' ||
+                    this.states[parserId].native.logLevel === message.severity
+                ) {
+                    if (
+                        !this.states[parserId].native.logSource ||
+                        this.states[parserId].native.logSource === '*' ||
+                        this.states[parserId].native.logSource === message.from
+                    ) {
+                        this.analyseData(this.states[parserId], message.message, null);
+                    }
+                }
+            }
+        }
+    };
+
+    private async onFileChange(id: string, fileName: string): Promise<void> {
+        const key = `iobfile://${id}/${fileName}`;
+        if (this.fileSubscriptions[key] && fileName) {
+            try {
+                const file = await this.readFileAsync(id, fileName);
+                if (file.file) {
+                    for (const parserId of this.fileSubscriptions[key]) {
+                        if (this.states[parserId]) {
+                            this.analyseData(this.states[parserId], file.file.toString(), null);
+                        }
+                    }
+                }
+            } catch (error) {
+                this.log.error(String(error));
+            }
+        }
+    }
+
+    private async onObjectChange(id: string, obj: ioBroker.Object | null | undefined): Promise<void> {
         if (!id) {
             return;
         }
         if (!obj) {
             if (this.states[id]) {
                 this.log.info(`Parser object ${id} removed`);
-                this.deletePoll(this.states[id]);
+                await this.deletePoll(this.states[id]);
                 delete this.states[id];
             }
         } else if (id.startsWith(`${this.namespace}.`)) {
@@ -54,19 +181,18 @@ class ParserAdapter extends Adapter {
 
             if (!this.states[id]) {
                 this.log.info(`Parser object ${id} added`);
-                this.getState(id, (_err, state) => {
-                    this.states[id] = newObj;
-                    this.states[id].value = (state as ioBroker.State) || {
-                        val: null,
-                        ack: false,
-                        ts: 0,
-                        lc: 0,
-                        from: '',
-                    };
-                    if (this.initPoll(this.states[id], false)) {
-                        this.poll(this.timers[newObj.native.interval].interval);
-                    }
-                });
+                const state = await this.getStateAsync(id);
+                this.states[id] = newObj;
+                this.states[id].value = (state as ioBroker.State) || {
+                    val: null,
+                    ack: false,
+                    ts: 0,
+                    lc: 0,
+                    from: '',
+                };
+                if (await this.initPoll(this.states[id], false)) {
+                    this.poll(this.timers[newObj.native.interval].interval);
+                }
             } else {
                 if (
                     this.states[id].native.interval !== newObj.native.interval ||
@@ -74,19 +200,32 @@ class ParserAdapter extends Adapter {
                         (newObj.common as ioBroker.StateCommon & { enabled?: boolean }).enabled
                 ) {
                     this.log.info(`Parser object ${id} interval changed`);
-                    this.deletePoll(this.states[id]);
+                    await this.deletePoll(this.states[id]);
                     this.states[id] = Object.assign(this.states[id], newObj);
-                    this.initPoll(this.states[id], false);
+                    await this.initPoll(this.states[id], false);
                 } else {
                     this.log.debug(`Parser object ${id} updated`);
                     this.states[id] = Object.assign(this.states[id], newObj);
-                    this.initPoll(this.states[id], true);
+                    await this.initPoll(this.states[id], true);
                 }
             }
         }
     }
 
     private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
+        // Handle subscribed foreign state changes (any ack)
+        if (this.stateSubscriptions[id]) {
+            if (state) {
+                const text = state.val != null ? String(state.val) : '';
+                for (const parserId of this.stateSubscriptions[id]) {
+                    if (this.states[parserId]) {
+                        this.analyseData(this.states[parserId], text, null);
+                    }
+                }
+            }
+            return;
+        }
+
         if (!state || state.ack) {
             return;
         }
@@ -145,7 +284,7 @@ class ParserAdapter extends Adapter {
         }
     }
 
-    private initPoll(obj: ParserStateObject, onlyUpdate: boolean): boolean {
+    private async initPoll(obj: ParserStateObject, onlyUpdate: boolean): Promise<boolean> {
         if (!obj.native) {
             this.log.warn(`No configuration for ${obj._id}, ignoring it`);
             return false;
@@ -196,8 +335,49 @@ class ParserAdapter extends Adapter {
         if (!obj.native.link) {
             this.log.warn(`No link configured for ${obj._id}, ignoring it`);
             return false;
-        } else if (!obj.native.link.match(/^https?:\/\//)) {
+        }
+        if (!obj.native.link.match(/^https?:\/\//)) {
             obj.native.link = obj.native.link.replace(/\\/g, '/');
+        }
+
+        if (this.isStateLink(obj.native.link)) {
+            if (!onlyUpdate) {
+                const stateId = iobUriParse(obj.native.link);
+                if (!this.stateSubscriptions[stateId.address]) {
+                    this.stateSubscriptions[stateId.address] = [];
+                    this.subscribeForeignStates(stateId.address);
+                }
+                if (!this.stateSubscriptions[stateId.address].includes(obj._id)) {
+                    this.stateSubscriptions[stateId.address].push(obj._id);
+                }
+            }
+            return false; // no timer for state-subscribed rules
+        }
+
+        if (this.isIobFileLink(obj.native.link)) {
+            if (!onlyUpdate) {
+                const fileId = iobUriParse(obj.native.link);
+                if (!this.fileSubscriptions[obj.native.link]) {
+                    this.fileSubscriptions[obj.native.link] = [];
+                    await this.subscribeForeignFiles(fileId.address, fileId.path!);
+                }
+                if (!this.fileSubscriptions[obj.native.link].includes(obj._id)) {
+                    this.fileSubscriptions[obj.native.link].push(obj._id);
+                }
+            }
+            return false; // no timer for state-subscribed rules
+        }
+
+        if (obj.native.link === 'ioblog') {
+            if (!onlyUpdate) {
+                if (!this.logSubscriptions.length) {
+                    await this.requireLog?.(true);
+                }
+                if (!this.logSubscriptions.includes(obj._id)) {
+                    this.logSubscriptions.push(obj._id);
+                }
+            }
+            return false; // no timer for log-subscribed rules
         }
 
         if (!onlyUpdate) {
@@ -215,7 +395,45 @@ class ParserAdapter extends Adapter {
         return false;
     }
 
-    private deletePoll(obj: ParserStateObject): void {
+    private async deletePoll(obj: ParserStateObject): Promise<void> {
+        if (this.isStateLink(obj.native.link)) {
+            const stateId = iobUriParse(obj.native.link);
+            if (this.stateSubscriptions[stateId.address]) {
+                this.stateSubscriptions[stateId.address] = this.stateSubscriptions[stateId.address].filter(
+                    id => id !== obj._id,
+                );
+                if (!this.stateSubscriptions[stateId.address].length) {
+                    delete this.stateSubscriptions[stateId.address];
+                    this.unsubscribeForeignStates(stateId.address);
+                }
+            }
+            return;
+        }
+
+        if (this.isIobFileLink(obj.native.link)) {
+            const fileId = iobUriParse(obj.native.link);
+            if (this.fileSubscriptions[obj.native.link]) {
+                this.fileSubscriptions[obj.native.link] = this.fileSubscriptions[obj.native.link].filter(
+                    id => id !== obj._id,
+                );
+                if (!this.fileSubscriptions[obj.native.link].length) {
+                    delete this.fileSubscriptions[obj.native.link];
+                    await this.unsubscribeForeignFiles(fileId.address, fileId.path!);
+                }
+            }
+            return;
+        }
+
+        if (obj.native.link === 'ioblog') {
+            const pos = this.logSubscriptions.indexOf(obj._id);
+            if (pos !== -1) {
+                this.logSubscriptions.splice(pos, 1);
+            }
+            if (!this.logSubscriptions.length) {
+                await this.requireLog?.(false);
+            }
+        }
+
         if (this.timers[obj.native.interval] === undefined) {
             return;
         }
@@ -461,11 +679,40 @@ class ParserAdapter extends Adapter {
         }
     }
 
+    private isStateLink(link: string): boolean {
+        return (link || '').startsWith('iobstate://');
+    }
+
+    private isIobFileLink(link: string): boolean {
+        return (link || '').startsWith('iobfile://');
+    }
+
     private isRemoteLink(link: string): boolean {
         return !!(link || '').match(/^https?:\/\//);
     }
 
     private async readLink(link: string, callback: ReadLinkCallback): Promise<void> {
+        if (this.isStateLink(link)) {
+            const stateId = iobUriParse(link);
+            try {
+                const state = await this.getForeignStateAsync(stateId.address);
+                callback(null, state?.val != null ? String(state.val) : '', link);
+            } catch (e) {
+                callback(String(e), null, link);
+            }
+            return;
+        }
+        if (this.isIobFileLink(link)) {
+            const fileId = iobUriParse(link);
+            try {
+                const state = await this.readFileAsync(fileId.address, fileId.path!);
+                callback(null, state?.file != null ? String(state.file) : '', link);
+            } catch (e) {
+                callback(String(e), null, link);
+            }
+            return;
+        }
+
         if (this.isRemoteLink(link)) {
             this.log.debug(`Request URL: ${link}`);
             try {
@@ -575,6 +822,9 @@ class ParserAdapter extends Adapter {
         for (const id of Object.keys(this.states)) {
             if (
                 this.states[id].native.interval === interval &&
+                !this.isStateLink(this.states[id].native.link) &&
+                !this.isIobFileLink(this.states[id].native.link) &&
+                this.states[id].native.link !== 'ioblog' &&
                 (this.states[id].processed || this.states[id].processed === undefined)
             ) {
                 this.states[id].processed = false;
@@ -640,12 +890,47 @@ class ParserAdapter extends Adapter {
         // Mark all sensors as if they received something
         for (const id of Object.keys(this.states)) {
             this.states[id].value = (values[id] as ioBroker.State) || { val: null, ack: false, ts: 0, lc: 0, from: '' };
-            this.initPoll(this.states[id], false);
+            await this.initPoll(this.states[id], false);
         }
 
         // trigger all parsers first time
         for (const timerEntry of Object.values(this.timers)) {
             this.poll(timerEntry.interval);
+        }
+
+        // Initial read for state-subscribed rules
+        for (const [stateId, parserIds] of Object.entries(this.stateSubscriptions)) {
+            try {
+                const state = await this.getForeignStateAsync(stateId);
+                if (state) {
+                    const text = state.val != null ? String(state.val) : '';
+                    for (const parserId of parserIds) {
+                        if (this.states[parserId]) {
+                            this.analyseData(this.states[parserId], text, null);
+                        }
+                    }
+                }
+            } catch (e) {
+                this.log.warn(`Cannot read initial state "${stateId}": ${e}`);
+            }
+        }
+
+        // Initial read for file-subscribed rules
+        for (const [key, parserIds] of Object.entries(this.fileSubscriptions)) {
+            const fileId = iobUriParse(key);
+            try {
+                const file = await this.readFileAsync(fileId.address, fileId.path!);
+                if (file) {
+                    const text = file.file ? String(file.file) : '';
+                    for (const parserId of parserIds) {
+                        if (this.states[parserId]) {
+                            this.analyseData(this.states[parserId], text, null);
+                        }
+                    }
+                }
+            } catch (e) {
+                this.log.warn(`Cannot read initial file "${key}": ${e}`);
+            }
         }
     }
 }

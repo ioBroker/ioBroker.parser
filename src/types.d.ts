@@ -9,7 +9,7 @@ export interface ParserAdapterConfig {
 }
 
 export interface ParserNative {
-    link: string;
+    link: string; // state, file, URL or log
     interval: number;
     regex: string;
     item: number;
@@ -19,6 +19,9 @@ export interface ParserNative {
     substituteOld: boolean | string;
     comma?: boolean;
     parseHtml?: boolean;
+
+    logLevel?: ioBroker.LogLevel | '*';
+    logSource?: string;
 }
 
 export interface ParserStateObject extends Omit<ioBroker.StateObject, 'native'> {
