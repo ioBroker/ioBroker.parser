@@ -106,6 +106,23 @@ const styles: Record<string, any> = {
     changedRow: {
         backgroundColor: '#795d5d',
     },
+    cardPaper: {
+        marginBottom: 8,
+        padding: '8px 12px',
+    },
+    cardLabel: {
+        fontWeight: 'bold',
+        whiteSpace: 'nowrap',
+        width: 90,
+        padding: '4px 8px 4px 0',
+        border: 'none',
+        verticalAlign: 'middle',
+    },
+    cardValue: {
+        padding: '4px 0',
+        border: 'none',
+        verticalAlign: 'middle',
+    },
 };
 
 interface ParserComponentState extends ConfigGenericState {
@@ -118,11 +135,14 @@ interface ParserComponentState extends ConfigGenericState {
     showSelectFileDialog: number | null;
     logSources: string[];
     changed: number[];
+    width: number;
 }
 
 export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentState> {
     private readonly namespace: string;
     private saveTimer: ReturnType<typeof setTimeout> | null = null;
+    private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    private readonly refDiv: React.RefObject<HTMLDivElement>;
 
     constructor(props: ConfigGenericProps) {
         super(props);
@@ -137,8 +157,10 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             logSources: [],
             changed: [],
             alive: false,
+            width: 0,
         };
         this.namespace = `${this.props.oContext.adapterName}.${this.props.oContext.instance}.`;
+        this.refDiv = React.createRef();
     }
 
     async componentDidMount(): Promise<void> {
@@ -225,6 +247,41 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     async componentWillUnmount(): Promise<void> {
         await this.props.oContext.socket.unsubscribeObject(`${this.namespace}*`, this.onObjectChange);
         this.props.oContext.socket.unsubscribeState(`system.adapter.${this.namespace}*`, this.onAliveChange);
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = null;
+        }
+    }
+
+    componentDidUpdate(): void {
+        if (this.refDiv.current?.clientWidth && this.refDiv.current.clientWidth !== this.state.width) {
+            if (this.resizeTimeout) {
+                clearTimeout(this.resizeTimeout);
+            }
+            this.resizeTimeout = setTimeout(() => {
+                this.resizeTimeout = null;
+                this.setState({ width: this.refDiv.current?.clientWidth || 0 });
+            }, 50);
+        }
+    }
+
+    getCurrentBreakpoint(): 'xs' | 'sm' | 'md' | 'lg' | 'xl' {
+        if (!this.state.width) {
+            return 'md';
+        }
+        if (this.state.width < 600) {
+            return 'xs';
+        }
+        if (this.state.width < 900) {
+            return 'sm';
+        }
+        if (this.state.width < 1200) {
+            return 'md';
+        }
+        if (this.state.width < 1536) {
+            return 'lg';
+        }
+        return 'xl';
     }
 
     onObjectChange = (id: string, obj: ioBroker.Object | null | undefined): void => {
@@ -437,6 +494,183 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         this.setState({ rules }, () => this.onAutoSave(index));
     }
 
+    onAddRule(): void {
+        const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+        rules.push({
+            _id: '',
+            common: {
+                name: '',
+                enabled: true,
+                role: 'state',
+                type: 'string',
+                unit: '',
+                read: true,
+                write: false,
+            },
+            native: {
+                type: 'url',
+                link: '',
+                item: 0,
+                regex: '',
+                interval: '',
+                substitute: '',
+                substituteOld: true,
+                offset: 0,
+                factor: 1,
+                parseHtml: false,
+            },
+        });
+        this.setState({ rules });
+    }
+
+    renderSourceField(rule: ParserRule, index: number, disabled: boolean): React.JSX.Element {
+        return (
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+                <Select
+                    value={rule.native.type || 'url'}
+                    onChange={e => {
+                        const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+                        rules[index].native.type = e.target.value as ParserRule['native']['type'];
+                        if (e.target.value === 'ioblog') {
+                            rules[index].native.link = '';
+                        }
+                        this.setState({ rules }, () => this.onAutoSave(index));
+                    }}
+                    variant="standard"
+                    disabled={disabled}
+                    style={{ minWidth: 60, flexShrink: 0 }}
+                >
+                    <MenuItem value="url">URL</MenuItem>
+                    <MenuItem value="iobstate">{I18n.t('parser_State')}</MenuItem>
+                    <MenuItem value="iobfile">{I18n.t('parser_File')}</MenuItem>
+                    <MenuItem value="ioblog">{I18n.t('parser_Log')}</MenuItem>
+                </Select>
+                {(!rule.native.type || rule.native.type === 'url') && (
+                    <TextField
+                        fullWidth
+                        disabled={disabled}
+                        value={rule.native.link}
+                        onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                        variant="standard"
+                    />
+                )}
+                {rule.native.type === 'iobstate' && (
+                    <>
+                        <TextField
+                            fullWidth
+                            disabled={disabled}
+                            value={rule.native.link}
+                            onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                            variant="standard"
+                            placeholder="adapter.0.stateName"
+                        />
+                        <IconButton
+                            size="small"
+                            disabled={disabled}
+                            onClick={() => this.setState({ showSelectIdDialog: index })}
+                        >
+                            <AccountTree fontSize="small" />
+                        </IconButton>
+                    </>
+                )}
+                {rule.native.type === 'iobfile' && (
+                    <>
+                        <TextField
+                            fullWidth
+                            disabled={disabled}
+                            value={rule.native.link}
+                            onChange={e => this._onChange(index, true, 'link', e.target.value)}
+                            variant="standard"
+                            placeholder="objectId/path/file.txt"
+                        />
+                        <IconButton
+                            size="small"
+                            disabled={disabled}
+                            onClick={() => this.setState({ showSelectFileDialog: index })}
+                        >
+                            <FolderOpen fontSize="small" />
+                        </IconButton>
+                    </>
+                )}
+                {rule.native.type === 'ioblog' && (
+                    <Select
+                        fullWidth
+                        disabled={disabled}
+                        value={rule.native.logLevel || '*'}
+                        onChange={e => this._onChange(index, true, 'logLevel', e.target.value)}
+                        variant="standard"
+                    >
+                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                        <MenuItem value="silly">silly</MenuItem>
+                        <MenuItem value="debug">debug</MenuItem>
+                        <MenuItem value="info">info</MenuItem>
+                        <MenuItem value="warn">warn</MenuItem>
+                        <MenuItem value="error">error</MenuItem>
+                    </Select>
+                )}
+                {rule.native.type === 'ioblog' ? (
+                    <Select
+                        fullWidth
+                        disabled={disabled}
+                        value={rule.native.logSource || '*'}
+                        onChange={e => {
+                            const val = e.target.value;
+                            this._onChange(index, true, 'logSource', val === '*' ? undefined : val);
+                        }}
+                        variant="standard"
+                    >
+                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
+                        {this.state.logSources.map(src => (
+                            <MenuItem
+                                key={src}
+                                value={src}
+                            >
+                                {src.startsWith('system.host.')
+                                    ? `${src.replace('system.host.', '')} [host]`
+                                    : src.startsWith('system.adapter.')
+                                      ? `${src.replace('system.adapter.', '')} [instance]`
+                                      : src}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                ) : null}
+            </div>
+        );
+    }
+
+    renderCloneButton(rule: ParserRule, index: number, disabled: boolean): React.JSX.Element {
+        return (
+            <IconButton
+                size="small"
+                disabled={disabled}
+                onClick={async () => {
+                    const cloned: ParserRule = JSON.parse(JSON.stringify(this.state.rules![index]));
+                    let i = 1;
+                    let text = cloned.common.name;
+                    const pattern = text.match(/(\d+)$/);
+                    if (pattern) {
+                        text = text.replace(pattern[0], '');
+                        i = parseInt(pattern[0], 10) + 1;
+                    } else {
+                        text += '_';
+                    }
+                    while (this.state.rules!.find(it => it.common.name === text + i.toString())) {
+                        i++;
+                    }
+                    cloned.common.name = text + i.toString();
+                    cloned._id = `${this.namespace}${cloned.common.name}`;
+                    await this.props.oContext.socket.setObject(`${this.namespace}${cloned.common.name}`, {
+                        type: 'state',
+                        common: rule.common as ioBroker.StateCommon,
+                        native: rule.native,
+                    });
+                }}
+            >
+                <ContentCopy />
+            </IconButton>
+        );
+    }
+
     renderRule(
         rule: ParserRule,
         index: number,
@@ -476,116 +710,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     />
                 </TableCell>
                 <TableCell style={styles.cell}>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
-                        <Select
-                            value={rule.native.type || 'url'}
-                            onChange={e => {
-                                const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
-                                rules[index].native.type = e.target.value as ParserRule['native']['type'];
-                                if (e.target.value === 'ioblog') {
-                                    rules[index].native.link = '';
-                                }
-                                this.setState({ rules }, () => this.onAutoSave(index));
-                            }}
-                            variant="standard"
-                            disabled={!!error || !rule.common.enabled}
-                            style={{ minWidth: 60, flexShrink: 0 }}
-                        >
-                            <MenuItem value="url">URL</MenuItem>
-                            <MenuItem value="iobstate">{I18n.t('parser_State')}</MenuItem>
-                            <MenuItem value="iobfile">{I18n.t('parser_File')}</MenuItem>
-                            <MenuItem value="ioblog">{I18n.t('parser_Log')}</MenuItem>
-                        </Select>
-                        {(!rule.native.type || rule.native.type === 'url') && (
-                            <TextField
-                                fullWidth
-                                disabled={!!error || !rule.common.enabled}
-                                value={rule.native.link}
-                                onChange={e => this._onChange(index, true, 'link', e.target.value)}
-                                variant="standard"
-                            />
-                        )}
-                        {rule.native.type === 'iobstate' && (
-                            <>
-                                <TextField
-                                    fullWidth
-                                    disabled={!!error || !rule.common.enabled}
-                                    value={rule.native.link}
-                                    onChange={e => this._onChange(index, true, 'link', e.target.value)}
-                                    variant="standard"
-                                    placeholder="adapter.0.stateName"
-                                />
-                                <IconButton
-                                    size="small"
-                                    disabled={!!error || !rule.common.enabled}
-                                    onClick={() => this.setState({ showSelectIdDialog: index })}
-                                >
-                                    <AccountTree fontSize="small" />
-                                </IconButton>
-                            </>
-                        )}
-                        {rule.native.type === 'iobfile' && (
-                            <>
-                                <TextField
-                                    fullWidth
-                                    disabled={!!error || !rule.common.enabled}
-                                    value={rule.native.link}
-                                    onChange={e => this._onChange(index, true, 'link', e.target.value)}
-                                    variant="standard"
-                                    placeholder="objectId/path/file.txt"
-                                />
-                                <IconButton
-                                    size="small"
-                                    disabled={!!error || !rule.common.enabled}
-                                    onClick={() => this.setState({ showSelectFileDialog: index })}
-                                >
-                                    <FolderOpen fontSize="small" />
-                                </IconButton>
-                            </>
-                        )}
-                        {rule.native.type === 'ioblog' && (
-                            <Select
-                                fullWidth
-                                disabled={!!error || !rule.common.enabled}
-                                value={rule.native.logLevel || '*'}
-                                onChange={e => this._onChange(index, true, 'logLevel', e.target.value)}
-                                variant="standard"
-                            >
-                                <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
-                                <MenuItem value="silly">silly</MenuItem>
-                                <MenuItem value="debug">debug</MenuItem>
-                                <MenuItem value="info">info</MenuItem>
-                                <MenuItem value="warn">warn</MenuItem>
-                                <MenuItem value="error">error</MenuItem>
-                            </Select>
-                        )}
-                        {rule.native.type === 'ioblog' ? (
-                            <Select
-                                fullWidth
-                                disabled={!!error || !rule.common.enabled}
-                                value={rule.native.logSource || '*'}
-                                onChange={e => {
-                                    const val = e.target.value;
-                                    this._onChange(index, true, 'logSource', val === '*' ? undefined : val);
-                                }}
-                                variant="standard"
-                            >
-                                <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
-                                {this.state.logSources.map(src => (
-                                    <MenuItem
-                                        key={src}
-                                        value={src}
-                                    >
-                                        {src.startsWith('system.host.')
-                                            ? `${src.replace('system.host.', '')} [host]`
-                                            : src.startsWith('system.adapter.')
-                                              ? `${src.replace('system.adapter.', '')} [instance]`
-                                              : src}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        ) : null}
-                    </div>
+                    {this.renderSourceField(rule, index, !!error || !rule.common.enabled)}
                 </TableCell>
                 <TableCell style={styles.cell}>
                     <TextField
@@ -604,6 +729,11 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                                 disabled={!!error || !rule.common.enabled}
                                 value={rule.native.item}
                                 type="number"
+                                slotProps={{
+                                    htmlInput: {
+                                        min: 0,
+                                    },
+                                }}
                                 onChange={e => this._onChange(index, true, 'item', e.target.value)}
                                 variant="standard"
                             />
@@ -742,35 +872,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     >
                         <Delete />
                     </IconButton>
-                    <IconButton
-                        size="small"
-                        disabled={!!error || !rule.common.enabled}
-                        onClick={async () => {
-                            const cloned: ParserRule = JSON.parse(JSON.stringify(this.state.rules![index]));
-                            let i = 1;
-                            let text = cloned.common.name;
-                            const pattern = text.match(/(\d+)$/);
-                            if (pattern) {
-                                text = text.replace(pattern[0], '');
-                                i = parseInt(pattern[0], 10) + 1;
-                            } else {
-                                text += '_';
-                            }
-                            while (this.state.rules!.find(it => it.common.name === text + i.toString())) {
-                                i++;
-                            }
-                            cloned.common.name = text + i.toString();
-                            cloned._id = `${this.namespace}${cloned.common.name}`;
-
-                            await this.props.oContext.socket.setObject(`${this.namespace}${cloned.common.name}`, {
-                                type: 'state',
-                                common: rule.common as ioBroker.StateCommon,
-                                native: rule.native,
-                            });
-                        }}
-                    >
-                        <ContentCopy />
-                    </IconButton>
+                    {this.renderCloneButton(rule, index, !!error || !rule.common.enabled)}
                 </TableCell>
             </TableRow>
         );
@@ -851,53 +953,264 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         );
     }
 
-    renderItem(): React.JSX.Element {
-        if (!this.state.rules) {
-            return <LinearProgress />;
-        }
+    renderCard(rule: ParserRule, index: number): React.JSX.Element {
+        const error =
+            !rule.common.name || !!this.state.rules?.find((r, i) => r.common.name === rule.common.name && i !== index);
+        const disabled = error || !rule.common.enabled;
+        const isNumber = rule.common.type === 'number';
 
-        const anyNumber = !!this.state.rules.find(it => it.common.type === 'number');
-        const anySubstituteOld = !!this.state.rules.find(it => !it.native.substituteOld);
-        const anyNotArray = !!this.state.rules.find(it => it.common.type !== 'array');
+        return (
+            <Paper
+                key={`${index}_${rule._id}`}
+                style={{
+                    ...styles.cardPaper,
+                    ...(this.state.changed.includes(index) ? styles.changedRow : undefined),
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                    <Checkbox
+                        disabled={error}
+                        checked={rule.common.enabled}
+                        onChange={e => this._onChange(index, false, 'enabled', e.target.checked)}
+                        size="small"
+                    />
+                    <TextField
+                        value={rule.common.name}
+                        error={error}
+                        disabled={!rule.common.enabled}
+                        onChange={e => {
+                            const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+                            rules[index].common.name = e.target.value;
+                            const err = this.checkError();
+                            this.setState({ rules, error: err }, () => this.onAutoSave(index));
+                        }}
+                        variant="standard"
+                        style={{ flex: 1 }}
+                        label={I18n.t('parser_Name')}
+                    />
+                    <IconButton
+                        size="small"
+                        disabled={disabled}
+                        onClick={() => this.setState({ showEditDialog: this.state.rules![index] })}
+                    >
+                        <Edit />
+                    </IconButton>
+                    <IconButton
+                        size="small"
+                        onClick={() => this.setState({ showDeleteDialog: index })}
+                    >
+                        <Delete />
+                    </IconButton>
+                    {this.renderCloneButton(rule, index, disabled)}
+                </div>
+                <Table size="small">
+                    <TableBody>
+                        <TableRow>
+                            <TableCell style={styles.cardLabel}>{I18n.t('parser_Source')}</TableCell>
+                            <TableCell style={styles.cardValue}>
+                                {this.renderSourceField(rule, index, disabled)}
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell style={styles.cardLabel}>{I18n.t('parser_RegEx')}</TableCell>
+                            <TableCell style={styles.cardValue}>
+                                <TextField
+                                    disabled={disabled}
+                                    fullWidth
+                                    value={rule.native.regex}
+                                    onChange={e => this._onChange(index, true, 'regex', e.target.value)}
+                                    variant="standard"
+                                />
+                            </TableCell>
+                        </TableRow>
+                        {rule.common.type !== 'array' ? (
+                            <TableRow>
+                                <TableCell style={styles.cardLabel}>{I18n.t('parser_Item')}</TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <TextField
+                                        fullWidth
+                                        disabled={disabled}
+                                        value={rule.native.item}
+                                        type="number"
+                                        slotProps={{ htmlInput: { min: 0 } }}
+                                        onChange={e => this._onChange(index, true, 'item', e.target.value)}
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        <TableRow>
+                            <TableCell style={styles.cardLabel}>{I18n.t('parser_Role')}</TableCell>
+                            <TableCell style={styles.cardValue}>
+                                <Select
+                                    fullWidth
+                                    disabled={disabled}
+                                    value={rule.common.role || ''}
+                                    onChange={e => this._onChange(index, false, 'role', e.target.value)}
+                                    variant="standard"
+                                >
+                                    <MenuItem value="state">default</MenuItem>
+                                    <MenuItem value="">custom</MenuItem>
+                                    <MenuItem value="temperature">temperature</MenuItem>
+                                    <MenuItem value="value">value</MenuItem>
+                                    <MenuItem value="blinds">blinds</MenuItem>
+                                    <MenuItem value="switch">switch</MenuItem>
+                                    <MenuItem value="indicator">indicator</MenuItem>
+                                </Select>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell style={styles.cardLabel}>{I18n.t('parser_Type')}</TableCell>
+                            <TableCell style={styles.cardValue}>
+                                <Select
+                                    fullWidth
+                                    disabled={disabled}
+                                    value={rule.common.type || 'string'}
+                                    onChange={e => this._onChange(index, false, 'type', e.target.value)}
+                                    variant="standard"
+                                >
+                                    <MenuItem value="boolean">boolean</MenuItem>
+                                    <MenuItem value="number">number</MenuItem>
+                                    <MenuItem value="string">string</MenuItem>
+                                    <MenuItem value="json">json</MenuItem>
+                                </Select>
+                            </TableCell>
+                        </TableRow>
+                        {isNumber ? (
+                            <TableRow>
+                                <TableCell style={styles.cardLabel}>{I18n.t('parser_Comma')}</TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <Checkbox
+                                        disabled={disabled}
+                                        checked={!!rule.native.comma}
+                                        onChange={e => this._onChange(index, true, 'comma', e.target.checked)}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        {isNumber ? (
+                            <TableRow>
+                                <TableCell style={styles.cardLabel}>{I18n.t('parser_Unit')}</TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <TextField
+                                        fullWidth
+                                        disabled={disabled}
+                                        value={rule.common.unit}
+                                        onChange={e => this._onChange(index, false, 'unit', e.target.value)}
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        <TableRow>
+                            <TableCell
+                                style={styles.cardLabel}
+                                title={I18n.t('parser_If new value is not available, let old value unchanged')}
+                            >
+                                {I18n.t('parser_Old')}
+                            </TableCell>
+                            <TableCell style={styles.cardValue}>
+                                <Checkbox
+                                    disabled={disabled}
+                                    checked={!!rule.native.substituteOld}
+                                    onChange={e => this._onChange(index, true, 'substituteOld', e.target.checked)}
+                                />
+                            </TableCell>
+                        </TableRow>
+                        {!rule.native.substituteOld ? (
+                            <TableRow>
+                                <TableCell
+                                    style={styles.cardLabel}
+                                    title={I18n.t('parser_If new value is not available, use this value')}
+                                >
+                                    {I18n.t('parser_Subs')}
+                                </TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <TextField
+                                        disabled={disabled}
+                                        fullWidth
+                                        value={rule.native.substitute}
+                                        onChange={e => this._onChange(index, true, 'substitute', e.target.value)}
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        {isNumber ? (
+                            <TableRow>
+                                <TableCell style={styles.cardLabel}>{I18n.t('parser_Factor')}</TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <TextField
+                                        disabled={disabled}
+                                        fullWidth
+                                        value={rule.native.factor}
+                                        onChange={e => this._onChange(index, true, 'factor', e.target.value)}
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        {isNumber ? (
+                            <TableRow>
+                                <TableCell style={styles.cardLabel}>{I18n.t('parser_Offset')}</TableCell>
+                                <TableCell style={styles.cardValue}>
+                                    <TextField
+                                        disabled={disabled}
+                                        fullWidth
+                                        value={rule.native.offset}
+                                        onChange={e => this._onChange(index, true, 'offset', e.target.value)}
+                                        variant="standard"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : null}
+                        <TableRow>
+                            <TableCell
+                                style={styles.cardLabel}
+                                title={I18n.t('parser_Leave it empty if default interval is desired')}
+                            >
+                                {I18n.t('parser_Interval')}
+                            </TableCell>
+                            <TableCell style={styles.cardValue}>
+                                <TextField
+                                    disabled={disabled}
+                                    fullWidth
+                                    value={rule.native.interval}
+                                    type="number"
+                                    onChange={e => this._onChange(index, true, 'interval', e.target.value)}
+                                    variant="standard"
+                                />
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </Paper>
+        );
+    }
+
+    renderCards(): React.JSX.Element {
+        return (
+            <div style={{ padding: 8 }}>
+                {this.state.rules!.map((rule, index) => this.renderCard(rule, index))}
+                <Fab
+                    size="small"
+                    color="primary"
+                    onClick={() => this.onAddRule()}
+                    style={{ marginTop: 8 }}
+                >
+                    <Add />
+                </Fab>
+            </div>
+        );
+    }
+
+    renderTable(): React.JSX.Element {
+        const anyNumber = !!this.state.rules!.find(it => it.common.type === 'number');
+        const anySubstituteOld = !!this.state.rules!.find(it => !it.native.substituteOld);
+        const anyNotArray = !!this.state.rules!.find(it => it.common.type !== 'array');
 
         return (
             <TableContainer component={Paper}>
-                <style>
-                    {`
-@keyframes admin-parser-blink {
-    0% {
-        color: #00FF00;
-    }
-    100% {
-        color: ${this.props.oContext.themeType === 'dark' ? '#fff' : '#000'};
-    }
-}
-`}
-                </style>
-                {this.state.showEditDialog ? (
-                    <EditDialog
-                        rule={this.state.showEditDialog}
-                        logSources={this.state.logSources}
-                        theme={this.props.oContext.theme}
-                        onClose={() => this.setState({ showEditDialog: null })}
-                        onSave={editedRule => {
-                            const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
-                            const index = rules.findIndex(r => r._id === editedRule._id);
-                            Object.assign(rules[index].common, editedRule.common);
-                            Object.assign(rules[index].native, editedRule.native);
-                            this.setState({ showEditDialog: null, rules }, () => this.onAutoSave(index));
-                        }}
-                        fetchText={() =>
-                            this.fetchText(
-                                this.state.showEditDialog!.native.link,
-                                this.state.showEditDialog!.native.type,
-                            )
-                        }
-                    />
-                ) : null}
-                {this.renderDeleteDialog()}
-                {this.renderSelectIdDialog()}
-                {this.renderSelectFileDialog()}
                 <Table size="small">
                     <TableHead>
                         <TableRow>
@@ -963,34 +1276,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                                 <Fab
                                     size="small"
                                     color="primary"
-                                    onClick={() => {
-                                        const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
-                                        rules.push({
-                                            _id: '',
-                                            common: {
-                                                name: '',
-                                                enabled: true,
-                                                role: 'state',
-                                                type: 'string',
-                                                unit: '',
-                                                read: true,
-                                                write: false,
-                                            },
-                                            native: {
-                                                type: 'url',
-                                                link: '',
-                                                item: 0,
-                                                regex: '',
-                                                interval: '',
-                                                substitute: '',
-                                                substituteOld: true,
-                                                offset: 0,
-                                                factor: 1,
-                                                parseHtml: false,
-                                            },
-                                        });
-                                        this.setState({ rules });
-                                    }}
+                                    onClick={() => this.onAddRule()}
                                 >
                                     <Add />
                                 </Fab>
@@ -998,12 +1284,65 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.state.rules.map((rule, index) =>
+                        {this.state.rules!.map((rule, index) =>
                             this.renderRule(rule, index, anyNumber, anySubstituteOld, anyNotArray),
                         )}
                     </TableBody>
                 </Table>
             </TableContainer>
+        );
+    }
+
+    renderItem(): React.JSX.Element {
+        if (!this.state.rules) {
+            return <LinearProgress />;
+        }
+
+        const isNarrow = this.getCurrentBreakpoint() === 'xs';
+
+        return (
+            <div
+                ref={this.refDiv}
+                style={{ width: '100%' }}
+            >
+                <style>
+                    {`
+@keyframes admin-parser-blink {
+    0% {
+        color: #00FF00;
+    }
+    100% {
+        color: ${this.props.oContext.themeType === 'dark' ? '#fff' : '#000'};
+    }
+}
+`}
+                </style>
+                {this.state.showEditDialog ? (
+                    <EditDialog
+                        rule={this.state.showEditDialog}
+                        logSources={this.state.logSources}
+                        theme={this.props.oContext.theme}
+                        onClose={() => this.setState({ showEditDialog: null })}
+                        onSave={editedRule => {
+                            const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+                            const index = rules.findIndex(r => r._id === editedRule._id);
+                            Object.assign(rules[index].common, editedRule.common);
+                            Object.assign(rules[index].native, editedRule.native);
+                            this.setState({ showEditDialog: null, rules }, () => this.onAutoSave(index));
+                        }}
+                        fetchText={() =>
+                            this.fetchText(
+                                this.state.showEditDialog!.native.link,
+                                this.state.showEditDialog!.native.type,
+                            )
+                        }
+                    />
+                ) : null}
+                {this.renderDeleteDialog()}
+                {this.renderSelectIdDialog()}
+                {this.renderSelectFileDialog()}
+                {isNarrow ? this.renderCards() : this.renderTable()}
+            </div>
         );
     }
 }

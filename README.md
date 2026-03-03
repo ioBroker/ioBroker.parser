@@ -148,6 +148,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 * (bluefox) Migrated to TypeScript
 * (bluefox) Added parsing of states, ioBroker files and logs
 * (bluefox) Fixing position marking in test dialog
+* (bluefox) Added mobile view
 
 ### 2.3.1 (2025-03-24)
 * (bluefox) Migrated the admin GUI to TypeScript

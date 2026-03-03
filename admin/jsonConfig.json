@@ -27,6 +27,7 @@
           "type": "number",
           "label": "parser_Request Delay",
           "help": "parser_ms",
+          "tooltip": "parser_tooltip_requestDelay",
           "sm": 6,
           "md": 4,
           "lg": 2
