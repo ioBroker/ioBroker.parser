@@ -14,6 +14,7 @@
     "parser_Old value": "Letztes Wert",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Anfrageverzögerung",
+    "parser_tooltip_requestDelay": "Minimale Verzögerung zwischen aufeinanderfolgenden HTTP-Anfragen an denselben Host. Nützlich bei langsamen Hosts oder Verbindungen. Jeder Host wird unabhängig parallel abgefragt. Null bedeutet keine Verzögerung.",
     "parser_Request Timeout": "Zeitüberschreitung der Anforderung",
     "parser_Result": "Ergebnis",
     "parser_Role": "Rolle",

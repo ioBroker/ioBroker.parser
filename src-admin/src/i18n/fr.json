@@ -14,6 +14,7 @@
     "parser_Old value": "L'ancienne valeur",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Délai de demande",
+    "parser_tooltip_requestDelay": "Délai minimum entre les requêtes HTTP consécutives vers le même hôte. Utile pour les hôtes lents ou les connexions lentes. Chaque hôte est interrogé indépendamment en parallèle. Zéro signifie aucun délai.",
     "parser_Request Timeout": "Délai d'expiration de la demande",
     "parser_Result": "Résultat",
     "parser_Role": "Rôle",

@@ -907,6 +907,14 @@ class ParserAdapter extends Adapter {
             void this.stop?.();
             return;
         }
+        // Migrate all states write: true
+        for (const id of Object.keys(this.states)) {
+            if (!this.states[id].common.write) {
+                this.states[id].common.write = true;
+                await this.setForeignObjectAsync(id, this.states[id]);
+            }
+        }
+
         let values: Record<string, ioBroker.State | null | undefined>;
         try {
             values = await this.getForeignStatesAsync(`${this.namespace}.*`);

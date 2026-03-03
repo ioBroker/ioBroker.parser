@@ -14,6 +14,7 @@
     "parser_Old value": "旧价值",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "请求延迟",
+    "parser_tooltip_requestDelay": "同一主机连续HTTP请求之间的最小延迟。适用于慢速主机或连接。每个主机独立并行查询。零表示无延迟。",
     "parser_Request Timeout": "请求超时",
     "parser_Result": "结果，",
     "parser_Role": "作用",

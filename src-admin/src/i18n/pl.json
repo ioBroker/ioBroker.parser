@@ -14,6 +14,7 @@
     "parser_Old value": "Stare wartość",
     "parser_RegEx": "Wyrażenie regularne",
     "parser_Request Delay": "Opóźnienie żądania",
+    "parser_tooltip_requestDelay": "Minimalne opóźnienie między kolejnymi żądaniami HTTP do tego samego hosta. Przydatne dla wolnych hostów lub połączeń. Każdy host jest odpytywany niezależnie równolegle. Zero oznacza brak opóźnienia.",
     "parser_Request Timeout": "Limit czasu żądania",
     "parser_Result": "Wynik",
     "parser_Role": "Rola",

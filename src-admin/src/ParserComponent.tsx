@@ -308,7 +308,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         type: obj.common.type,
                         unit: obj.common.unit,
                         read: true,
-                        write: false,
+                        write: true,
                     },
                     native: {
                         type: obj.native.type,
@@ -505,7 +505,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 type: 'string',
                 unit: '',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {
                 type: 'url',

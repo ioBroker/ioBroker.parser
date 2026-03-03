@@ -14,6 +14,7 @@
     "parser_Old value": "Old value",
     "parser_RegEx": "RegEx",
     "parser_Request Delay": "Request Delay",
+    "parser_tooltip_requestDelay": "Minimum delay between consecutive HTTP requests to the same host. Useful for slow hosts or connections. Each host is queried independently in parallel. Zero means no delay.",
     "parser_Request Timeout": "Request Timeout",
     "parser_Result": "Result",
     "parser_Role": "Role",
