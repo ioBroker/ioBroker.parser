@@ -8,32 +8,26 @@ import {
     TableRow,
     TableCell,
     Paper,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
     TextField,
     Checkbox,
     IconButton,
     Select,
     MenuItem,
     LinearProgress,
-    Grid2 as Grid,
-    FormControlLabel,
-    FormControl,
-    InputLabel,
     Fab,
 } from '@mui/material';
 
-import { Save, Close, Edit, Delete, ContentCopy, PlayArrow, Add, FolderOpen, AccountTree } from '@mui/icons-material';
+import { Edit, Delete, ContentCopy, Add, FolderOpen, AccountTree } from '@mui/icons-material';
 
 // important to make from package and not from some children.
 // invalid
 // import Confirm from '@iobroker/adapter-react-v5/Confirm';
 // valid
-import { I18n, Confirm, DialogSelectID, DialogSelectFile, type IobTheme } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm, DialogSelectID, DialogSelectFile } from '@iobroker/adapter-react-v5';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
+
+import { EditDialog } from './EditDialog';
+import type { ParserState, ParserRule } from './types';
 
 const styles: Record<string, any> = {
     table: {
@@ -112,85 +106,11 @@ const styles: Record<string, any> = {
     changedRow: {
         backgroundColor: '#795d5d',
     },
-    marginRight: {
-        marginRight: 10,
-    },
-    item: {
-        width: 50,
-        marginLeft: 10,
-    },
-    regex: {
-        width: 'calc(100% - 100px)',
-    },
-    dialog: {
-        // height: 'calc(100% - 50px)',
-    },
-    testText: (theme: IobTheme): any => ({
-        '& textarea': {
-            width: '100%',
-            height: 150,
-            resize: 'none',
-            backgroundColor: theme.palette.mode === 'dark' ? '#333' : '#fff',
-            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-        },
-    }),
-    input: {
-        width: 100,
-    },
-    resultUpdated: (theme: IobTheme): any => ({
-        '& label': {
-            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-            animation: `admin-parser-blink 1000ms ease-in-out`,
-        },
-        '& input': {
-            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-            animation: `admin-parser-blink 1000ms ease-in-out`,
-        },
-    }),
 };
-
-interface ParserCommon extends ioBroker.StateCommon {
-    enabled?: boolean;
-}
-
-interface ParserState extends ioBroker.StateObject {
-    common: ParserCommon;
-}
-
-interface ParserRule {
-    _id: string;
-    common: {
-        name: string;
-        enabled: boolean;
-        role?: string;
-        type: ioBroker.CommonType;
-        unit?: string;
-        read?: boolean;
-        write?: boolean;
-    };
-    native: {
-        type?: 'url' | 'iobstate' | 'iobfile' | 'ioblog';
-        link: string;
-        logLevel?: ioBroker.LogLevel | '*';
-        logSource?: string;
-        item: number | string;
-        regex: string;
-        interval: number | string;
-        substitute: string | null | number | boolean | undefined;
-        substituteOld: string | null | number | boolean | undefined;
-        offset: number | string;
-        factor: number | string;
-        parseHtml: boolean | 'true';
-        comma?: boolean;
-    };
-}
 
 interface ParserComponentState extends ConfigGenericState {
     showEditDialog: ParserRule | null;
     error: false | number;
-    testText: string;
-    testResult: string | number | boolean;
-    resultIndex: number;
     alive: boolean;
     rules: ParserRule[] | null;
     showDeleteDialog: null | number;
@@ -198,14 +118,10 @@ interface ParserComponentState extends ConfigGenericState {
     showSelectFileDialog: number | null;
     logSources: string[];
     changed: number[];
-    testError: string;
-    originalRule: string;
 }
 
 export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, ParserComponentState> {
     private readonly namespace: string;
-    private readonly testTextRef: React.RefObject<HTMLTextAreaElement>;
-    private timerTest: ReturnType<typeof setTimeout> | null = null;
     private saveTimer: ReturnType<typeof setTimeout> | null = null;
 
     constructor(props: ConfigGenericProps) {
@@ -219,16 +135,10 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             showSelectIdDialog: null,
             showSelectFileDialog: null,
             logSources: [],
-            testText: 'Test text',
-            testResult: '',
-            testError: '',
             changed: [],
-            resultIndex: 0,
             alive: false,
-            originalRule: '',
         };
         this.namespace = `${this.props.oContext.adapterName}.${this.props.oContext.instance}.`;
-        this.testTextRef = React.createRef();
     }
 
     async componentDidMount(): Promise<void> {
@@ -315,10 +225,6 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     async componentWillUnmount(): Promise<void> {
         await this.props.oContext.socket.unsubscribeObject(`${this.namespace}*`, this.onObjectChange);
         this.props.oContext.socket.unsubscribeState(`system.adapter.${this.namespace}*`, this.onAliveChange);
-        if (this.timerTest) {
-            clearTimeout(this.timerTest);
-            this.timerTest = null;
-        }
     }
 
     onObjectChange = (id: string, obj: ioBroker.Object | null | undefined): void => {
@@ -407,322 +313,26 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         }
     };
 
-    requestData(link: string, type?: string): void {
-        if (!this.state.alive) {
-            return;
+    fetchText(link: string, type?: string): Promise<string | null> {
+        if (!this.state.alive || type === 'ioblog') {
+            return Promise.resolve(null);
         }
         let uri = link;
         if (type === 'iobstate') {
             uri = `iobstate://${link}`;
         } else if (type === 'iobfile') {
             uri = `iobfile://${link}`;
-        } else if (type === 'ioblog') {
-            return; // no on-demand fetch for log
         }
-        void this.props.oContext.socket
+        return this.props.oContext.socket
             .sendTo(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, 'link', uri)
             .then(result => {
-                if (result) {
-                    if (result.error) {
-                        window.alert(result.error);
-                    } else {
-                        this.setState({ testText: result.text || '' });
-                    }
+                if (result?.error) {
+                    window.alert(result.error);
+                    return null;
                 }
-            });
-    }
-
-    renderEditDialog(): React.JSX.Element | null {
-        if (!this.state.showEditDialog) {
-            return null;
-        }
-
-        const rule = this.state.showEditDialog;
-        return (
-            <Dialog
-                key="dialog"
-                maxWidth="lg"
-                fullWidth
-                open={!0}
-                onClose={() => {}}
-                sx={{ '& .MuiDialog-paper': styles.dialog }}
-            >
-                <DialogTitle>
-                    {I18n.t('parser_Test regex')}:
-                    <span style={{ fontStyle: 'italic', fontWeight: 'bold', marginLeft: 10 }}>
-                        {this.state.showEditDialog.common.name}
-                    </span>
-                </DialogTitle>
-                <DialogContent>
-                    <Grid
-                        container
-                        spacing={2}
-                    >
-                        <Grid size={12}>
-                            <FormControl
-                                variant="standard"
-                                style={styles.marginRight}
-                            >
-                                <InputLabel>{I18n.t('parser_Type')}</InputLabel>
-                                <Select
-                                    value={rule.common.type || 'string'}
-                                    onChange={e => {
-                                        const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.common.type = e.target.value as ioBroker.CommonType;
-                                        this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                    }}
-                                    variant="standard"
-                                >
-                                    <MenuItem value="boolean">boolean</MenuItem>
-                                    <MenuItem value="number">number</MenuItem>
-                                    <MenuItem value="string">string</MenuItem>
-                                    <MenuItem value="json">json</MenuItem>
-                                    <MenuItem value="array">array</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {rule.common.type === 'number' ? (
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={!!rule.native.substituteOld}
-                                            onChange={() => {
-                                                const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                                newRule.native.comma = !newRule.native.comma;
-                                                this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                            }}
-                                        />
-                                    }
-                                    label={I18n.t('parser_Comma')}
-                                />
-                            ) : null}
-                        </Grid>
-                        {rule.native.type === 'ioblog' ? (
-                            <Grid size={12}>
-                                <FormControl
-                                    variant="standard"
-                                    style={styles.marginRight}
-                                >
-                                    <InputLabel>{I18n.t('parser_Log level')}</InputLabel>
-                                    <Select
-                                        value={rule.native.logLevel || '*'}
-                                        onChange={e => {
-                                            const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                            newRule.native.logLevel = e.target.value as ioBroker.LogLevel | '*';
-                                            this.setState({ showEditDialog: newRule });
-                                        }}
-                                        variant="standard"
-                                    >
-                                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
-                                        <MenuItem value="silly">silly</MenuItem>
-                                        <MenuItem value="debug">debug</MenuItem>
-                                        <MenuItem value="info">info</MenuItem>
-                                        <MenuItem value="warn">warn</MenuItem>
-                                        <MenuItem value="error">error</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="standard"
-                                    style={styles.marginRight}
-                                >
-                                    <InputLabel>{I18n.t('parser_Log source')}</InputLabel>
-                                    <Select
-                                        value={rule.native.logSource || '*'}
-                                        onChange={e => {
-                                            const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                            newRule.native.logSource =
-                                                e.target.value === '*' ? undefined : e.target.value;
-                                            this.setState({ showEditDialog: newRule });
-                                        }}
-                                        variant="standard"
-                                        style={{ minWidth: 150 }}
-                                    >
-                                        <MenuItem value="*">{I18n.t('parser_Any')}</MenuItem>
-                                        {this.state.logSources.map(src => (
-                                            <MenuItem
-                                                key={src}
-                                                value={src}
-                                            >
-                                                {src.startsWith('system.host.')
-                                                    ? `${src.replace('system.host.', '')} [host]`
-                                                    : src.startsWith('system.adapter.')
-                                                      ? `${src.replace('system.adapter.', '')} [instance]`
-                                                      : src}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        ) : null}
-                        <Grid size={12}>
-                            <FormControlLabel
-                                title={I18n.t('parser_If new value is not available, let old value unchanged')}
-                                style={styles.marginRight}
-                                control={
-                                    <Checkbox
-                                        checked={!!rule.native.substituteOld}
-                                        onChange={() => {
-                                            const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                            newRule.native.substituteOld = !newRule.native.substituteOld;
-                                            this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                        }}
-                                    />
-                                }
-                                label={I18n.t('parser_Substitute old value')}
-                            />
-                            {!rule.native.substituteOld ? (
-                                <TextField
-                                    title={I18n.t('parser_If new value is not available, use this value')}
-                                    style={{ ...styles.marginRight, ...styles.input }}
-                                    value={rule.native.substitute || ''}
-                                    onChange={e => {
-                                        const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.native.substitute = e.target.value;
-                                        this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                    }}
-                                    label={I18n.t('parser_Substitute value')}
-                                    variant="standard"
-                                />
-                            ) : null}
-
-                            {rule.common.type === 'number' ? (
-                                <TextField
-                                    style={{ ...styles.marginRight, ...styles.input }}
-                                    value={rule.native.factor || 1}
-                                    onChange={e => {
-                                        const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.native.factor = e.target.value;
-                                        this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                    }}
-                                    variant="standard"
-                                    label={I18n.t('parser_Factor')}
-                                />
-                            ) : null}
-                            {rule.common.type === 'number' ? (
-                                <TextField
-                                    style={{ ...styles.marginRight, ...styles.input }}
-                                    value={rule.native.offset || 0}
-                                    onChange={e => {
-                                        const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.native.offset = e.target.value;
-                                        this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                    }}
-                                    label={I18n.t('parser_Offset')}
-                                    variant="standard"
-                                />
-                            ) : null}
-                            {rule.common.type === 'string' ? (
-                                <FormControlLabel
-                                    title={I18n.t('parser_Convert &#48; => 0 and so on')}
-                                    style={styles.marginRight}
-                                    control={
-                                        <Checkbox
-                                            checked={!!rule.native.parseHtml}
-                                            onChange={() => {
-                                                const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                                newRule.native.parseHtml = !newRule.native.parseHtml;
-                                                this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                            }}
-                                        />
-                                    }
-                                    label={I18n.t('parser_Parse HTML text')}
-                                />
-                            ) : null}
-                        </Grid>
-                        <Grid size={12}>
-                            <TextField
-                                value={rule.native.regex || ''}
-                                onChange={e => {
-                                    const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                    newRule.native.regex = e.target.value;
-                                    this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                }}
-                                variant="standard"
-                                style={styles.regex}
-                                label={I18n.t('parser_RegEx')}
-                            />
-                            {rule.common.type !== 'array' ? (
-                                <TextField
-                                    value={rule.native.item || 0}
-                                    type="number"
-                                    slotProps={{
-                                        htmlInput: {
-                                            min: 0,
-                                        },
-                                    }}
-                                    onChange={e => {
-                                        const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.native.item = e.target.value;
-                                        this.setState({ showEditDialog: newRule }, () => this.onTest());
-                                    }}
-                                    variant="standard"
-                                    style={styles.item}
-                                    label={I18n.t('parser_Item')}
-                                />
-                            ) : null}
-                            <Fab
-                                color="primary"
-                                size="small"
-                                onClick={() => this.onTest(true)}
-                            >
-                                <PlayArrow />
-                            </Fab>
-                        </Grid>
-                        <Grid
-                            size={12}
-                            sx={styles.testText}
-                        >
-                            <textarea
-                                ref={this.testTextRef}
-                                value={this.state.testText}
-                                onChange={e => this.setState({ testText: e.target.value }, () => this.onTest())}
-                            />
-                        </Grid>
-                        <Grid size={12}>
-                            <TextField
-                                sx={styles.resultUpdated}
-                                key={this.state.resultIndex}
-                                variant="standard"
-                                label={I18n.t('parser_Result')}
-                                value={this.state.testResult.toString()}
-                                slotProps={{
-                                    htmlInput: {
-                                        readOnly: true,
-                                    },
-                                }}
-                                fullWidth
-                            />
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        disabled={JSON.stringify(this.state.showEditDialog) === this.state.originalRule}
-                        onClick={() => {
-                            const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
-                            const index = rules.findIndex(r => r._id === rule._id);
-                            Object.assign(rules[index].common, this.state.showEditDialog!.common);
-                            Object.assign(rules[index].native, this.state.showEditDialog!.native);
-                            this.setState({ showEditDialog: null, originalRule: '', rules }, () =>
-                                this.onAutoSave(index),
-                            );
-                        }}
-                        color="primary"
-                        startIcon={<Save />}
-                        variant="contained"
-                    >
-                        {I18n.t('ra_Save')}
-                    </Button>
-                    <Button
-                        color="grey"
-                        onClick={() => this.setState({ showEditDialog: null, originalRule: '' })}
-                        variant="contained"
-                        startIcon={<Close />}
-                    >
-                        {I18n.t('ra_Cancel')}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
+                return result?.text ?? null;
+            })
+            .catch(() => null);
     }
 
     checkError(): number | false {
@@ -1122,19 +732,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     <IconButton
                         size="small"
                         disabled={!!error || !rule.common.enabled}
-                        onClick={() =>
-                            this.setState(
-                                {
-                                    showEditDialog: JSON.parse(JSON.stringify(this.state.rules![index])),
-                                    originalRule: JSON.stringify(this.state.rules![index]),
-                                },
-                                () =>
-                                    this.requestData(
-                                        this.state.rules![index].native.link,
-                                        this.state.rules![index].native.type,
-                                    ),
-                            )
-                        }
+                        onClick={() => this.setState({ showEditDialog: this.state.rules![index] })}
                     >
                         <Edit />
                     </IconButton>
@@ -1253,191 +851,6 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
         );
     }
 
-    onTest(immediately?: boolean): void {
-        if (this.timerTest) {
-            clearTimeout(this.timerTest);
-            this.timerTest = null;
-        }
-        if (this.state.showEditDialog) {
-            this.timerTest = setTimeout(
-                () => {
-                    if (!this.state.showEditDialog) {
-                        return;
-                    }
-                    let test = this.state.testText;
-                    let regex = this.state.showEditDialog.native.regex;
-                    const type = this.state.showEditDialog.common.type;
-                    const comma = this.state.showEditDialog.native.comma;
-                    const offsetStr = this.state.showEditDialog.native.offset;
-                    const itemStr = this.state.showEditDialog.native.item;
-                    const factorStr = this.state.showEditDialog.native.factor;
-                    const parseHtml =
-                        this.state.showEditDialog.native.parseHtml === 'true' ||
-                        this.state.showEditDialog.native.parseHtml === true;
-                    let substitute = this.state.showEditDialog.native.substitute;
-
-                    if (!regex) {
-                        regex = '.+';
-                    }
-
-                    if (regex[0] === '/') {
-                        regex = regex.substring(1, regex.length - 1);
-                    }
-
-                    if (substitute !== '' && substitute !== undefined && substitute !== null) {
-                        if (substitute === 'null') {
-                            substitute = null;
-                        }
-
-                        if (type === 'number') {
-                            substitute = parseFloat(substitute as string) || 0;
-                        } else if (type === 'boolean') {
-                            if (substitute === 'true') {
-                                substitute = true;
-                            }
-                            if (substitute === 'false') {
-                                substitute = false;
-                            }
-                            substitute = !!substitute;
-                        }
-                    } else {
-                        substitute = undefined;
-                    }
-                    let regExpression;
-                    try {
-                        regExpression = new RegExp(regex, itemStr || type === 'array' ? 'g' : '');
-                    } catch (e) {
-                        this.setState({ testError: (e as Error).toString() });
-                        return;
-                    }
-                    const offset = parseFloat(offsetStr as string) || 0;
-                    const factor = parseFloat(factorStr as string) || 1;
-                    let item = (parseInt(itemStr as string, 10) || 0) + 1;
-                    if (item < 0) {
-                        item = 1;
-                    }
-                    if (item > 1000) {
-                        item = 1000;
-                    }
-                    test = (test || '').toString().replace(/\r\n|[\r\n]/g, ' ');
-                    let m: RegExpMatchArray | null;
-                    if (type === 'array') {
-                        m = test.match(regExpression);
-                    } else {
-                        do {
-                            m = regExpression.exec(test);
-                            item--;
-                        } while (item && m);
-                    }
-
-                    if (m) {
-                        let newVal;
-
-                        if (type === 'boolean') {
-                            newVal = 'true';
-                        } else if (type !== 'array') {
-                            newVal = m.length > 1 ? m[1] : m[0];
-                            if (type === 'number') {
-                                // 1,000,000 => 1000000
-                                if (!comma) {
-                                    newVal = newVal.replace(/,/g, '');
-                                } else {
-                                    // 1.000.000 => 1000000
-                                    newVal = newVal.replace(/\./g, '');
-                                    // 5,67 => 5.67
-                                    newVal = newVal.replace(',', '.');
-                                }
-                                // 1 000 000 => 1000000
-                                newVal = newVal.replace(/\s/g, '');
-                                newVal = parseFloat(newVal);
-                                newVal *= factor;
-                                newVal += offset;
-                            }
-                        } else {
-                            // extract from string the value
-                            if (regex.includes('(')) {
-                                const _regExpression = new RegExp(regex);
-                                m = m?.map(it => {
-                                    const _m = it.match(_regExpression);
-                                    if (_m && _m[1]) {
-                                        return _m[1];
-                                    }
-                                    return it;
-                                }) as RegExpMatchArray;
-                            }
-                            if (parseHtml) {
-                                newVal = JSON.stringify(
-                                    m?.map(it => it.replace(/&#(\d+);/g, (_match, dec) => String.fromCharCode(dec))),
-                                );
-                            } else {
-                                newVal = JSON.stringify(m);
-                            }
-                        }
-
-                        if (parseHtml && type === 'string') {
-                            // replace &#48 with 0 and so on
-                            newVal = newVal === null || newVal === undefined ? '' : newVal.toString();
-                            newVal = newVal.replace(/&#(\d+);/g, (_match, dec) => String.fromCharCode(dec));
-                        }
-
-                        this.setState(
-                            {
-                                testResult: newVal === null || newVal === undefined ? '' : newVal,
-                                resultIndex: this.state.resultIndex + 1,
-                            },
-                            () => {
-                                if (m) {
-                                    // find position of the text
-                                    const ll = m[1] ? m[0].indexOf(m[1]) : 0;
-                                    // highlight text
-                                    const el = this.testTextRef.current;
-                                    const start = (m.index || 0) + ll;
-                                    const end = (m.index || 0) + ll + (m[1] ? m[1].length : m[0].length);
-                                    if (el?.setSelectionRange) {
-                                        el.focus();
-
-                                        const fullText = el.value;
-                                        el.value = fullText.substring(0, end);
-                                        const height = el.scrollHeight;
-                                        el.scrollTop = height;
-                                        el.value = fullText;
-                                        el.scrollTop = height - 30;
-
-                                        el?.setSelectionRange(start, end);
-                                        // @ts-expect-error legacy
-                                    } else if (el?.createTextRange) {
-                                        // @ts-expect-error legacy
-                                        const range = el.createTextRange();
-                                        range.collapse(true);
-                                        range.moveEnd('character', end);
-                                        range.moveStart('character', start);
-                                        range.select();
-                                    } else if (el?.selectionStart) {
-                                        el.selectionStart = start;
-                                        el.selectionEnd = end;
-                                    }
-                                }
-                            },
-                        );
-                    } else {
-                        if (type === 'boolean') {
-                            this.setState({
-                                testResult: 'false',
-                                resultIndex: this.state.resultIndex + 1,
-                            });
-                        } else {
-                            this.setState({
-                                testResult: substitute === null || substitute === undefined ? '' : substitute,
-                                resultIndex: this.state.resultIndex + 1,
-                            });
-                        }
-                    }
-                },
-                immediately ? 0 : 1000,
-            );
-        }
-    }
-
     renderItem(): React.JSX.Element {
         if (!this.state.rules) {
             return <LinearProgress />;
@@ -1461,7 +874,27 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
 }
 `}
                 </style>
-                {this.renderEditDialog()}
+                {this.state.showEditDialog ? (
+                    <EditDialog
+                        rule={this.state.showEditDialog}
+                        logSources={this.state.logSources}
+                        theme={this.props.oContext.theme}
+                        onClose={() => this.setState({ showEditDialog: null })}
+                        onSave={editedRule => {
+                            const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
+                            const index = rules.findIndex(r => r._id === editedRule._id);
+                            Object.assign(rules[index].common, editedRule.common);
+                            Object.assign(rules[index].native, editedRule.native);
+                            this.setState({ showEditDialog: null, rules }, () => this.onAutoSave(index));
+                        }}
+                        fetchText={() =>
+                            this.fetchText(
+                                this.state.showEditDialog!.native.link,
+                                this.state.showEditDialog!.native.type,
+                            )
+                        }
+                    />
+                ) : null}
                 {this.renderDeleteDialog()}
                 {this.renderSelectIdDialog()}
                 {this.renderSelectFileDialog()}
