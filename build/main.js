@@ -100,6 +100,36 @@ function iobUriParse(uri) {
     }
     return result;
 }
+const LOG_LEVEL_SEVERITY = { error: 0, warn: 1, info: 2, debug: 3, silly: 4 };
+/** Returns true if `messageSeverity` is at least as severe as `configLevel`. */
+function compareLogLevel(configLevel, messageSeverity) {
+    if (!configLevel || configLevel === '*') {
+        return true;
+    }
+    const configRank = LOG_LEVEL_SEVERITY[configLevel] ?? 2;
+    const msgRank = LOG_LEVEL_SEVERITY[messageSeverity] ?? 2;
+    return msgRank <= configRank;
+}
+function compareLogSource(config, source) {
+    if (!config || config === '*') {
+        return true;
+    }
+    if (config.startsWith('system.adapter.')) {
+        const stripped = config.slice('system.adapter.'.length); // e.g. 'admin.0' or 'admin.*'
+        if (stripped.endsWith('.*')) {
+            return source.startsWith(`${stripped.slice(0, -2)}.`); // 'admin.*' → source starts with 'admin.'
+        }
+        return stripped === source;
+    }
+    if (config.startsWith('system.host.')) {
+        const stripped = config.slice('system.host.'.length); // e.g. 'iobroker' or '*'
+        if (stripped === '*') {
+            return source.startsWith('host.'); // match any host process
+        }
+        return `host.${stripped}` === source; // 'host.iobroker' === source
+    }
+    return config === source;
+}
 class ParserAdapter extends adapter_core_1.Adapter {
     states = {};
     timers = {};
@@ -122,14 +152,12 @@ class ParserAdapter extends adapter_core_1.Adapter {
         this.on('log', this.onLog);
     }
     onLog = (message) => {
+        console.log(`[${message.severity}] ${message.from}: ${message.message}`);
+        // host has "from" as "host.NAME", but instance is "adapter.X"
         for (const parserId of this.logSubscriptions) {
             if (this.states[parserId]) {
-                if (!this.states[parserId].native.logLevel ||
-                    this.states[parserId].native.logLevel === '*' ||
-                    this.states[parserId].native.logLevel === message.severity) {
-                    if (!this.states[parserId].native.logSource ||
-                        this.states[parserId].native.logSource === '*' ||
-                        this.states[parserId].native.logSource === message.from) {
+                if (compareLogLevel(this.states[parserId].native.logLevel, message.severity)) {
+                    if (compareLogSource(this.states[parserId].native.logSource, message.from)) {
                         this.analyseData(this.states[parserId], message.message, null);
                     }
                 }
@@ -302,11 +330,11 @@ class ParserAdapter extends adapter_core_1.Adapter {
             this.log.debug(`Rule ${obj._id} is disabled, ignoring it`);
             return false;
         }
-        if (!obj.native.link) {
+        if (!obj.native.link && obj.native.type !== 'ioblog') {
             this.log.warn(`No link configured for ${obj._id}, ignoring it`);
             return false;
         }
-        if (!obj.native.link.match(/^https?:\/\//)) {
+        if (obj.native.link && !obj.native.link.match(/^https?:\/\//)) {
             obj.native.link = obj.native.link.replace(/\\/g, '/');
         }
         if (obj.native.type === 'iobstate') {

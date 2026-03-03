@@ -280,10 +280,32 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 .getObjectViewSystem('host', 'system.host.', `system.host.\u9999`)
                 .catch(() => ({})),
         ]);
-        const logSources: string[] = [
-            ...Object.keys(instancesObj).map(id => id.replace(/^system\.adapter\./, '')),
-            ...Object.keys(hostsObj).map(id => id.replace(/^system\.host\./, '')),
+        // Build grouped source list: for each adapter show wildcard then instances;
+        // for hosts show system.host.* wildcard then specific hosts.
+        // Exclude www-only adapters (no log output) and sort.
+        const instances = instancesObj as Record<string, ioBroker.InstanceObject>;
+        const instanceIds = Object.keys(instances)
+            .filter(id => !instances[id]?.common?.onlyWWW)
+            .sort();
+        const hostIds = Object.keys(hostsObj).sort();
+
+        // Group instance IDs by adapter name (system.adapter.NAME.NUM → NAME)
+        const adapterNames = [
+            ...new Set(instanceIds.map(id => id.replace(/^system\.adapter\.([-\w]+)\..+$/, '$1'))),
         ].sort();
+
+        const logSources: string[] = [];
+        for (const adapterName of adapterNames) {
+            const adapterInstances = instanceIds.filter(id => id.startsWith(`system.adapter.${adapterName}.`));
+            if (adapterInstances.length > 1) {
+                logSources.push(`system.adapter.${adapterName}.*`);
+            }
+            logSources.push(...adapterInstances);
+        }
+        if (hostIds.length) {
+            logSources.push('system.host.*');
+            logSources.push(...hostIds);
+        }
 
         this.setState({ rules, alive: state ? (state.val as boolean) : false, logSources });
         await this.props.oContext.socket.subscribeObject(`${this.namespace}*`, this.onObjectChange);
@@ -518,7 +540,11 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                                                 key={src}
                                                 value={src}
                                             >
-                                                {src}
+                                                {src.startsWith('system.host.')
+                                                    ? `${src.replace('system.host.', '')} [host]`
+                                                    : src.startsWith('system.adapter.')
+                                                      ? `${src.replace('system.adapter.', '')} [instance]`
+                                                      : src}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -938,7 +964,11 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                                         key={src}
                                         value={src}
                                     >
-                                        {src}
+                                        {src.startsWith('system.host.')
+                                            ? `${src.replace('system.host.', '')} [host]`
+                                            : src.startsWith('system.adapter.')
+                                              ? `${src.replace('system.adapter.', '')} [instance]`
+                                              : src}
                                     </MenuItem>
                                 ))}
                             </Select>
