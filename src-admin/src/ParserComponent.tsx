@@ -315,8 +315,10 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     async componentWillUnmount(): Promise<void> {
         await this.props.oContext.socket.unsubscribeObject(`${this.namespace}*`, this.onObjectChange);
         this.props.oContext.socket.unsubscribeState(`system.adapter.${this.namespace}*`, this.onAliveChange);
-        this.timerTest && clearTimeout(this.timerTest);
-        this.timerTest = null;
+        if (this.timerTest) {
+            clearTimeout(this.timerTest);
+            this.timerTest = null;
+        }
     }
 
     onObjectChange = (id: string, obj: ioBroker.Object | null | undefined): void => {
@@ -1252,7 +1254,10 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     }
 
     onTest(immediately?: boolean): void {
-        this.timerTest && clearTimeout(this.timerTest);
+        if (this.timerTest) {
+            clearTimeout(this.timerTest);
+            this.timerTest = null;
+        }
         if (this.state.showEditDialog) {
             this.timerTest = setTimeout(
                 () => {

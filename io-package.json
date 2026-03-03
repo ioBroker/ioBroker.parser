@@ -134,12 +134,12 @@
       },
       "dependencies": [
           {
-              "js-controller": ">=5.0.0"
+              "js-controller": ">=6.0.11"
           }
       ],
       "globalDependencies": [
           {
-              "admin": ">=7.6.0"
+              "admin": ">=7.6.17"
           }
       ],
       "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.parser/master/admin/parser.png",
