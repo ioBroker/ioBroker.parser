@@ -34,8 +34,7 @@
     "@iobroker/dev-server": "^0.8.0",
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/testing": "^5.2.2",
-    "@iobroker/legacy-testing": "^2.0.2",
-    "mocha": "^11.7.5"
+    "@iobroker/legacy-testing": "^2.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
