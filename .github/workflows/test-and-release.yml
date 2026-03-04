@@ -40,16 +40,17 @@ jobs:
 
     needs: [check-and-lint]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: ioBroker/testing-action-adapter@v1.1.1
         with:
           build: true
-          os: 'ubuntu-latest'
+          os: ${{ matrix.os }}
           node-version: ${{ matrix.node-version }}
           screenshots-path: 'tmp/screenshots/**/*.png'
 
