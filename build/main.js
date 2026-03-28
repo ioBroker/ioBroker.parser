@@ -101,7 +101,12 @@ function iobUriParse(uri) {
     return result;
 }
 const LOG_LEVEL_SEVERITY = { error: 0, warn: 1, info: 2, debug: 3, silly: 4 };
-/** Returns true if `messageSeverity` is at least as severe as `configLevel`. */
+/**
+ * Returns true if `messageSeverity` is at least as severe as `configLevel`.
+ *
+ * @param configLevel
+ * @param messageSeverity
+ */
 function compareLogLevel(configLevel, messageSeverity) {
     if (!configLevel || configLevel === '*') {
         return true;
@@ -219,8 +224,7 @@ class ParserAdapter extends adapter_core_1.Adapter {
                 const oldNative = this.states[id].native;
                 const isSubscriptionType = (t) => t === 'iobstate' || t === 'iobfile' || t === 'ioblog';
                 const needsReset = oldNative.interval !== newObj.native.interval ||
-                    this.states[id].common.enabled !==
-                        newObj.common.enabled ||
+                    this.states[id].common.enabled !== newObj.common.enabled ||
                     oldNative.type !== newObj.native.type ||
                     (oldNative.link !== newObj.native.link &&
                         (isSubscriptionType(oldNative.type) || isSubscriptionType(newObj.native.type)));
@@ -759,7 +763,9 @@ class ParserAdapter extends adapter_core_1.Adapter {
         const curStates = [];
         const curLinks = [];
         for (const id of Object.keys(this.states)) {
-            if (this.states[id].native.interval === interval &&
+            // skip disabled rules - they should not be polled even if the timer exists for other rules with the same interval
+            if (this.states[id].common.enabled !== false &&
+                this.states[id].native.interval === interval &&
                 this.states[id].native.type !== 'iobfile' &&
                 this.states[id].native.type !== 'iobstate' &&
                 this.states[id].native.type !== 'ioblog' &&
