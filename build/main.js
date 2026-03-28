@@ -759,7 +759,9 @@ class ParserAdapter extends adapter_core_1.Adapter {
         const curStates = [];
         const curLinks = [];
         for (const id of Object.keys(this.states)) {
-            if (this.states[id].native.interval === interval &&
+            // skip disabled rules - they should not be polled even if the timer exists for other rules with the same interval
+            if (this.states[id].common.enabled !== false &&
+                this.states[id].native.interval === interval &&
                 this.states[id].native.type !== 'iobfile' &&
                 this.states[id].native.type !== 'iobstate' &&
                 this.states[id].native.type !== 'ioblog' &&

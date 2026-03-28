@@ -155,7 +155,7 @@ class ParserAdapter extends Adapter {
         this.on('log', this.onLog);
     }
 
-    onLog = (message: ioBroker.LogMessage): void => {
+    onLog = (message: { severity: string; from: string; message: string; ts: number }): void => {
         console.log(`[${message.severity}] ${message.from}: ${message.message}`);
         // host has "from" as "host.NAME", but instance is "adapter.X"
         for (const parserId of this.logSubscriptions) {
