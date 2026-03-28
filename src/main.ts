@@ -4,7 +4,14 @@ import path from 'node:path';
 import fs from 'node:fs';
 import axios from 'axios';
 
-import type { LogMessage, ParserAdapterConfig, ParserStateObject, QueueEntry, ReadLinkCallback, TimerEntry } from './types';
+import type {
+    LogMessage,
+    ParserAdapterConfig,
+    ParserStateObject,
+    QueueEntry,
+    ReadLinkCallback,
+    TimerEntry,
+} from './types';
 
 const regexFlags: Record<string, string> = {
     global: 'g',
@@ -100,7 +107,12 @@ function iobUriParse(uri: IobUri): IobUriParsed {
 
 const LOG_LEVEL_SEVERITY: Record<string, number> = { error: 0, warn: 1, info: 2, debug: 3, silly: 4 };
 
-/** Returns true if `messageSeverity` is at least as severe as `configLevel`. */
+/**
+ * Returns true if `messageSeverity` is at least as severe as `configLevel`.
+ *
+ * @param configLevel
+ * @param messageSeverity
+ */
 function compareLogLevel(configLevel: string | undefined, messageSeverity: string): boolean {
     if (!configLevel || configLevel === '*') {
         return true;
@@ -226,8 +238,7 @@ class ParserAdapter extends Adapter {
                     t === 'iobstate' || t === 'iobfile' || t === 'ioblog';
                 const needsReset =
                     oldNative.interval !== newObj.native.interval ||
-                    this.states[id].common.enabled !==
-                        newObj.common.enabled ||
+                    this.states[id].common.enabled !== newObj.common.enabled ||
                     oldNative.type !== newObj.native.type ||
                     (oldNative.link !== newObj.native.link &&
                         (isSubscriptionType(oldNative.type) || isSubscriptionType(newObj.native.type)));
