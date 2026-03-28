@@ -852,7 +852,9 @@ class ParserAdapter extends Adapter {
         const curStates: string[] = [];
         const curLinks: string[] = [];
         for (const id of Object.keys(this.states)) {
+            // skip disabled rules - they should not be polled even if the timer exists for other rules with the same interval
             if (
+                (this.states[id].common as ioBroker.StateCommon & { enabled?: boolean }).enabled !== false &&
                 this.states[id].native.interval === interval &&
                 this.states[id].native.type !== 'iobfile' &&
                 this.states[id].native.type !== 'iobstate' &&
