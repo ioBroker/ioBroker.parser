@@ -4,7 +4,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import axios from 'axios';
 
-import type { ParserAdapterConfig, ParserStateObject, QueueEntry, ReadLinkCallback, TimerEntry } from './types';
+import type { LogMessage, ParserAdapterConfig, ParserStateObject, QueueEntry, ReadLinkCallback, TimerEntry } from './types';
 
 const regexFlags: Record<string, string> = {
     global: 'g',
@@ -155,7 +155,7 @@ class ParserAdapter extends Adapter {
         this.on('log', this.onLog);
     }
 
-    onLog = (message: { severity: string; from: string; message: string; ts: number }): void => {
+    onLog = (message: LogMessage): void => {
         console.log(`[${message.severity}] ${message.from}: ${message.message}`);
         // host has "from" as "host.NAME", but instance is "adapter.X"
         for (const parserId of this.logSubscriptions) {
@@ -226,8 +226,8 @@ class ParserAdapter extends Adapter {
                     t === 'iobstate' || t === 'iobfile' || t === 'ioblog';
                 const needsReset =
                     oldNative.interval !== newObj.native.interval ||
-                    (this.states[id].common as ioBroker.StateCommon & { enabled?: boolean }).enabled !==
-                        (newObj.common as ioBroker.StateCommon & { enabled?: boolean }).enabled ||
+                    this.states[id].common.enabled !==
+                        newObj.common.enabled ||
                     oldNative.type !== newObj.native.type ||
                     (oldNative.link !== newObj.native.link &&
                         (isSubscriptionType(oldNative.type) || isSubscriptionType(newObj.native.type)));
@@ -361,7 +361,7 @@ class ParserAdapter extends Adapter {
         obj.native.item = parseFloat(String(obj.native.item)) || 0;
         obj.regex = new RegExp(obj.native.regex, obj.native.item || obj.common.type === 'array' ? 'g' : '');
 
-        if ((obj.common as ioBroker.StateCommon & { enabled?: boolean }).enabled === false) {
+        if (obj.common.enabled === false) {
             this.log.debug(`Rule ${obj._id} is disabled, ignoring it`);
             return false;
         }
@@ -854,7 +854,7 @@ class ParserAdapter extends Adapter {
         for (const id of Object.keys(this.states)) {
             // skip disabled rules - they should not be polled even if the timer exists for other rules with the same interval
             if (
-                (this.states[id].common as ioBroker.StateCommon & { enabled?: boolean }).enabled !== false &&
+                this.states[id].common.enabled !== false &&
                 this.states[id].native.interval === interval &&
                 this.states[id].native.type !== 'iobfile' &&
                 this.states[id].native.type !== 'iobstate' &&
