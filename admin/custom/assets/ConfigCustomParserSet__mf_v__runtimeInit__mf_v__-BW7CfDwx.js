@@ -1,1 +1,0 @@
-const i="__mf_init____mf__virtual/ConfigCustomParserSet__mf_v__runtimeInit__mf_v__.js__";if(!globalThis[i]){let _,t;const e=new Promise((s,o)=>{_=s,t=o});globalThis[i]={initPromise:e,initResolve:_,initReject:t}}const{initPromise:n,initResolve:l,initReject:a}=globalThis[i];export{n as a,l as i};

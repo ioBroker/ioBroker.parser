@@ -1,0 +1,1 @@
+import{g as e}from"./ConfigCustomParserSet__loadShare__react__loadShare__.js_commonjs-proxy-BlhiEPf1.js";import{C as r}from"./ConfigCustomParserSet__loadShare__react_mf_2_dom__loadShare__.js-D8UyoWDG.js";const _=e(r);export{_ as r};

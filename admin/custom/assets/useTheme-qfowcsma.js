@@ -1,1 +1,0 @@
-import{_ as n}from"./ConfigCustomParserSet__loadShare__react__loadShare__-DFWkjxiL.js";import{Y as o,e as s}from"./createTheme-BZ-DLVVv.js";function m(e){return Object.keys(e).length===0}function r(e=null){const t=n.useContext(o);return!t||m(t)?e:t}const u=s();function h(e=u){return r(e)}export{r as a,h as u};

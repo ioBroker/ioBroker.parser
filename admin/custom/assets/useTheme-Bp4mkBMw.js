@@ -1,0 +1,1 @@
+import{n}from"./ConfigCustomParserSet__loadShare__react__loadShare__.js-BmxYe3f6.js";import{Y as m,e as s}from"./createTheme-DbwPHMnw.js";function o(e){return Object.keys(e).length===0}function r(e=null){const t=n(m);return!t||o(t)?e:t}const u=s();function f(e=u){return r(e)}export{r as a,f as u};

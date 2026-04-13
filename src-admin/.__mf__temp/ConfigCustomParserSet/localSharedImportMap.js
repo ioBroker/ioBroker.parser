@@ -39,18 +39,20 @@
       
           "@iobroker/adapter-react-v5": {
             name: "@iobroker/adapter-react-v5",
-            version: "8.1.1",
+            version: "8.1.8",
             scope: ["default"],
             loaded: false,
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"@iobroker/adapter-react-v5"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"@iobroker/adapter-react-v5"}' must be provided by host`);
               }
               usedShared["@iobroker/adapter-react-v5"].loaded = true
               const {"@iobroker/adapter-react-v5": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "@iobroker/adapter-react-v5" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,
@@ -69,18 +71,20 @@
         ,
           "@iobroker/json-config": {
             name: "@iobroker/json-config",
-            version: "8.2.1",
+            version: "8.3.8",
             scope: ["default"],
             loaded: false,
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"@iobroker/json-config"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"@iobroker/json-config"}' must be provided by host`);
               }
               usedShared["@iobroker/json-config"].loaded = true
               const {"@iobroker/json-config": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "@iobroker/json-config" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,
@@ -105,12 +109,14 @@
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"@mui/icons-material"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"@mui/icons-material"}' must be provided by host`);
               }
               usedShared["@mui/icons-material"].loaded = true
               const {"@mui/icons-material": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "@mui/icons-material" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,
@@ -135,12 +141,14 @@
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"@mui/material"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"@mui/material"}' must be provided by host`);
               }
               usedShared["@mui/material"].loaded = true
               const {"@mui/material": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "@mui/material" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,
@@ -165,12 +173,14 @@
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"react"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"react"}' must be provided by host`);
               }
               usedShared["react"].loaded = true
               const {"react": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "react" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,
@@ -195,12 +205,14 @@
             from: "ConfigCustomParserSet",
             async get () {
               if (false) {
-                throw new Error(`Shared module '${"react-dom"}' must be provided by host`);
+                throw new Error(`[Module Federation] Shared module '${"react-dom"}' must be provided by host`);
               }
               usedShared["react-dom"].loaded = true
               const {"react-dom": pkgDynamicImport} = importMap
               const res = await pkgDynamicImport()
-              const exportModule = {...res}
+              const exportModule = false && "react-dom" === "react"
+                ? (res?.default ?? res)
+                : {...res}
               // All npm packages pre-built by vite will be converted to esm
               Object.defineProperty(exportModule, "__esModule", {
                 value: true,

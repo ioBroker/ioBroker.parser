@@ -1,7 +1,7 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import https from 'node:https';
 import path from 'node:path';
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import axios from 'axios';
 
 import type {
@@ -59,47 +59,28 @@ function iobUriParse(uri: IobUri): IobUriParsed {
         result.address = uri; // data:image/jpeg;base64,...
     } else {
         // no protocol provided
-        const parts = uri.split('/');
-        if (parts.length === 2) {
-            result.address = parts[0];
-            result.path = parts[1];
-            if (result.path.includes('.')) {
+        const slashPos = uri.indexOf('/');
+        if (slashPos === -1) {
+            // no slash at all, e.g. "adapter.0.stateId"
+            result.address = uri;
+            result.type = 'state';
+        } else {
+            result.address = uri.substring(0, slashPos);
+            result.path = uri.substring(slashPos + 1);
+
+            const STATE_PATHS = ['val', 'q', 'ack', 'ts', 'lc', 'from', 'user', 'expire', 'c'];
+            const OBJECT_PATHS = ['common', 'native', 'acl', 'type'];
+
+            if (STATE_PATHS.includes(result.path)) {
+                result.type = 'state';
+            } else if (OBJECT_PATHS.includes(result.path) || result.path.includes('.')) {
                 result.type = 'object';
-            } else if (result.path) {
-                if (
-                    result.path === 'val' ||
-                    result.path === 'q' ||
-                    result.path === 'ack' ||
-                    result.path === 'ts' ||
-                    result.path === 'lc' ||
-                    result.path === 'from' ||
-                    result.path === 'user' ||
-                    result.path === 'expire' ||
-                    result.path === 'c'
-                ) {
-                    result.type = 'state';
-                } else if (
-                    result.path === 'common' ||
-                    result.path === 'native' ||
-                    result.path === 'from' ||
-                    result.path === 'acl' ||
-                    result.path === 'type'
-                ) {
-                    result.type = 'object';
-                } else {
-                    throw new Error(`Unknown path: ${result.path}`);
-                }
+            } else if (result.path.includes('/')) {
+                // multi-segment path like "instance/sub/path" → treat as file
+                result.type = 'file';
             } else {
                 result.type = 'state';
             }
-        } else if (parts.length === 1) {
-            result.address = parts[0];
-            result.type = 'state';
-        } else {
-            // it is a file
-            result.address = parts.shift() || '';
-            result.type = 'file';
-            result.path = parts.join('/');
         }
     }
     return result;
@@ -152,6 +133,7 @@ class ParserAdapter extends Adapter {
     private stateSubscriptions: Record<string, string[]> = {};
     private fileSubscriptions: Record<string, string[]> = {};
     private logSubscriptions: string[] = [];
+    private httpsAgent: https.Agent | null = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -162,13 +144,27 @@ class ParserAdapter extends Adapter {
             fileChange: (id: string, fileName: string) => this.onFileChange(id, fileName),
             message: obj => this.onMessage(obj),
             ready: () => this.main(),
+            unload: callback => this.onUnload(callback),
             logTransporter: true,
         });
         this.on('log', this.onLog);
     }
 
+    private onUnload(callback: () => void): void {
+        try {
+            for (const entry of Object.values(this.timers)) {
+                clearInterval(entry.timer);
+            }
+            this.timers = {};
+            this.httpsAgent?.destroy();
+            this.httpsAgent = null;
+        } catch {
+            // ignore
+        }
+        callback();
+    }
+
     onLog = (message: LogMessage): void => {
-        console.log(`[${message.severity}] ${message.from}: ${message.message}`);
         // host has "from" as "host.NAME", but instance is "adapter.X"
         for (const parserId of this.logSubscriptions) {
             if (this.states[parserId]) {
@@ -338,8 +334,9 @@ class ParserAdapter extends Adapter {
         obj.native.interval = obj.native.interval || this.config.pollInterval;
         obj.native.regex = obj.native.regex || '.+';
 
-        if (obj.native.regex[0] === '/') {
-            obj.native.regex = obj.native.regex.substring(1, obj.native.regex.length - 1);
+        const slashMatch = obj.native.regex.match(/^\/(.+)\/([gimsuy]*)$/);
+        if (slashMatch) {
+            obj.native.regex = slashMatch[1];
         }
         obj.native.substituteOld = obj.native.substituteOld === 'true' || obj.native.substituteOld === true;
 
@@ -703,7 +700,7 @@ class ParserAdapter extends Adapter {
                             if (obj.native.substitute !== undefined) {
                                 obj.value.val = obj.native.substitute;
                             }
-                            console.log(`Use substitution: "${obj.native.substitute}"`);
+                            this.log.debug(`Use substitution: "${obj.native.substitute}"`);
 
                             this.setForeignState(
                                 obj._id,
@@ -762,9 +759,7 @@ class ParserAdapter extends Adapter {
                 const res = await axios({
                     method: 'GET',
                     url: link,
-                    httpsAgent: new https.Agent({
-                        rejectUnauthorized: this.config.acceptInvalidCertificates === false,
-                    }),
+                    httpsAgent: this.httpsAgent,
                     insecureHTTPParser: !!this.config.useInsecureHTTPParser,
                     timeout: this.config.requestTimeout,
                     transformResponse: [],
@@ -791,18 +786,17 @@ class ParserAdapter extends Adapter {
 
             this.log.debug(`Read file: ${resolvedLink}`);
 
-            if (fs.existsSync(resolvedLink)) {
-                let data: string;
-                try {
-                    data = fs.readFileSync(resolvedLink).toString('utf8');
-                } catch (e) {
-                    this.log.warn(`Cannot read file "${resolvedLink}": ${e}`);
-                    callback(String(e), null, link);
-                    return;
-                }
+            try {
+                const data = await fs.readFile(resolvedLink, 'utf8');
                 callback(null, data, link);
-            } else {
-                callback('File does not exist', null, link);
+            } catch (e: unknown) {
+                const err = e as NodeJS.ErrnoException;
+                if (err.code === 'ENOENT') {
+                    callback('File does not exist', null, link);
+                } else {
+                    this.log.warn(`Cannot read file "${resolvedLink}": ${err}`);
+                    callback(String(err), null, link);
+                }
             }
         }
     }
@@ -816,45 +810,59 @@ class ParserAdapter extends Adapter {
 
     private addToRemoteQueue(link: string, callback: ReadLinkCallback): void {
         this.log.debug(`Queue ${link}`);
-        const url = new URL(link);
-
-        if (!(url.hostname in this.hostnamesQueue)) {
-            // No queue object yet, make one
-            this.log.debug(`Creating request queue for ${url.hostname}`);
-            this.hostnamesQueue[url.hostname] = [];
+        let hostname: string;
+        try {
+            hostname = new URL(link).hostname;
+        } catch {
+            this.log.warn(`Invalid URL: ${link}`);
+            callback('Invalid URL', null, link);
+            return;
         }
-        const requestQueue = this.hostnamesQueue[url.hostname];
+
+        if (!(hostname in this.hostnamesQueue)) {
+            // No queue object yet, make one
+            this.log.debug(`Creating request queue for ${hostname}`);
+            this.hostnamesQueue[hostname] = [];
+        }
+        const requestQueue = this.hostnamesQueue[hostname];
         requestQueue.push({ link, callback });
 
         if (requestQueue.length === 1) {
             // First item in queue, process it. Otherwise, will get done when current request is removed.
-            this.processRemoteQueue(url.hostname);
+            this.processRemoteQueue(hostname);
         }
     }
 
     private removeFromRemoteQueue(link: string): void {
         this.log.debug(`Dequeue ${link}`);
-        const url = new URL(link);
-        const requestQueue = this.hostnamesQueue[url.hostname];
+        let hostname: string;
+        try {
+            hostname = new URL(link).hostname;
+        } catch {
+            return;
+        }
+        const requestQueue = this.hostnamesQueue[hostname];
+        if (!requestQueue) {
+            return;
+        }
 
         // Remove first entry (should be the request that just finished)
         requestQueue.shift();
 
         // And process the next request if there is one
         if (requestQueue.length > 0) {
-            // Make sure correct delay has passed or wait until for that point
-            const delay = Date.now() - this.hostnamesRequestTime[url.hostname];
-            this.log.debug(`Next delay for ${url.hostname} is ${delay}`);
-            if (delay < this.config.requestDelay) {
-                this.setTimeout(() => this.processRemoteQueue(url.hostname), delay);
+            // Make sure correct delay has passed or wait for the remaining time
+            const elapsed = Date.now() - this.hostnamesRequestTime[hostname];
+            const remaining = this.config.requestDelay - elapsed;
+            this.log.debug(`Next delay for ${hostname}: elapsed=${elapsed}, remaining=${remaining}`);
+            if (remaining > 0) {
+                this.setTimeout(() => this.processRemoteQueue(hostname), remaining);
             } else {
-                // Request already took longer than timeout so start instantly.
-                // Issue a warning because this means delay is probably too short.
-                this.log.warn(`No delay before next request to ${url.hostname}`);
-                this.processRemoteQueue(url.hostname);
+                // Request already took longer than the configured delay, so start instantly
+                this.processRemoteQueue(hostname);
             }
         } else {
-            this.log.debug(`Request queue for ${url.hostname} is now empty`);
+            this.log.debug(`Request queue for ${hostname} is now empty`);
         }
     }
 
@@ -881,6 +889,14 @@ class ParserAdapter extends Adapter {
         }
         this.log.debug(`States for current Interval (${interval}): ${JSON.stringify(curStates)}`);
 
+        let pending = curLinks.length;
+        const onLinkDone = (): void => {
+            pending--;
+            if (pending <= 0) {
+                callback?.();
+            }
+        };
+
         for (let j = 0; j < curLinks.length; j++) {
             const thisLink = curLinks[j];
             this.log.debug(`Do Link: ${thisLink}`);
@@ -890,14 +906,18 @@ class ParserAdapter extends Adapter {
                 this.addToRemoteQueue(thisLink, (error, text, link) => {
                     // Remove from queue before performing actual analyse callback
                     this.removeFromRemoteQueue(link);
-                    this.analyseDataForStates(curStates, link, text, error, callback);
+                    this.analyseDataForStates(curStates, link, text, error, onLinkDone);
                 });
             } else {
                 // Just read it instantly
                 void this.readLink(thisLink, (error, text, link) =>
-                    this.analyseDataForStates(curStates, link, text, error, callback),
+                    this.analyseDataForStates(curStates, link, text, error, onLinkDone),
                 );
             }
+        }
+
+        if (!curLinks.length) {
+            callback?.();
         }
     }
 
@@ -908,6 +928,10 @@ class ParserAdapter extends Adapter {
         this.config.userAgent =
             this.config.userAgent ||
             'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
+
+        this.httpsAgent = new https.Agent({
+            rejectUnauthorized: this.config.acceptInvalidCertificates === false,
+        });
 
         // read current existing objects
         try {

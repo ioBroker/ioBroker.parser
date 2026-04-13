@@ -394,9 +394,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 if (JSON.stringify(this.state.rules![ruleIndex]) === JSON.stringify(rules[ruleIndex])) {
                     return;
                 }
-                console.log('Detected change');
-                console.log(`old: ${JSON.stringify(this.state.rules![ruleIndex])}`);
-                console.log(`new: ${JSON.stringify(rules[ruleIndex])}`);
+
             } else {
                 // add new rule
                 rules.push({
@@ -883,8 +881,8 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     cloned._id = `${this.namespace}${cloned.common.name}`;
                     await this.props.oContext.socket.setObject(`${this.namespace}${cloned.common.name}`, {
                         type: 'state',
-                        common: rule.common as ioBroker.StateCommon,
-                        native: rule.native,
+                        common: cloned.common as ioBroker.StateCommon,
+                        native: cloned.native,
                     });
                 }}
             >
@@ -1567,6 +1565,10 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         onSave={editedRule => {
                             const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
                             const index = rules.findIndex(r => r._id === editedRule._id);
+                            if (index === -1) {
+                                this.setState({ showEditDialog: null });
+                                return;
+                            }
                             Object.assign(rules[index].common, editedRule.common);
                             Object.assign(rules[index].native, editedRule.native);
                             this.setState({ showEditDialog: null, rules }, () => this.onAutoSave(index));
