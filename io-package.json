@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "news": {
+      "3.1.0": {
+        "en": "Updated dependencies\nFixed disabled rules still being polled when sharing an interval\nFixed possible problems\nAdded possibility to use CRON as interval",
+        "de": "Aktualisierte Abhängigkeiten\nBehobene Behindertenregeln werden immer noch beim Austausch eines Intervalls abgefragt\nMögliche Probleme behoben\nZusätzliche Möglichkeit, CRON als Intervall zu verwenden",
+        "ru": "Обновленные зависимости\nПравила с фиксированными инвалидами все еще обсуждаются при совместном использовании интервала\nИсправлены возможные проблемы\nДобавлена возможность использования CRON в качестве интервала",
+        "pt": "Dependências atualizadas\nRegras fixas desactivadas ainda a ser pesquisadas ao partilhar um intervalo\nCorrigidos possíveis problemas\nAdicionada possibilidade de usar CRON como intervalo",
+        "nl": "Bijgewerkte afhankelijkheden\nVaste regels voor gehandicapten worden nog steeds ondervraagd bij het delen van een interval\nVaste problemen\nToegevoegde mogelijkheid om CRON als interval te gebruiken",
+        "fr": "Dépendances actualisées\nRègles désactivées fixes toujours en cours de sondage lors du partage d'un intervalle\nCorrection des problèmes éventuels\nPossibilité d'utiliser CRON comme intervalle",
+        "it": "Dipendenze aggiornate\nRegole disabilità fissa ancora in fase di condivisione di un intervallo\nProblemi possibili risolti\nAggiunta possibilità di utilizzare CRON come intervallo",
+        "es": "Dependencias actualizadas\nReglas fijas para minusválidos aún siendo encuestadas al compartir un intervalo\nProblemas posibles fijos\nAñadido posibilidad de utilizar CRON como intervalo",
+        "pl": "Aktualizacja zależności\nUstalone zasady wyłączone nadal są sondowane podczas dzielenia interwału\nNaprawiono ewentualne problemy\nDodano możliwość użycia CRON jako interwał",
+        "uk": "Оновлені залежності\nВиправлені правила відключення, як і раніше запилюються при поділі інтервалу\nВиправлено можливі проблеми\nДодано можливість використання CRON в інтервалі",
+        "zh-cn": "更新的依赖关系\n共享间隔时仍在对固定残废规则进行投票\n可能出现的问题\n添加使用 CRON 作为间隔的可能性"
+      },
       "3.0.0": {
         "en": "Migrated the new NPM token\nMigrated to TypeScript\nAdded parsing of states, ioBroker files and logs\nFixing position marking in test dialog\nAdded mobile view\nMinimal Node.js version is now 20\nAdded export import via CSV file",
         "de": "Migrierte den neuen NPM-Token\nZu TypeScript migriert\nErgänzung von Zuständen, ioBroker Dateien und Protokolle\nPositionsmarkierung im Prüfdialog fixieren\nMobile Ansicht\nMinimal Node.js Version ist jetzt 20\nExport import via CSV-Datei hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Tylko węzeł 16 i więcej jest wspierany",
         "uk": "Тільки вузол 16 і вище підтримується",
         "zh-cn": "只支助了16个和较高职等"
-      },
-      "2.0.7": {
-        "en": "added the user agent to prevent timeout blocking\nAdded a configurable userAgent option",
-        "de": "den benutzer agenten hinzugefügt, um die timeout-blockung zu verhindern\nHinzufügen einer konfigurierbaren userAgent Option",
-        "ru": "добавил агент пользователя для предотвращения блокировки timeout\nДобавлен конфигурируемый пользовательAgent option",
-        "pt": "adicionou o agente de usuário para evitar bloqueio de tempo limite\nAdicionado uma opção configurável userAgent",
-        "nl": "voegde de gebruiker toe om tijdversperring te voorkomen\nVoegde een aangepaste gebruikeraanval toe",
-        "fr": "a ajouté l'agent utilisateur pour empêcher le blocage du timeout\nAjout d'une option utilisateur configurable",
-        "it": "aggiunto l'agente utente per evitare il blocco timeout\nAggiunto un utente configurabileAgent opzione",
-        "es": "agregó el agente del usuario para evitar el bloqueo de tiempo\nAñadido una opción configurable userAgent",
-        "pl": "dodano użytkownikowi agentowi, aby zapobiec blokowaniu czasu\nAdded konfigurowalny opcja użytkownikaAgent",
-        "uk": "додано агента користувача для запобігання блокування часу\nДодано параметр configurable userAgent",
-        "zh-cn": "增加用户代理人以防止时间停滞\n添加一个易燃用户选择"
       }
     },
     "titleLang": {
