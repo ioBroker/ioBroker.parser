@@ -8,6 +8,7 @@ const node_https_1 = __importDefault(require("node:https"));
 const node_path_1 = __importDefault(require("node:path"));
 const promises_1 = __importDefault(require("node:fs/promises"));
 const axios_1 = __importDefault(require("axios"));
+const croner_1 = require("croner");
 const regexFlags = {
     global: 'g',
     ignoreCase: 'i',
@@ -124,6 +125,7 @@ class ParserAdapter extends adapter_core_1.Adapter {
     stateSubscriptions = {};
     fileSubscriptions = {};
     logSubscriptions = [];
+    cronJobs = {};
     httpsAgent = null;
     constructor(options = {}) {
         super({
@@ -145,6 +147,10 @@ class ParserAdapter extends adapter_core_1.Adapter {
                 clearInterval(entry.timer);
             }
             this.timers = {};
+            for (const job of Object.values(this.cronJobs)) {
+                job.stop();
+            }
+            this.cronJobs = {};
             this.httpsAgent?.destroy();
             this.httpsAgent = null;
         }
@@ -376,6 +382,21 @@ class ParserAdapter extends adapter_core_1.Adapter {
             return false; // no timer for log-subscribed rules
         }
         if (!onlyUpdate) {
+            if (obj.native.cron) {
+                // Cron-based scheduling: one cron job per state
+                if (!this.cronJobs[obj._id]) {
+                    try {
+                        this.cronJobs[obj._id] = new croner_1.Cron(obj.native.cron, () => this.pollState(obj._id));
+                        this.log.debug(`Cron job created for ${obj._id}: ${obj.native.cron}`);
+                    }
+                    catch (e) {
+                        this.log.warn(`Invalid cron expression for ${obj._id}: "${obj.native.cron}" - ${e}`);
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
             if (!this.timers[obj.native.interval]) {
                 this.timers[obj.native.interval] = {
                     interval: obj.native.interval,
@@ -419,6 +440,11 @@ class ParserAdapter extends adapter_core_1.Adapter {
             if (!this.logSubscriptions.length) {
                 await this.requireLog?.(false);
             }
+        }
+        if (this.cronJobs[obj._id]) {
+            this.cronJobs[obj._id].stop();
+            delete this.cronJobs[obj._id];
+            return;
         }
         if (this.timers[obj.native.interval] === undefined) {
             return;
@@ -768,6 +794,23 @@ class ParserAdapter extends adapter_core_1.Adapter {
             this.log.debug(`Request queue for ${hostname} is now empty`);
         }
     }
+    pollState(id) {
+        const obj = this.states[id];
+        if (!obj || obj.common.enabled === false) {
+            return;
+        }
+        this.log.debug(`Cron poll for ${id}`);
+        const link = obj.native.link;
+        if (this.isRemoteLink(link) && this.config.requestDelay) {
+            this.addToRemoteQueue(link, (error, text, _link) => {
+                this.removeFromRemoteQueue(_link);
+                this.analyseData(obj, text, error);
+            });
+        }
+        else {
+            void this.readLink(link, (error, text) => this.analyseData(obj, text, error));
+        }
+    }
     poll(interval, callback) {
         // first mark all entries as not processed and collect the states for current interval that are not already planned for processing
         const curStates = [];
@@ -861,6 +904,10 @@ class ParserAdapter extends adapter_core_1.Adapter {
         // trigger all parsers first time
         for (const timerEntry of Object.values(this.timers)) {
             this.poll(timerEntry.interval);
+        }
+        // Initial read for cron-scheduled rules
+        for (const id of Object.keys(this.cronJobs)) {
+            this.pollState(id);
         }
         // Initial read for state-subscribed rules
         for (const [stateId, parserIds] of Object.entries(this.stateSubscriptions)) {

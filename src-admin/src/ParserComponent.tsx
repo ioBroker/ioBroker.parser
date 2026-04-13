@@ -24,7 +24,7 @@ import { Edit, Delete, ContentCopy, Add, FolderOpen, AccountTree, FileDownload, 
 // invalid
 // import Confirm from '@iobroker/adapter-react-v5/Confirm';
 // valid
-import { I18n, Confirm, DialogSelectID, DialogSelectFile } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm, DialogSelectID, DialogSelectFile, DialogCron } from '@iobroker/adapter-react-v5';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
 
 import { EditDialog } from './EditDialog';
@@ -92,7 +92,7 @@ const styles: Record<string, any> = {
         width: 50,
     },
     colInterval: {
-        width: 50,
+        width: 130,
     },
     colLogLevel: {
         width: 70,
@@ -134,6 +134,7 @@ interface ParserComponentState extends ConfigGenericState {
     showDeleteDialog: null | number;
     showSelectIdDialog: number | null;
     showSelectFileDialog: number | null;
+    showCronDialog: number | null;
     logSources: string[];
     changed: number[];
     width: number;
@@ -220,6 +221,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             showDeleteDialog: null,
             showSelectIdDialog: null,
             showSelectFileDialog: null,
+            showCronDialog: null,
             logSources: [],
             changed: [],
             alive: false,
@@ -260,6 +262,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     item: state.native.item || 0,
                     regex: state.native.regex,
                     interval: state.native.interval,
+                    cron: state.native.cron || '',
                     substitute: state.native.substitute,
                     substituteOld: state.native.substituteOld,
                     offset: state.native.offset,
@@ -384,6 +387,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         item: obj.native.item || 0,
                         regex: obj.native.regex,
                         interval: obj.native.interval,
+                        cron: obj.native.cron || '',
                         substitute: obj.native.substitute,
                         substituteOld: obj.native.substituteOld,
                         offset: obj.native.offset,
@@ -394,7 +398,6 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 if (JSON.stringify(this.state.rules![ruleIndex]) === JSON.stringify(rules[ruleIndex])) {
                     return;
                 }
-
             } else {
                 // add new rule
                 rules.push({
@@ -414,6 +417,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         item: obj.native.item || 0,
                         regex: obj.native.regex,
                         interval: obj.native.interval,
+                        cron: obj.native.cron || '',
                         substitute: obj.native.substitute,
                         substituteOld: obj.native.substituteOld,
                         offset: obj.native.offset,
@@ -581,6 +585,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 item: 0,
                 regex: '',
                 interval: '',
+                cron: '',
                 substitute: '',
                 substituteOld: true,
                 offset: 0,
@@ -605,6 +610,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             'commonType',
             'unit',
             'interval',
+            'cron',
             'factor',
             'offset',
             'substitute',
@@ -627,6 +633,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 rule.common.type || 'string',
                 rule.common.unit || '',
                 String(rule.native.interval || ''),
+                rule.native.cron || '',
                 String(rule.native.factor ?? ''),
                 String(rule.native.offset ?? ''),
                 String(rule.native.substitute ?? ''),
@@ -683,6 +690,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     regex: get('regex'),
                     item: Number(get('item')) || 0,
                     interval: get('interval'),
+                    cron: get('cron') || '',
                     factor: get('factor') !== '' ? Number(get('factor')) : 1,
                     offset: get('offset') !== '' ? Number(get('offset')) : 0,
                     substitute: get('substitute') || undefined,
@@ -1065,18 +1073,48 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         ) : null}
                     </TableCell>
                 ) : null}
-                <TableCell
-                    title={I18n.t('parser_Leave it empty if default interval is desired')}
-                    style={styles.cell}
-                >
-                    <TextField
-                        disabled={!!error || !rule.common.enabled}
-                        fullWidth
-                        value={rule.native.interval}
-                        type="number"
-                        onChange={e => this._onChange(index, true, 'interval', e.target.value)}
-                        variant="standard"
-                    />
+                <TableCell style={{ ...styles.cell, whiteSpace: 'nowrap' }}>
+                    <Tooltip title={I18n.t('parser_Use cron expression')}>
+                        <Checkbox
+                            size="small"
+                            disabled={!!error || !rule.common.enabled}
+                            checked={!!rule.native.cron}
+                            onChange={e => {
+                                if (e.target.checked) {
+                                    this.setState({ showCronDialog: index });
+                                } else {
+                                    this._onChange(index, true, 'cron', '');
+                                }
+                            }}
+                        />
+                    </Tooltip>
+                    {rule.native.cron ? (
+                        <span
+                            style={{
+                                cursor: !error && rule.common.enabled ? 'pointer' : 'default',
+                                textDecoration: 'underline',
+                                opacity: !error && rule.common.enabled ? 1 : 0.5,
+                                verticalAlign: 'middle',
+                            }}
+                            onClick={() => {
+                                if (!error && rule.common.enabled) {
+                                    this.setState({ showCronDialog: index });
+                                }
+                            }}
+                        >
+                            {rule.native.cron}
+                        </span>
+                    ) : (
+                        <TextField
+                            disabled={!!error || !rule.common.enabled}
+                            title={I18n.t('parser_Leave it empty if default interval is desired')}
+                            style={{ width: 'calc(100% - 42px)', verticalAlign: 'middle' }}
+                            value={rule.native.interval}
+                            type="number"
+                            onChange={e => this._onChange(index, true, 'interval', e.target.value)}
+                            variant="standard"
+                        />
+                    )}
                 </TableCell>
                 <TableCell style={styles.cell}>
                     <IconButton
@@ -1169,6 +1207,30 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                         this.setState({ showDeleteDialog: null });
                     }
                 }}
+            />
+        );
+    }
+
+    renderCronDialog(): React.JSX.Element | null {
+        if (this.state.showCronDialog === null || !this.state.rules) {
+            return null;
+        }
+        const index = this.state.showCronDialog;
+        if (index < 0 || index >= this.state.rules.length) {
+            return null;
+        }
+        const rule = this.state.rules[index];
+        return (
+            <DialogCron
+                key="cronDialog"
+                noWizard
+                cron={rule.native.cron || '* * * * *'}
+                theme={this.props.oContext.theme}
+                onOk={cron => {
+                    this._onChange(index, true, 'cron', cron);
+                    this.setState({ showCronDialog: null });
+                }}
+                onClose={() => this.setState({ showCronDialog: null })}
             />
         );
     }
@@ -1385,21 +1447,50 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                             </TableRow>
                         ) : null}
                         <TableRow>
-                            <TableCell
-                                style={styles.cardLabel}
-                                title={I18n.t('parser_Leave it empty if default interval is desired')}
-                            >
-                                {I18n.t('parser_Interval')}
+                            <TableCell style={styles.cardLabel}>
+                                <Tooltip title={I18n.t('parser_Use cron expression')}>
+                                    <Checkbox
+                                        size="small"
+                                        disabled={disabled}
+                                        checked={!!rule.native.cron}
+                                        onChange={e => {
+                                            if (e.target.checked) {
+                                                this.setState({ showCronDialog: index });
+                                            } else {
+                                                this._onChange(index, true, 'cron', '');
+                                            }
+                                        }}
+                                    />
+                                </Tooltip>
+                                {rule.native.cron ? I18n.t('parser_Cron') : I18n.t('parser_Interval')}
                             </TableCell>
                             <TableCell style={styles.cardValue}>
-                                <TextField
-                                    disabled={disabled}
-                                    fullWidth
-                                    value={rule.native.interval}
-                                    type="number"
-                                    onChange={e => this._onChange(index, true, 'interval', e.target.value)}
-                                    variant="standard"
-                                />
+                                {rule.native.cron ? (
+                                    <span
+                                        style={{
+                                            cursor: disabled ? 'default' : 'pointer',
+                                            textDecoration: 'underline',
+                                            opacity: disabled ? 0.5 : 1,
+                                        }}
+                                        onClick={() => {
+                                            if (!disabled) {
+                                                this.setState({ showCronDialog: index });
+                                            }
+                                        }}
+                                    >
+                                        {rule.native.cron}
+                                    </span>
+                                ) : (
+                                    <TextField
+                                        disabled={disabled}
+                                        title={I18n.t('parser_Leave it empty if default interval is desired')}
+                                        fullWidth
+                                        value={rule.native.interval}
+                                        type="number"
+                                        onChange={e => this._onChange(index, true, 'interval', e.target.value)}
+                                        variant="standard"
+                                    />
+                                )}
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -1490,9 +1581,9 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                             ) : null}
                             <TableCell
                                 style={{ ...styles.cell, ...styles.colInterval }}
-                                title={I18n.t('parser_Leave it empty if default interval is desired')}
+                                title={I18n.t('parser_Cron expression as alternative to interval')}
                             >
-                                {I18n.t('parser_Interval')}
+                                {I18n.t('parser_Interval')}/{I18n.t('parser_Cron')}
                             </TableCell>
                             <TableCell style={{ ...styles.cell, ...styles.colButtons }}>
                                 <Fab
@@ -1584,6 +1675,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 {this.renderDeleteDialog()}
                 {this.renderSelectIdDialog()}
                 {this.renderSelectFileDialog()}
+                {this.renderCronDialog()}
                 {isNarrow ? this.renderCards() : this.renderTable()}
             </div>
         );

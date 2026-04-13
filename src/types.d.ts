@@ -12,6 +12,7 @@ export interface ParserNative {
     type: 'iobstate' | 'url' | 'ioblog' | 'iobfile' | undefined;
     link: string; // state, file, URL or log
     interval: number;
+    cron: string;
     regex: string;
     item: number;
     factor: number;

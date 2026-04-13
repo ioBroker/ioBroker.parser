@@ -25,6 +25,7 @@ export interface ParserRule {
         item: number | string;
         regex: string;
         interval: number | string;
+        cron: string;
         substitute: string | null | number | boolean | undefined;
         substituteOld: string | null | number | boolean | undefined;
         offset: number | string;
