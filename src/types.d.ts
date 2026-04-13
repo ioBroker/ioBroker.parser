@@ -25,7 +25,8 @@ export interface ParserNative {
     logSource?: string;
 }
 
-export interface ParserStateObject extends Omit<ioBroker.StateObject, 'native'> {
+export interface ParserStateObject extends Omit<ioBroker.StateObject, 'native' | 'common'> {
+    common: ParserStateCommon;
     native: ParserNative;
     value: ioBroker.State;
     regex?: RegExp;
@@ -44,3 +45,14 @@ export interface QueueEntry {
 }
 
 export type ReadLinkCallback = (error: string | null, text: string | null, link: string) => void;
+
+export interface LogMessage {
+    severity: string;
+    from: string;
+    message: string;
+    ts: number;
+}
+
+export interface ParserStateCommon extends ioBroker.StateCommon {
+    enabled?: boolean;
+}
