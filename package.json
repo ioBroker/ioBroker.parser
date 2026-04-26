@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "axios": "^1.15.0",
+    "axios": "^1.15.1",
     "croner": "^10.0.1"
   },
   "devDependencies": {
