@@ -35,7 +35,8 @@
     "@iobroker/dev-server": "^0.8.0",
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/testing": "^5.2.2"
+    "@iobroker/testing": "^5.2.2",
+    "@tsconfig/node20": "^20.1.9"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.parser/issues"
