@@ -143,6 +143,9 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 3.1.0 (2026-04-13)
 * (bluefox) Updated dependencies
 * (TA2k) Fixed disabled rules still being polled when sharing an interval
