@@ -10,7 +10,7 @@ import {
     Checkbox,
     Select,
     MenuItem,
-    Grid2 as Grid,
+    Grid,
     FormControlLabel,
     FormControl,
     InputLabel,
@@ -19,7 +19,7 @@ import {
 
 import { Save, Close, PlayArrow } from '@mui/icons-material';
 
-import { I18n, type IobTheme } from '@iobroker/adapter-react-v5';
+import { I18n, type IobTheme } from '@iobroker/gui-components';
 
 import type { ParserRule } from './types';
 
@@ -79,7 +79,7 @@ interface EditDialogState {
 }
 
 export class EditDialog extends React.Component<EditDialogProps, EditDialogState> {
-    private readonly testTextRef: React.RefObject<HTMLTextAreaElement>;
+    private readonly testTextRef: React.RefObject<HTMLTextAreaElement | null>;
     private timerTest: ReturnType<typeof setTimeout> | null = null;
     private readonly originalRule: string;
 
@@ -322,7 +322,7 @@ export class EditDialog extends React.Component<EditDialogProps, EditDialogState
                                     value={rule.common.type || 'string'}
                                     onChange={e => {
                                         const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                        newRule.common.type = e.target.value as ioBroker.CommonType;
+                                        newRule.common.type = e.target.value;
                                         this.setState({ rule: newRule }, () => this.onTest());
                                     }}
                                     variant="standard"
@@ -361,7 +361,7 @@ export class EditDialog extends React.Component<EditDialogProps, EditDialogState
                                         value={rule.native.logLevel || '*'}
                                         onChange={e => {
                                             const newRule: ParserRule = JSON.parse(JSON.stringify(rule));
-                                            newRule.native.logLevel = e.target.value as ioBroker.LogLevel | '*';
+                                            newRule.native.logLevel = e.target.value;
                                             this.setState({ rule: newRule });
                                         }}
                                         variant="standard"

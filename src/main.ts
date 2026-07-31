@@ -668,7 +668,7 @@ class ParserAdapter extends Adapter {
                         );
                     }
                 } else {
-                    let mArr: string[] = m as string[];
+                    let mArr: string[] = m;
                     if (obj.native.regex.includes('(')) {
                         const _regex = this.cloneRegex(obj.regex, true);
                         mArr = mArr.map(it => {

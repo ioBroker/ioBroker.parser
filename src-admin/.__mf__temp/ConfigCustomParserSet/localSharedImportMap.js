@@ -4,11 +4,6 @@
     import {loadShare} from "@module-federation/runtime";
     const importMap = {
       
-        "@iobroker/adapter-react-v5": async () => {
-          let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_iobroker_mf_1_adapter_mf_2_react_mf_2_v5__prebuild__.js");
-            return pkg;
-        }
-      ,
         "@iobroker/json-config": async () => {
           let pkg = await import("__mf__virtual/ConfigCustomParserSet__prebuild___mf_0_iobroker_mf_1_json_mf_2_config__prebuild__.js");
             return pkg;
@@ -37,38 +32,6 @@
     }
       const usedShared = {
       
-          "@iobroker/adapter-react-v5": {
-            name: "@iobroker/adapter-react-v5",
-            version: "8.1.8",
-            scope: ["default"],
-            loaded: false,
-            from: "ConfigCustomParserSet",
-            async get () {
-              if (false) {
-                throw new Error(`[Module Federation] Shared module '${"@iobroker/adapter-react-v5"}' must be provided by host`);
-              }
-              usedShared["@iobroker/adapter-react-v5"].loaded = true
-              const {"@iobroker/adapter-react-v5": pkgDynamicImport} = importMap
-              const res = await pkgDynamicImport()
-              const exportModule = false && "@iobroker/adapter-react-v5" === "react"
-                ? (res?.default ?? res)
-                : {...res}
-              // All npm packages pre-built by vite will be converted to esm
-              Object.defineProperty(exportModule, "__esModule", {
-                value: true,
-                enumerable: false
-              })
-              return function () {
-                return exportModule
-              }
-            },
-            shareConfig: {
-              singleton: true,
-              requiredVersion: "*",
-              
-            }
-          }
-        ,
           "@iobroker/json-config": {
             name: "@iobroker/json-config",
             version: "8.3.8",

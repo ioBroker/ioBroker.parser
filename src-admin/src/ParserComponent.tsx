@@ -22,9 +22,9 @@ import { Edit, Delete, ContentCopy, Add, FolderOpen, AccountTree, FileDownload, 
 
 // important to make from package and not from some children.
 // invalid
-// import Confirm from '@iobroker/adapter-react-v5/Confirm';
+// import Confirm from '@iobroker/gui-components/Confirm';
 // valid
-import { I18n, Confirm, DialogSelectID, DialogSelectFile, DialogCron } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm, DialogSelectID, DialogSelectFile, DialogCron } from '@iobroker/gui-components';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
 
 import { EditDialog } from './EditDialog';
@@ -208,8 +208,8 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     private readonly namespace: string;
     private saveTimer: ReturnType<typeof setTimeout> | null = null;
     private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-    private readonly refDiv: React.RefObject<HTMLDivElement>;
-    private readonly fileInputRef: React.RefObject<HTMLInputElement> = React.createRef();
+    private readonly refDiv: React.RefObject<HTMLDivElement | null>;
+    private readonly fileInputRef: React.RefObject<HTMLInputElement | null> = React.createRef();
 
     constructor(props: ConfigGenericProps) {
         super(props);
@@ -232,7 +232,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
     }
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         const rows = await this.props.oContext.socket.getObjectViewSystem(
             'state',
             this.namespace,
@@ -244,6 +244,8 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
             .catch(() => null);
 
         const rules = Object.keys(rows).map(id => {
+            // ParserState adds "enabled" to common, which ioBroker.StateCommon does not declare
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             const state = rows[id] as ParserState;
             return {
                 _id: id,
@@ -510,9 +512,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 if (rule.common.name && !rules.find((r, i) => r.common.name === rule.common.name && i !== _index)) {
                     const originalObj: ioBroker.StateObject | undefined | null = rule._id
                         ? ((await this.props.oContext.socket.getObject(rule._id)) as
-                              | ioBroker.StateObject
-                              | undefined
-                              | null)
+                              ioBroker.StateObject | undefined | null)
                         : ({ common: {}, native: {}, type: 'state' } as ioBroker.StateObject);
                     if (!originalObj) {
                         continue;
@@ -758,7 +758,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                     value={rule.native.type || 'url'}
                     onChange={e => {
                         const rules: ParserRule[] = JSON.parse(JSON.stringify(this.state.rules));
-                        rules[index].native.type = e.target.value as ParserRule['native']['type'];
+                        rules[index].native.type = e.target.value;
                         if (e.target.value === 'ioblog') {
                             rules[index].native.link = '';
                         }
@@ -1149,7 +1149,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 dialogName="parser"
                 themeType={this.props.oContext.themeType}
                 theme={this.props.oContext.theme}
-                socket={this.props.oContext.socket as any}
+                socket={this.props.oContext.socket}
                 selected={rule.native.link}
                 onClose={() => this.setState({ showSelectIdDialog: null })}
                 onOk={(selected: string | string[] | undefined) => {
@@ -1174,7 +1174,7 @@ export default class ParserComponent extends ConfigGeneric<ConfigGenericProps, P
                 dialogName="parser"
                 themeType={this.props.oContext.themeType}
                 theme={this.props.oContext.theme}
-                socket={this.props.oContext.socket as any}
+                socket={this.props.oContext.socket}
                 selected={rule.native.link}
                 onClose={() => this.setState({ showSelectFileDialog: null })}
                 onOk={(selected: string | string[] | undefined) => {

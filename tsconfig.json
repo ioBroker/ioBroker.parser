@@ -13,6 +13,8 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "strict": true,
+        "strictNullChecks": true,
+        "rootDir": "./src",
         "target": "es2022",
         "sourceMap": true,
         "inlineSourceMap": false,

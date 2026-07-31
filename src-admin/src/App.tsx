@@ -11,7 +11,8 @@ import {
     Loader,
     type GenericAppProps,
     type GenericAppState,
-} from '@iobroker/adapter-react-v5';
+    ScrollbarStyles,
+} from '@iobroker/gui-components';
 
 import ParserComponent from './ParserComponent';
 
@@ -44,7 +45,7 @@ interface AppState extends GenericAppState {
     originalData: Record<string, any>;
 }
 
-class App extends GenericApp<GenericAppProps, AppState> {
+export default class App extends GenericApp<GenericAppProps, AppState> {
     constructor(props: GenericAppProps) {
         const extendedProps = { ...props };
         super(props, extendedProps);
@@ -69,7 +70,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
             'zh-cn': zhCNLocal,
         };
 
-        I18n.setTranslations(translations);
+        I18n.extendTranslations(translations);
         // @ts-expect-error userLanguage could exist
         I18n.setLanguage((navigator.language || navigator.userLanguage || 'en').substring(0, 2).toLowerCase());
     }
@@ -88,6 +89,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
+                    <ScrollbarStyles theme={this.state.theme} />
                     <Box sx={styles.app}>
                         <div style={styles.item}>
                             <ParserComponent
@@ -127,5 +129,3 @@ class App extends GenericApp<GenericAppProps, AppState> {
         );
     }
 }
-
-export default App;
