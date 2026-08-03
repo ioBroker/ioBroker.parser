@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "news": {
+      "4.0.0": {
+        "en": "Migrated for admin 8",
+        "de": "Migriert für Admin 8",
+        "ru": "Перенесено для административной панели 8",
+        "pt": "Migrado para administrador 8",
+        "nl": "Gemigreerd voor beheerder 8",
+        "fr": "Migré pour l'administrateur 8",
+        "it": "Migrato per admin 8",
+        "es": "Migrado para administrador 8",
+        "pl": "Przeniesiono do wersji administracyjnej 8",
+        "uk": "Перенесено для адміністратора 8",
+        "zh-cn": "已迁移至管理员 8"
+      },
       "3.1.0": {
         "en": "Updated dependencies\nFixed disabled rules still being polled when sharing an interval\nFixed possible problems\nAdded possibility to use CRON as interval",
         "de": "Aktualisierte Abhängigkeiten\nBehobene Behindertenregeln werden immer noch beim Austausch eines Intervalls abgefragt\nMögliche Probleme behoben\nZusätzliche Möglichkeit, CRON als Intervall zu verwenden",
@@ -80,19 +93,6 @@
         "pl": "Interfejs GUI został wysłany do admin v7",
         "uk": "GUI був мігрований для адміністратора v7",
         "zh-cn": "管理员 v7 的图形用户界面已迁移"
-      },
-      "2.1.0": {
-        "en": "Only node 16 and higher is supported",
-        "de": "Nur Knoten 16 und höher unterstützt",
-        "ru": "Поддерживается только нод 16 и выше",
-        "pt": "Apenas o nó 16 e maior é suportado",
-        "nl": "Alleen node 16 en hoger is ondersteund",
-        "fr": "Seulement node 16 et plus est supporté",
-        "it": "Solo nodo 16 e superiore è supportato",
-        "es": "Sólo el nodo 16 y mayor es apoyado",
-        "pl": "Tylko węzeł 16 i więcej jest wspierany",
-        "uk": "Тільки вузол 16 і вище підтримується",
-        "zh-cn": "只支助了16个和较高职等"
       }
     },
     "titleLang": {
