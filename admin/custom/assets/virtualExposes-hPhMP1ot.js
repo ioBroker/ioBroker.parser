@@ -1,1 +1,0 @@
-import{t as e}from"./virtual_mf-exposes___mfe_internal__ConfigCustomParserSet__customComponents_js-DkLA5AYG.js";export{e as default};
