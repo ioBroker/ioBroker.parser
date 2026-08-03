@@ -143,7 +143,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.0.0 (2026-08-03)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Migrated for admin 8
 
 ### 3.1.0 (2026-04-13)
@@ -156,7 +156,7 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 * (bluefox) Migrated the new NPM token
 * (bluefox) Migrated to TypeScript
 * (bluefox) Added parsing of states, ioBroker files and logs
-* (bluefox) Fixing position marking in test dialog
+* (bluefox) Fixing position marking in the test dialog
 * (bluefox) Added mobile view
 * (bluefox) Minimal Node.js version is now 20
 * (bluefox) Added export import via CSV file
