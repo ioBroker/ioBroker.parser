@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "parser",
-    "version": "4.0.1",
+    "version": "4.0.2",
     "news": {
+      "4.0.2": {
+        "en": "Adapter requires node.js >= 22 now.\nMigrated for admin 8",
+        "de": "Adapter benötigt jetzt node.js >= 22.\nMigriert für Admin 8",
+        "ru": "Теперь для адаптера требуется файл node.js >= 22.\nПеренесено для администратора 8",
+        "pt": "O adaptador exige node.js >= 2.\nMigrado para admin 8",
+        "nl": "Voor de adapter is nu node.js >= 22 nodig.\nGemigreerd voor admin 8",
+        "fr": "Adapter nécessite node.js >= 22.\nMigré pour Admin 8",
+        "it": "Adapter richiede node.js >= 2 ora.\nMigrato per admin 8",
+        "es": "El adaptador necesita node.js >= 22 ahora.\nMigrado para admin 8",
+        "pl": "Adapter wymaga teraz node.js >= 22.\nMigracja dla administratora 8",
+        "uk": "Тепер адаптер вимагає node.js >= 22.\nПеренесено для адміністратора 8",
+        "zh-cn": "适配器现在需要 node.js >= 22。\n已迁移到管理员 8"
+      },
       "3.1.0": {
         "en": "Updated dependencies\nFixed disabled rules still being polled when sharing an interval\nFixed possible problems\nAdded possibility to use CRON as interval",
         "de": "Aktualisierte Abhängigkeiten\nBehobene Behindertenregeln werden immer noch beim Austausch eines Intervalls abgefragt\nMögliche Probleme behoben\nZusätzliche Möglichkeit, CRON als Intervall zu verwenden",
