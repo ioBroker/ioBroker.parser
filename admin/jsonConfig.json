@@ -10,17 +10,21 @@
                     "type": "number",
                     "label": "parser_Default poll interval",
                     "help": "parser_ms",
+                    "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "requestTimeout": {
                     "type": "number",
                     "label": "parser_Request Timeout",
                     "help": "parser_ms",
+                    "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "requestDelay": {
                     "newLine": true,
@@ -28,40 +32,50 @@
                     "label": "parser_Request Delay",
                     "help": "parser_ms",
                     "tooltip": "parser_tooltip_requestDelay",
+                    "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "acceptInvalidCertificates": {
                     "newLine": true,
                     "type": "checkbox",
                     "label": "parser_Accept invalid certificates",
+                    "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "useInsecureHTTPParser": {
                     "type": "checkbox",
                     "label": "parser_Use insecure HTTP parser",
+                    "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "lg": 2
+                    "lg": 2,
+                    "xl": 2
                 },
                 "updateNonChanged": {
                     "newLine": true,
                     "type": "checkbox",
                     "label": "parser_Update timestamp of non changed values",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 4
+                    "lg": 4,
+                    "xl": 4
                 },
                 "userAgent": {
                     "newLine": true,
                     "type": "text",
                     "label": "parser_User agent",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 4
+                    "lg": 4,
+                    "xl": 4
                 }
             }
         },
@@ -75,7 +89,11 @@
                     "i18n": true,
                     "url": "custom/customComponents.js",
                     "name": "ConfigCustomParserSet/Components/ParserComponent",
+                    "xs": 12,
                     "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
                     "guiApi": 2,
                     "bundlerType": "module"
                 }
