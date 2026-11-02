@@ -143,6 +143,9 @@ sendTo("parser.0", "trigger", "temperatureMunich" /* name of rule, or parser.0.t
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22.19.0 now
 ### 4.0.2 (2026-10-17)
 * (iobroker-bot) Adapter requires node.js >= 22 now.
 * (@GermanBluefox) Migrated for admin 8
