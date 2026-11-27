@@ -36,7 +36,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/legacy-testing": "^4.0.1",
     "@iobroker/testing": "^6.3.2",
-    "@tsconfig/node22": "^22.0.6",
+    "@tsconfig/node22": "^22.0.7",
     "@types/node": "^22.20.5",
     "typescript": "~6.0.3"
   },
